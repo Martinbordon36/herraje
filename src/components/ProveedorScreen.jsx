@@ -3,9 +3,13 @@ import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Importar iconos de react-icons
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
+import Footer from './Footer';
 
 const ProveedorScreen = () => {
   const [proveedores, setProveedores] = useState([]);
+  const [selectedProveedor, setSelectedProveedor] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
@@ -46,22 +50,37 @@ const ProveedorScreen = () => {
     navigate(`/editarproveedor/${id}`);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor/${id}`, {
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor/${selectedProveedor.id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
       if (!response.ok) {
         throw new Error('Error al eliminar el proveedor');
       }
-      setProveedores(proveedores.filter(proveedor => proveedor.id !== id));
+      setProveedores(proveedores.filter(proveedor => proveedor.id !== selectedProveedor.id));
+      setShowConfirmModal(false);
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Error deleting proveedor:', error);
     }
+  };
+
+  const openConfirmModal = (proveedor) => {
+    setSelectedProveedor(proveedor);
+    setShowConfirmModal(true);
+  };
+
+  const closeConfirmModal = () => {
+    setSelectedProveedor(null);
+    setShowConfirmModal(false);
+  };
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
   };
 
   return (
@@ -104,7 +123,7 @@ const ProveedorScreen = () => {
                   />
                   <FaTrash 
                     className="icon delete-icon" 
-                    onClick={() => handleDelete(proveedor.id)} 
+                    onClick={() => openConfirmModal(proveedor)} 
                   />
                 </td>
               </tr>
@@ -112,6 +131,50 @@ const ProveedorScreen = () => {
           </tbody>
         </table>
       </div>
+
+      {showConfirmModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirmar Eliminación</h5>
+                <button type="button" className="close" onClick={closeConfirmModal}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>¿Estás seguro de que deseas eliminar el proveedor {selectedProveedor.razonSocial}?</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeConfirmModal}>Cancelar</button>
+                <button type="button" className="btn btn-danger" onClick={handleDelete}>Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSuccessModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Proveedor Eliminado</h5>
+                <button type="button" className="close" onClick={closeSuccessModal}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>Proveedor eliminado con éxito.</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={closeSuccessModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* <Footer/> */}
     </>
   );
 };

@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
-import { FaEdit, FaTrash } from 'react-icons/fa';
-
+import { FaEdit, FaTrash } from 'react-icons/fa'; // Importar iconos de react-icons
+import Footer from './Footer';
 
 const ProductoScreen = () => {
   const [productos, setProductos] = useState([]);
+  const [productoIdAEliminar, setProductoIdAEliminar] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Este es el token " + token);
-
     const fetchProductos = async () => {
       if (!token) {
         console.error('Token no disponible');
@@ -23,7 +24,6 @@ const ProductoScreen = () => {
         const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/producto', {
           method: 'GET',
           headers: {
-            // 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
         });
@@ -48,22 +48,32 @@ const ProductoScreen = () => {
     navigate(`/editarproducto/${id}`);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+    setProductoIdAEliminar(id);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/${id}`, {
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/${productoIdAEliminar}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
       if (!response.ok) {
         throw new Error('Error al eliminar el producto');
       }
-      setProductos(productos.filter(producto => producto.id !== id));
+      setProductos(productos.filter(producto => producto.id !== productoIdAEliminar));
+      setShowConfirmModal(false);
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Error deleting producto:', error);
     }
+  };
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
   };
 
   return (
@@ -72,8 +82,9 @@ const ProductoScreen = () => {
       <div className="container">
         <h1 className="title">Productos</h1>
         <button className="button" onClick={handleCreateProduct}>Crear Producto</button>
-        </div>
+      </div>
 
+      <div className="table-container">
         <table className="table">
           <thead>
             <tr>
@@ -84,14 +95,6 @@ const ProductoScreen = () => {
               <th className="th">Punto de Reposición</th>
               <th className="th">Estado</th>
               <th className="th">Costo</th>
-              {/* <th className="th">Precio Venta</th>
-              <th className="th">Unidad Compra</th>
-              <th className="th">Unidad Venta</th> */}
-              {/* <th className="th">Art Dto Gan</th>
-              <th className="th">Categoría</th>
-              <th className="th">SubCategoría</th>
-              <th className="th">Proveedor</th>
-              <th className="th">Fecha Modificación</th> */}
               <th className="th">Acciones</th>
             </tr>
           </thead>
@@ -105,14 +108,6 @@ const ProductoScreen = () => {
                 <td className="td">{producto.puntoReposicion}</td>
                 <td className="td">{producto.estado}</td>
                 <td className="td">{producto.costo}</td>
-                {/* <td className="td">{producto.precioVenta}</td>
-                <td className="td">{producto.unidadCompra}</td>
-                <td className="td">{producto.unidadVenta}</td> */}
-                {/* <td className="td">{producto.artDtoGan}</td>
-                <td className="td">{producto.categoria}</td>
-                <td className="td">{producto.subCategoria}</td>
-                <td className="td">{producto.proveedor}</td>
-                <td className="td">{producto.fechaModificacion}</td> */}
                 <td className="td">
                   <FaEdit 
                     className="icon edit-icon" 
@@ -127,6 +122,51 @@ const ProductoScreen = () => {
             ))}
           </tbody>
         </table>
+      </div>
+      
+
+      {showConfirmModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirmar Eliminación</h5>
+                <button type="button" className="close" onClick={() => setShowConfirmModal(false)}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>¿Estás seguro de que quieres eliminar este producto?</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>Cancelar</button>
+                <button type="button" className="btn btn-danger" onClick={confirmDelete}>Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSuccessModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Producto Eliminado</h5>
+                <button type="button" className="close" onClick={closeSuccessModal}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>El producto ha sido eliminado con éxito.</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={closeSuccessModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

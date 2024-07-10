@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import './Categorias.css'; // Asegúrate de crear y enlazar este archivo CSS
+import Footer from './Footer';
 
 const Categorias = () => {
   const [categoria, setCategoria] = useState('');
@@ -162,6 +163,7 @@ const Categorias = () => {
           </div>
         )}
       </div>
+      {/* <Footer /> */}
     </>
   );
 };

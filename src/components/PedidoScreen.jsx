@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import Footer from './Footer';
 
 const PedidoScreen = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -112,6 +113,7 @@ const PedidoScreen = () => {
           </tbody>
         </table>
       </div>
+      {/* <Footer/> */}
     </>
   );
 };

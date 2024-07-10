@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './VerPedido.css';
+import Footer from './Footer';
 
 const VerPedido = () => {
   const { id } = useParams();
@@ -67,6 +68,8 @@ const VerPedido = () => {
       <div className="button-container">
           <button onClick={() => navigate(-1)} className="confirm-button">Volver</button>
         </div>
+
+        {/* <Footer/> */}
 
     </div>
   );

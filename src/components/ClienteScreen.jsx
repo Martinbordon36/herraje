@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import './ClienteScreen.css';
 import { useNavigate, useParams } from 'react-router-dom';
+import Footer from './Footer';
 
 const ClienteScreen = () => {
   const [cliente, setCliente] = useState({
@@ -104,6 +105,9 @@ const ClienteScreen = () => {
     navigate('/clientes');
   };
 
+  const modalTitle = id ? 'Cliente Editado' : 'Cliente Creado';
+  const modalMessage = id ? 'Cliente editado con éxito.' : 'Cliente creado con éxito.';
+
   return (
     <>
       <Navbar />
@@ -117,7 +121,7 @@ const ClienteScreen = () => {
             <form onSubmit={handleSubmit}>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="razonSocial" className="form-label">(*) Razón Social</label>
+                  <label htmlFor="razonSocial" className="form-label">Razón Social</label>
                   <input
                     type="text"
                     id="razonSocial"
@@ -128,7 +132,7 @@ const ClienteScreen = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="cuit" className="form-label">(*) CUIT</label>
+                  <label htmlFor="cuit" className="form-label">CUIT</label>
                   <input
                     type="text"
                     id="cuit"
@@ -141,7 +145,7 @@ const ClienteScreen = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-12">
-                  <label htmlFor="domicilio" className="form-label">(*) Domicilio</label>
+                  <label htmlFor="domicilio" className="form-label"> Domicilio</label>
                   <input
                     type="text"
                     id="domicilio"
@@ -154,7 +158,7 @@ const ClienteScreen = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="telefono" className="form-label">(*) Teléfono</label>
+                  <label htmlFor="telefono" className="form-label"> Teléfono</label>
                   <input
                     type="text"
                     id="telefono"
@@ -165,7 +169,7 @@ const ClienteScreen = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="email" className="form-label">(*) Email</label>
+                  <label htmlFor="email" className="form-label"> Email</label>
                   <input
                     type="email"
                     id="email"
@@ -178,7 +182,7 @@ const ClienteScreen = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="provincia" className="form-label">(*) Provincia</label>
+                  <label htmlFor="provincia" className="form-label"> Provincia</label>
                   <input
                     type="text"
                     id="provincia"
@@ -189,7 +193,7 @@ const ClienteScreen = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="localidad" className="form-label">(*) Localidad</label>
+                  <label htmlFor="localidad" className="form-label"> Localidad</label>
                   <input
                     type="text"
                     id="localidad"
@@ -218,13 +222,13 @@ const ClienteScreen = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Cliente Creado</h5>
+                <h5 className="modal-title">{modalTitle}</h5>
                 <button type="button" className="close" onClick={closeModal}>
                   <span>&times;</span>
                 </button>
               </div>
               <div className="modal-body">
-                <p>Cliente creado con éxito.</p>
+                <p>{modalMessage}</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
@@ -233,6 +237,7 @@ const ClienteScreen = () => {
           </div>
         </div>
       )}
+      {/* <Footer/> */}
     </>
   );
 };

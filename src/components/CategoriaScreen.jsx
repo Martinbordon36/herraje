@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import Footer from './Footer';
 
 const CategoriaScreen = () => {
   const [categorias, setCategorias] = useState([]);
@@ -105,7 +106,9 @@ const CategoriaScreen = () => {
           </table>
         </div>
       </div>
+      {/* <Footer/> */}
     </>
+    
   );
 };
 

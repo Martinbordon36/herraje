@@ -24,6 +24,8 @@ const ProductoForm = () => {
 
   const [categorias, setCategorias] = useState([]);
   const [subCategorias, setSubCategorias] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const token = localStorage.getItem('token');
   const { id } = useParams();
   const navigate = useNavigate();
@@ -34,7 +36,6 @@ const ProductoForm = () => {
       try {
         const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria', {
           headers: {
-            'Authorization': `Bearer ${token}`
           }
         });
         const data = await response.json();
@@ -50,7 +51,6 @@ const ProductoForm = () => {
       try {
         const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/${id}`, {
           headers: {
-            'Authorization': `Bearer ${token}`
           }
         });
         const data = await response.json();
@@ -70,7 +70,6 @@ const ProductoForm = () => {
     try {
       const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/subcategoria', {
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -98,7 +97,7 @@ const ProductoForm = () => {
     fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(producto)
     })
@@ -109,8 +108,8 @@ const ProductoForm = () => {
       return response.json();
     })
     .then(data => {
-      console.log(id ? 'Producto editado:' : 'Producto creado:', data);
-      navigate('/productos');
+      setModalMessage(id ? 'Producto editado con éxito' : 'Producto creado con éxito');
+      setShowModal(true);
     })
     .catch(error => {
       console.error('Error:', error);
@@ -119,6 +118,11 @@ const ProductoForm = () => {
 
   const handleBack = () => {
     navigate(-1); // Navega a la página anterior
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    navigate('/productos');
   };
 
   return (
@@ -327,6 +331,26 @@ const ProductoForm = () => {
           </div>
         </div>
       </div>
+      {showModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Resultado</h5>
+                <button type="button" className="close" onClick={closeModal}>
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>{modalMessage}</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

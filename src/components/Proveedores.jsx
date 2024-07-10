@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import './Proveedores.css';
 import { useNavigate, useParams } from 'react-router-dom';
+import Footer from './Footer';
 
 const Proveedores = () => {
   const [proveedor, setProveedor] = useState({
@@ -50,9 +51,11 @@ const Proveedores = () => {
   };
 
   const validateForm = () => {
-    for (let key in proveedor) {
-      if (!proveedor[key]) {
-        return `El campo ${key} es obligatorio.`;
+    const requiredFields = ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad'];
+
+    for (let field of requiredFields) {
+      if (!proveedor[field]) {
+        return `El campo ${field} es obligatorio.`;
       }
     }
     return '';
@@ -104,6 +107,8 @@ const Proveedores = () => {
     navigate('/proveedores');
   };
 
+  const successMessage = id ? 'Proveedor editado con éxito.' : 'Proveedor creado con éxito.';
+
   return (
     <>
       <Navbar />
@@ -117,7 +122,7 @@ const Proveedores = () => {
             <form onSubmit={handleSubmit}>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="razonSocial" className="form-label">(*) Razón Social</label>
+                  <label htmlFor="razonSocial" className="form-label"> Razón Social</label>
                   <input
                     type="text"
                     id="razonSocial"
@@ -128,7 +133,7 @@ const Proveedores = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="cuit" className="form-label">(*) CUIT</label>
+                  <label htmlFor="cuit" className="form-label"> CUIT</label>
                   <input
                     type="text"
                     id="cuit"
@@ -141,7 +146,7 @@ const Proveedores = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-12">
-                  <label htmlFor="domicilio" className="form-label">(*) Domicilio</label>
+                  <label htmlFor="domicilio" className="form-label"> Domicilio</label>
                   <input
                     type="text"
                     id="domicilio"
@@ -154,7 +159,7 @@ const Proveedores = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="telefono" className="form-label">(*) Teléfono</label>
+                  <label htmlFor="telefono" className="form-label">Teléfono</label>
                   <input
                     type="text"
                     id="telefono"
@@ -165,7 +170,7 @@ const Proveedores = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="email" className="form-label">(*) Email</label>
+                  <label htmlFor="email" className="form-label">Email</label>
                   <input
                     type="email"
                     id="email"
@@ -178,7 +183,7 @@ const Proveedores = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="provincia" className="form-label">(*) Provincia</label>
+                  <label htmlFor="provincia" className="form-label">Provincia</label>
                   <input
                     type="text"
                     id="provincia"
@@ -189,7 +194,7 @@ const Proveedores = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="localidad" className="form-label">(*) Localidad</label>
+                  <label htmlFor="localidad" className="form-label">Localidad</label>
                   <input
                     type="text"
                     id="localidad"
@@ -218,13 +223,13 @@ const Proveedores = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Proveedor Creado</h5>
+                <h5 className="modal-title">{id ? 'Proveedor Editado' : 'Proveedor Creado'}</h5>
                 <button type="button" className="close" onClick={closeModal}>
                   <span>&times;</span>
                 </button>
               </div>
               <div className="modal-body">
-                <p>Proveedor creado con éxito.</p>
+                <p>{successMessage}</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
@@ -233,6 +238,7 @@ const Proveedores = () => {
           </div>
         </div>
       )}
+      {/* <Footer/> */}
     </>
   );
 };

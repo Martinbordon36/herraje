@@ -631,3 +631,7 @@ html {
 .autosuggest__suggestion--highlighted {
   background-color: #ddd;
 }
+
+.input-defecto{
+  background-color: #E6E6E6;
+}

@@ -3,6 +3,7 @@ import Navbar from './Navbar';
 import Autosuggest from 'react-autosuggest';
 import { useNavigate, useParams } from 'react-router-dom';
 import './CrearPedido.css';
+import Footer from './Footer';
 
 const CrearPedido = () => {
   const [productos, setProductos] = useState([{
@@ -284,7 +285,7 @@ const CrearPedido = () => {
         <button className="btn btn-secondary mb-3" onClick={handleBack}>Volver Atrás</button>
         <br />
         {validationError && <div className="alert alert-danger">{validationError}</div>}
-        <label htmlFor="buscarCliente">Buscar cliente:</label>
+        {/* <label htmlFor="buscarCliente">Buscar cliente:</label> */}
         <Autosuggest
           suggestions={suggestions}
           onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
@@ -309,11 +310,11 @@ const CrearPedido = () => {
       <div className="input-row">
         <div className="input-container">
           <label htmlFor="cliente"> Cliente:</label>
-          <input type="text" id="cliente" value={selectedCliente} readOnly />
+          <input className='input-defecto' type="text" id="cliente" value={selectedCliente} readOnly />
         </div>
         <div className="input-container">
           <label htmlFor="idUser"> Id Usuario:</label>
-          <input type="text" id="idUser" value="1" readOnly />
+          <input className='input-defecto' type="text" id="idUser" value="1" readOnly />
         </div>
       </div>
       <br />
@@ -384,7 +385,10 @@ const CrearPedido = () => {
           </div>
         </div>
       )}
+      {/* <Footer/> */}
     </div>
+
+    
   );
 }
 

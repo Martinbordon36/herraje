@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './SignupScreen.css';
+import avatarImage from '../assets/herraje.jpeg'; // Ajusta la ruta según corresponda
 
 const SignupScreen = () => {
   const [fullName, setFullName] = useState('');
@@ -30,7 +32,6 @@ const SignupScreen = () => {
 
       const data = await response.json();
       console.log("Registro correcto");
-     // localStorage.setItem('token', data.token);
       navigate('/');
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -43,7 +44,9 @@ const SignupScreen = () => {
   return (
     <div className="signup-container">
       <div className="signup-box">
-        <div className="avatar"></div>
+        <div className="avatar">
+          <img src={avatarImage} alt="avatar" className="avatar-image"/>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="input-container">
             <i className="fa fa-user icon"></i>

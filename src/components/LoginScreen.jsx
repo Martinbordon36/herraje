@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Asegúrate de tener react-router-dom instalado
 import './LoginScreen.css';
+import toolImage from '../assets/herraje.jpeg';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -49,7 +49,9 @@ const LoginScreen = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <div className="avatar"></div>
+        <div className="avatar">
+          <img src={toolImage} alt="avatar" className="avatar-image"/>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="input-container">
             <i className="fa fa-user icon"></i>
@@ -73,10 +75,7 @@ const LoginScreen = () => {
             {loading ? 'Loading...' : 'LOGIN'}
           </button>
           {error && <div className="error-message">{error}</div>}
-
-
         </form>
-
         <button onClick={handleSignupRedirect} className="signup-redirect-button">
           Crear usuario
         </button>

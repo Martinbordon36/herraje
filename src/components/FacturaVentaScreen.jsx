@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar';
+import Footer from './Footer';
 
 const FacturaVentasScreen = () => {
   const [facturas, setFacturas] = useState([
@@ -61,6 +62,7 @@ const FacturaVentasScreen = () => {
         </tbody>
       </table>
     </div>
+    {/* <Footer/> */}
     </>
   );
 };

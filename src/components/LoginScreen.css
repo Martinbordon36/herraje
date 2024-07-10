@@ -1,79 +1,74 @@
-
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100%;
-  }
-  
-  .login-box {
+    height: 100vh; /* Asegura que el contenedor ocupe el 100% de la altura de la ventana */
+    background-color: #f8f9fa;
+}
+
+.login-box {
     background: rgba(255, 255, 255, 0.9);
     padding: 40px;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-  }
-  
-  .avatar {
+}
+
+.avatar {
     width: 80px;
     height: 80px;
-    background: #000000;
     border-radius: 50%;
     margin: 0 auto 20px;
     position: relative;
-  }
-  
-  .avatar::before {
-    content: '\f007';
-    font-family: FontAwesome;
-    color: white;
-    font-size: 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .input-container {
+    overflow: hidden; /* Asegura que la imagen se recorte a un círculo */
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra todo el contenedor */
+}
+
+.input-container {
     position: relative;
     margin-bottom: 15px;
-  }
-  
-  .input-container input {
+}
+
+.input-container input {
     width: 100%;
     padding: 10px 10px 10px 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-  }
-  
-  .input-container .icon {
+}
+
+.input-container .icon {
     position: absolute;
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: #4a90e2;
-  }
-  
-  .options-container {
+}
+
+.options-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
     font-size: 14px;
-  }
-  
-  .options-container a {
+}
+
+.options-container a {
     color: #4a90e2;
     text-decoration: none;
-  }
-  
-  .options-container a:hover {
+}
+
+.options-container a:hover {
     text-decoration: underline;
-  }
-  
-  .login-button {
+}
+
+.login-button {
     background: #4a90e2;
     color: white;
     padding: 10px 20px;
@@ -81,55 +76,55 @@
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-  }
-  
-  .login-button:hover {
+}
+
+.login-button:hover {
     background: #357ab8;
-  }
-  
-  .signup-container {
+}
+
+.signup-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: #f0f2f5;
-  }
-  
-  .signup-box {
+}
+
+.signup-box {
     width: 300px;
     padding: 40px;
     border-radius: 8px;
     background-color: #fff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-  }
-  
-  .avatar {
+}
+
+.avatar {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     background-color: #000;
     margin: 0 auto 20px;
-  }
-  
-  .input-container {
+}
+
+.input-container {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
-  }
-  
-  .input-container i {
+}
+
+.input-container i {
     margin-right: 10px;
-  }
-  
-  .input-container input {
+}
+
+.input-container input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
-  
-  .signup-button {
+}
+
+.signup-button {
     width: 100%;
     padding: 10px;
     background-color: #007bff;
@@ -137,18 +132,18 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .signup-button:disabled {
+}
+
+.signup-button:disabled {
     background-color: #ccc;
-  }
-  
-  .error-message {
+}
+
+.error-message {
     color: red;
     margin-top: 10px;
-  }
-  
-  .signup-redirect-button {
+}
+
+.signup-redirect-button {
     margin-top: 20px;
     width: 100%;
     padding: 10px;
@@ -157,20 +152,20 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .signup-redirect-button:hover {
+}
+
+.signup-redirect-button:hover {
     background-color: #218838;
-  }
-  
-  body {
+}
+
+body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
-  }
-  
-  .form-container {
+}
+
+.form-container {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
@@ -179,32 +174,32 @@
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-top: 20px;
-  }
-  
-  h1 {
+}
+
+h1 {
     text-align: center;
     margin-bottom: 20px;
-  }
-  
-  .input-container {
+}
+
+.input-container {
     margin-bottom: 15px;
-  }
-  
-  .input-container label {
+}
+
+.input-container label {
     display: block;
     margin-bottom: 5px;
-  }
-  
-  .input-container input,
-  .input-container select {
+}
+
+.input-container input,
+.input-container select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-  }
-  
-  .confirm-button {
+}
+
+.confirm-button {
     width: 100%;
     padding: 10px;
     background-color: #007bff;
@@ -212,26 +207,26 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .confirm-button:hover {
+}
+
+.confirm-button:hover {
     background-color: #0056b3;
-  }
-  
-  @media (max-width: 600px) {
+}
+
+@media (max-width: 600px) {
     .form-container {
-      padding: 10px;
+        padding: 10px;
     }
-  } 
-  
-  body {
+}
+
+body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
-  }
-  
-  .form-container {
+}
+
+.form-container {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
@@ -240,32 +235,32 @@
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-top: 20px;
-  }
-  
-  h1 {
+}
+
+h1 {
     text-align: center;
     margin-bottom: 20px;
-  }
-  
-  .input-container {
+}
+
+.input-container {
     margin-bottom: 15px;
-  }
-  
-  .input-container label {
+}
+
+.input-container label {
     display: block;
     margin-bottom: 5px;
-  }
-  
-  .input-container input,
-  .input-container select {
+}
+
+.input-container input,
+.input-container select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-  }
-  
-  .confirm-button {
+}
+
+.confirm-button {
     width: 100%;
     padding: 10px;
     background-color: #007bff;
@@ -273,16 +268,14 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .confirm-button:hover {
+}
+
+.confirm-button:hover {
     background-color: #0056b3;
-  }
-  
-  @media (max-width: 600px) {
+}
+
+@media (max-width: 600px) {
     .form-container {
-      padding: 10px;
+        padding: 10px;
     }
-  }
-  
-  
+}

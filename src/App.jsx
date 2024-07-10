@@ -17,6 +17,7 @@ import ClienteScreen from './components/ClienteScreen';
 import ProveedorScreen from './components/ProveedorScreen';
 import Cliente from './components/Cliente';
 import VerPedido from './components/VerPedido';
+import Footer from './components/Footer';
 const App = () => {
   return (
     <Router>
@@ -43,7 +44,9 @@ const App = () => {
         <Route path="/verPedido/:id" element={<VerPedido />} />
 
       </Routes>
+      <Footer/>
     </Router>
+
   );
 };
 

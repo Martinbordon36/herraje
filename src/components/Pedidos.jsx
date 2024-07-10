@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Pedidos.css';
+import Footer from './Footer';
 
 const Pedidos = () => {
   const [pedido, setPedido] = useState({
@@ -275,6 +276,7 @@ const Pedidos = () => {
           </div>
         </div>
       </div>
+      {/* <Footer/> */}
     </>
   );
 };
