@@ -1,0 +1,79 @@
+.container {
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse; /* Asegura que las celdas compartan los bordes */
+  }
+
+  .button{
+    background-color: orange;
+    padding:8px;
+    color: white;
+    font-weight: 700;
+    border-radius: 10px;
+  }
+  
+  .th, .td {
+    padding: 10px;
+    border: 1px solid #ddd; /* Añadir bordes a las celdas */
+    text-align: left;
+    white-space: nowrap; /* Evita que el contenido se desborde */
+  }
+  
+  .button {
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .th, .td {
+      font-size: 12px; /* Ajustar tamaño de fuente para pantallas pequeñas */
+    }
+  }
+  
+  .edit-icon {
+    color: blue;
+    cursor: pointer;
+  }
+  
+  .delete-icon {
+    color: red;
+    cursor: pointer;
+  }
+
+  .icon {
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .edit-icon {
+    color: blue;
+  }
+  
+  .delete-icon {
+    color: red;
+  }
+
+  .button-subcategoria{
+    color: white;
+    background-color: blueviolet;
+    border-radius: 10px;
+  }
+  
+
+  .button-back {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .button-back:hover {
+    background-color: #0056b3;
+  }
+  
