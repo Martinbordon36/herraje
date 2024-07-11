@@ -1,23 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginScreen from './components/LoginScreen';
+import LoginScreen from './components/Login/LoginScreen';
 //import Home from './Home'; // Asegúrate de tener un componente Home
-import SignUpScreen from './components/SignUpScreen';
-import ProductoForm from './components/ProductoForm';
-import Clasificaciones from './components/Clasificaciones';
-import ProductoScreen from './components/ProductoScreen';
-import Proveedores from './components/Proveedores';
-import Categorias from './components/Categorias';
+import SignUpScreen from './components/Login/SignUpScreen';
+import ProductoForm from './components/Producto/ProductoForm';
+import Clasificaciones from './components/Categoria/Clasificaciones';
+import ProductoScreen from './components/Producto/ProductoScreen';
+import Proveedores from './components/Proovedores/Proveedores';
+import Categorias from './components/Categoria/Categorias';
 //import Pedidos from './components/Pedidos';
-import CategoriaScreen from './components/CategoriaScreen';
-import SubcategoriaScreen from './components/SubcategoriaScreen';
-import CrearPedido from './components/CrearPedido';
-import PedidoScreen from './components/PedidoScreen';
-import ClienteScreen from './components/ClienteScreen';
-import ProveedorScreen from './components/ProveedorScreen';
-import Cliente from './components/Cliente';
-import VerPedido from './components/VerPedido';
-import Footer from './components/Footer';
+import CategoriaScreen from './components/Categoria/CategoriaScreen';
+import SubcategoriaScreen from './components/Categoria/SubcategoriaScreen';
+import CrearPedido from './components/Pedido/CrearPedido';
+import PedidoScreen from './components/Pedido/PedidoScreen';
+import ClienteScreen from './components/Cliente/ClienteScreen';
+import ProveedorScreen from './components/Proovedores/ProveedorScreen';
+import Cliente from './components/Cliente/Cliente';
+import VerPedido from './components/Pedido/VerPedido';
+import Footer from './components/Others/Footer';
 const App = () => {
   return (
     <Router>

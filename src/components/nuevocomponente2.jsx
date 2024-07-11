@@ -1,5 +1,7 @@
+// Este actualiza bien
+
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../Others/Navbar';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ProductoForm.css';
 
@@ -337,9 +339,9 @@ const ProductoForm = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Resultado</h5>
-                <button type="button" className="close" onClick={closeModal}>
+                {/* <button type="button" className="close" onClick={closeModal}>
                   <span>&times;</span>
-                </button>
+                </button> */}
               </div>
               <div className="modal-body">
                 <p>{modalMessage}</p>

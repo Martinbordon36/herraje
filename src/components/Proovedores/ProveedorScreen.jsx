@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import Navbar from './Navbar';
-import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
-import Footer from './Footer';
+import { FaEdit, FaTrash } from 'react-icons/fa'; // Importar iconos de react-icons
+import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 
-const Cliente = () => {
-  const [clientes, setClientes] = useState([]);
-  const [selectedCliente, setSelectedCliente] = useState(null);
+const ProveedorScreen = () => {
+  const [proveedores, setProveedores] = useState([]);
+  const [selectedProveedor, setSelectedProveedor] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const token = localStorage.getItem('token');
@@ -16,66 +15,66 @@ const Cliente = () => {
   useEffect(() => {
     console.log("Este es el token " + token);
 
-    const fetchClientes = async () => {
+    const fetchProveedores = async () => {
       if (!token) {
         console.error('Token no disponible');
         return;
       }
 
       try {
-        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente', {
+        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           },
         });
         if (!response.ok) {
-          throw new Error('Error al obtener los clientes');
+          throw new Error('Error al obtener los proveedores');
         }
         const data = await response.json();
-        setClientes(data);
+        setProveedores(data);
       } catch (error) {
-        console.error('Error fetching clientes:', error);
+        console.error('Error fetching proveedores:', error);
       }
     };
 
-    fetchClientes();
+    fetchProveedores();
   }, [token]);
 
-  const handleCreateCliente = () => {
-    navigate('/nuevoCliente');
+  const handleCreateProveedor = () => {
+    navigate('/nuevoproveedor');
   };
 
   const handleEdit = (id) => {
-    navigate(`/editarCliente/${id}`);
+    navigate(`/editarproveedor/${id}`);
   };
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${selectedCliente.id}`, {
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor/${selectedProveedor.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         }
       });
       if (!response.ok) {
-        throw new Error('Error al eliminar el cliente');
+        throw new Error('Error al eliminar el proveedor');
       }
-      setClientes(clientes.filter(cliente => cliente.id !== selectedCliente.id));
+      setProveedores(proveedores.filter(proveedor => proveedor.id !== selectedProveedor.id));
       setShowConfirmModal(false);
       setShowSuccessModal(true);
     } catch (error) {
-      console.error('Error deleting cliente:', error);
+      console.error('Error deleting proveedor:', error);
     }
   };
 
-  const openConfirmModal = (cliente) => {
-    setSelectedCliente(cliente);
+  const openConfirmModal = (proveedor) => {
+    setSelectedProveedor(proveedor);
     setShowConfirmModal(true);
   };
 
   const closeConfirmModal = () => {
-    setSelectedCliente(null);
+    setSelectedProveedor(null);
     setShowConfirmModal(false);
   };
 
@@ -87,14 +86,14 @@ const Cliente = () => {
     <>
       <Navbar />
       <div className="container">
-        <h1 className="title">Clientes</h1>
-        <button className="button" onClick={handleCreateCliente}>Crear Cliente</button>
+        <h1 className="title">Proveedores</h1>
+        <button className="button" onClick={handleCreateProveedor}>Crear Proveedor</button>
       </div>
       <div className="table-container">
         <table className="table">
           <thead>
             <tr>
-              <th className="th">#ID Cliente</th>
+              <th className="th">#ID de proveedor</th>
               <th className="th">Razón Social</th>
               <th className="th">CUIT</th>
               <th className="th">Domicilio</th>
@@ -106,24 +105,24 @@ const Cliente = () => {
             </tr>
           </thead>
           <tbody>
-            {clientes.map((cliente) => (
-              <tr key={cliente.id}>
-                <td className="td">{cliente.id}</td>
-                <td className="td">{cliente.razonSocial}</td>
-                <td className="td">{cliente.cuit}</td>
-                <td className="td">{cliente.domicilio}</td>
-                <td className="td">{cliente.telefono}</td>
-                <td className="td">{cliente.email}</td>
-                <td className="td">{cliente.provincia}</td>
-                <td className="td">{cliente.localidad}</td>
+            {proveedores.map((proveedor) => (
+              <tr key={proveedor.id}>
+                <td className="td">{proveedor.id}</td>
+                <td className="td">{proveedor.razonSocial}</td>
+                <td className="td">{proveedor.cuit}</td>
+                <td className="td">{proveedor.domicilio}</td>
+                <td className="td">{proveedor.telefono}</td>
+                <td className="td">{proveedor.email}</td>
+                <td className="td">{proveedor.provincia}</td>
+                <td className="td">{proveedor.localidad}</td>
                 <td className="td">
                   <FaEdit 
                     className="icon edit-icon" 
-                    onClick={() => handleEdit(cliente.id)} 
+                    onClick={() => handleEdit(proveedor.id)} 
                   />
                   <FaTrash 
                     className="icon delete-icon" 
-                    onClick={() => openConfirmModal(cliente)} 
+                    onClick={() => openConfirmModal(proveedor)} 
                   />
                 </td>
               </tr>
@@ -138,12 +137,12 @@ const Cliente = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Confirmar Eliminación</h5>
-                <button type="button" className="close" onClick={closeConfirmModal}>
+                {/* <button type="button" className="close" onClick={closeConfirmModal}>
                   <span>&times;</span>
-                </button>
+                </button> */}
               </div>
               <div className="modal-body">
-                <p>¿Estás seguro de que deseas eliminar el cliente {selectedCliente.razonSocial}?</p>
+                <p>¿Estás seguro de que deseas eliminar el proveedor {selectedProveedor.razonSocial}?</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={closeConfirmModal}>Cancelar</button>
@@ -159,13 +158,13 @@ const Cliente = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Cliente Eliminado</h5>
-                <button type="button" className="close" onClick={closeSuccessModal}>
+                <h5 className="modal-title">Proveedor Eliminado</h5>
+                {/* <button type="button" className="close" onClick={closeSuccessModal}>
                   <span>&times;</span>
-                </button>
+                </button> */}
               </div>
               <div className="modal-body">
-                <p>Cliente eliminado con éxito.</p>
+                <p>Proveedor eliminado con éxito.</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={closeSuccessModal}>Cerrar</button>
@@ -179,4 +178,4 @@ const Cliente = () => {
   );
 };
 
-export default Cliente;
+export default ProveedorScreen;

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Importar iconos de react-icons
-import Footer from './Footer';
+// import Footer from './Footer';
 
 const ProductoScreen = () => {
   const [productos, setProductos] = useState([]);
   const [productoIdAEliminar, setProductoIdAEliminar] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
@@ -21,7 +23,7 @@ const ProductoScreen = () => {
       }
 
       try {
-        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/producto', {
+        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/paginacion?page=${currentPage}&size=50`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -31,14 +33,15 @@ const ProductoScreen = () => {
           throw new Error('Error al obtener los productos');
         }
         const data = await response.json();
-        setProductos(data);
+        setProductos(data.content);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching productos:', error);
       }
     };
 
     fetchProductos();
-  }, [token]);
+  }, [token, currentPage]);
 
   const handleCreateProduct = () => {
     navigate('/nuevoproductos');
@@ -74,6 +77,18 @@ const ProductoScreen = () => {
 
   const closeSuccessModal = () => {
     setShowSuccessModal(false);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -123,7 +138,23 @@ const ProductoScreen = () => {
           </tbody>
         </table>
       </div>
+        <div className='prueba1'>
+          <div className='prueba2'>
+            <span className='numpag'>{currentPage} de {totalPages}</span>
+          </div>
+      </div>
       
+      <div className="pagination">
+        <div className="pagination-buttons">
+
+          <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 1}>
+            Página Anterior
+          </button>
+          <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages}>
+            Página Siguiente
+          </button>
+        </div>
+      </div>
 
       {showConfirmModal && (
         <div className="modal show" style={{ display: 'block' }}>
@@ -131,9 +162,9 @@ const ProductoScreen = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Confirmar Eliminación</h5>
-                <button type="button" className="close" onClick={() => setShowConfirmModal(false)}>
+                {/* <button type="button" className="close" onClick={() => setShowConfirmModal(false)}>
                   <span>&times;</span>
-                </button>
+                </button> */}
               </div>
               <div className="modal-body">
                 <p>¿Estás seguro de que quieres eliminar este producto?</p>
@@ -153,9 +184,9 @@ const ProductoScreen = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Producto Eliminado</h5>
-                <button type="button" className="close" onClick={closeSuccessModal}>
+                {/* <button type="button" className="close" onClick={closeSuccessModal}>
                   <span>&times;</span>
-                </button>
+                </button> */}
               </div>
               <div className="modal-body">
                 <p>El producto ha sido eliminado con éxito.</p>

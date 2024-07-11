@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../Others/Navbar';
 import { useParams, useNavigate } from 'react-router-dom';
-import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
+import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 
 const SubcategoriaScreen = () => {
   const [subcategorias, setSubcategorias] = useState([]);

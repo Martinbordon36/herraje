@@ -635,3 +635,51 @@ html {
 .input-defecto{
   background-color: #E6E6E6;
 }
+
+.input-container {
+  margin: 10px;
+}
+
+.input-container.small {
+  width: 20%;
+}
+
+.input-container.large {
+  width: 40%;
+}
+
+.input-container.xsmall {
+  width: 10%;
+}
+
+.button-add-product {
+  margin-top: 20px;
+}
+
+.confirm-button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.modal.show {
+  display: block;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+}
+
+.input-defecto {
+  width: 100%;
+}
+
+.container-principal {
+  padding: 20px;
+}
+
+.bottom-controls {
+  margin-top: 20px;
+  text-align: center;
+}
+

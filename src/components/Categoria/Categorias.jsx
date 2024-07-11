@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../Others/Navbar';
 import './Categorias.css'; // Asegúrate de crear y enlazar este archivo CSS
-import Footer from './Footer';
+import Footer from '../Others/Footer';
 
 const Categorias = () => {
   const [categoria, setCategoria] = useState('');
@@ -12,6 +12,8 @@ const Categorias = () => {
   const [categorias, setCategorias] = useState([]);
   const [showCategoriaForm, setShowCategoriaForm] = useState(true);
   const [ultimaCategoria, setUltimaCategoria] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const token = localStorage.getItem('token'); // Obtener el token desde localStorage o donde lo tengas almacenado
 
@@ -56,6 +58,8 @@ const Categorias = () => {
         setSubcategoria({ ...subcategoria, idCategoria: data.id }); // Establecer la última categoría como seleccionada
         setCategoria('');
         setShowCategoriaForm(false); // Ocultar el formulario de categoría y mostrar el de subcategoría
+        setModalMessage('Categoría creada exitosamente');
+        setShowModal(true);
       })
       .catch(error => console.error('Error:', error));
   };
@@ -81,9 +85,17 @@ const Categorias = () => {
           idCategoria: '',
           descripcion: ''
         });
-        window.location.href = '/categorias'; // Redirigir a la página de categorías
+        setModalMessage('Subcategoría creada exitosamente');
+        setShowModal(true);
       })
       .catch(error => console.error('Error:', error));
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    if (modalMessage === 'Subcategoría creada exitosamente') {
+      window.location.href = '/categorias'; // Redirigir a la página de categorías
+    }
   };
 
   return (
@@ -163,7 +175,27 @@ const Categorias = () => {
           </div>
         )}
       </div>
-      {/* <Footer /> */}
+
+      {showModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Éxito</h5>
+                {/* <button type="button" className="close" onClick={closeModal}>
+                  <span>&times;</span>
+                </button> */}
+              </div>
+              <div className="modal-body">
+                <p>{modalMessage}</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

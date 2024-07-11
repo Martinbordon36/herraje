@@ -1,14 +1,16 @@
+// Este actualiza bien
+
 import React, { useState, useEffect } from 'react';
-import Navbar from './Others/Navbar';
+import Navbar from '../Others/Navbar';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ProductoForm.css';
-import Footer from './Others/Footer';
 
 const ProductoForm = () => {
   const [producto, setProducto] = useState({
     codigo: '',
-    codigoOrig: '',
+    codigoOriginal: '',
     descripcion: '',
+    unidadMedida: '',
     puntoReposicion: '',
     costo: '',
     estado: 'activo',
@@ -16,19 +18,22 @@ const ProductoForm = () => {
     precioVenta: '',
     unidadVenta: '',
     artDtoGan: '',
-    proveedor: '',
-    categoria: '',
-    subCategoria: '',
-    unidadMedida: '' // Nuevo campo agregado aquí
+    idProveedor: '',
+    idCategoria: '',
+    idSubCategoria: '',
+    idUsuario: 1 // Asignar un idUsuario fijo o dinámico según sea necesario
   });
 
   const [categorias, setCategorias] = useState([]);
   const [subCategorias, setSubCategorias] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const token = localStorage.getItem('token');
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Este es el token ' + token)
     const fetchCategorias = async () => {
       try {
         const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria', {
@@ -37,6 +42,7 @@ const ProductoForm = () => {
         });
         const data = await response.json();
         setCategorias(data);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching categorias:', error);
       }
@@ -50,32 +56,7 @@ const ProductoForm = () => {
           }
         });
         const data = await response.json();
-        setProducto({
-          codigo: data.codigo,
-          codigoOrig: data.codigoOrig,
-          descripcion: data.descripcion,
-          puntoReposicion: data.puntoReposicion,
-          costo: data.costo,
-          estado: data.estado,
-          unidadCompra: data.unidadCompra,
-          precioVenta: data.precioVenta,
-          unidadVenta: data.unidadVenta,
-          artDtoGan: data.artDtoGan,
-          proveedor: data.proveedor,
-          categoria: data.categoria,
-          subCategoria: data.subCategoria,
-          unidadMedida: data.unidadMedida // Asegurando que el valor se cargue si existe
-        });
-
-        // Fetch subcategories based on the fetched product category
-        if (data.categoria) {
-          const subCategoriasResponse = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria/${data.categoria}/subcategorias`, {
-            headers: {
-            }
-          });
-          const subCategoriasData = await subCategoriasResponse.json();
-          setSubCategorias(subCategoriasData.listaSubCategoria || []);
-        }
+        setProducto(data);
       } catch (error) {
         console.error('Error fetching producto:', error);
       }
@@ -87,14 +68,16 @@ const ProductoForm = () => {
 
   const handleCategoriaChange = async (e) => {
     const value = e.target.value;
-    setProducto({ ...producto, categoria: value, subCategoria: '' });
+    setProducto({ ...producto, idCategoria: value });
     try {
-      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria/${value}/subcategorias`, {
+      const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/subcategoria', {
         headers: {
+          'Content-Type': 'application/json'
         }
       });
       const data = await response.json();
-      setSubCategorias(data.listaSubCategoria || []);
+      const filteredSubCategorias = data.filter(subCategoria => subCategoria.categoria === parseInt(value));
+      setSubCategorias(filteredSubCategorias);
     } catch (error) {
       console.error('Error fetching subcategorias:', error);
     }
@@ -107,6 +90,7 @@ const ProductoForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(producto);
     const url = id 
       ? `http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/${id}` 
       : 'http://vps-1915951-x.dattaweb.com:8090/api/v1/producto';
@@ -115,7 +99,7 @@ const ProductoForm = () => {
     fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(producto)
     })
@@ -126,8 +110,8 @@ const ProductoForm = () => {
       return response.json();
     })
     .then(data => {
-      console.log(id ? 'Producto editado:' : 'Producto creado:', data);
-      navigate('/productos');
+      setModalMessage(id ? 'Producto editado con éxito' : 'Producto creado con éxito');
+      setShowModal(true);
     })
     .catch(error => {
       console.error('Error:', error);
@@ -136,6 +120,11 @@ const ProductoForm = () => {
 
   const handleBack = () => {
     navigate(-1); // Navega a la página anterior
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    navigate('/productos');
   };
 
   return (
@@ -150,7 +139,7 @@ const ProductoForm = () => {
             <form onSubmit={handleSubmit}>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="codigo" className="form-label"> Código</label>
+                  <label htmlFor="codigo" className="form-label">(*) Código</label>
                   <input
                     type="text"
                     id="codigo"
@@ -161,20 +150,20 @@ const ProductoForm = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="codigoOrig" className="form-label"> Código Original</label>
+                  <label htmlFor="codigoOriginal" className="form-label">(*) Código Original</label>
                   <input
                     type="text"
-                    id="codigoOrig"
-                    name="codigoOrig"
+                    id="codigoOriginal"
+                    name="codigoOriginal"
                     className="form-control"
-                    value={producto.codigoOrig}
+                    value={producto.codigoOriginal}
                     onChange={handleChange}
                   />
                 </div>
               </div>
               <div className="row mb-3">
                 <div className="col-md-12">
-                  <label htmlFor="descripcion" className="form-label"> Descripción</label>
+                  <label htmlFor="descripcion" className="form-label">(*) Descripción</label>
                   <input
                     type="text"
                     id="descripcion"
@@ -187,7 +176,18 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="puntoReposicion" className="form-label"> Punto de Reposición</label>
+                  <label htmlFor="unidadMedida" className="form-label">(*) Unidad de Medida</label>
+                  <input
+                    type="text"
+                    id="unidadMedida"
+                    name="unidadMedida"
+                    className="form-control"
+                    value={producto.unidadMedida}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="puntoReposicion" className="form-label">(*) Punto de Reposición</label>
                   <input
                     type="number"
                     id="puntoReposicion"
@@ -197,8 +197,10 @@ const ProductoForm = () => {
                     onChange={handleChange}
                   />
                 </div>
+              </div>
+              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="costo" className="form-label"> Costo</label>
+                  <label htmlFor="costo" className="form-label">(*) Costo</label>
                   <input
                     type="number"
                     id="costo"
@@ -208,10 +210,8 @@ const ProductoForm = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
-              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="estado" className="form-label"> Estado</label>
+                  <label htmlFor="estado" className="form-label">(*) Estado</label>
                   <select
                     id="estado"
                     name="estado"
@@ -223,8 +223,10 @@ const ProductoForm = () => {
                     <option value="inactivo">Inactivo</option>
                   </select>
                 </div>
+              </div>
+              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="unidadCompra" className="form-label"> Unidad de Compra</label>
+                  <label htmlFor="unidadCompra" className="form-label">(*) Unidad de Compra</label>
                   <input
                     type="number"
                     id="unidadCompra"
@@ -234,10 +236,8 @@ const ProductoForm = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
-              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="precioVenta" className="form-label"> Precio de Venta</label>
+                  <label htmlFor="precioVenta" className="form-label">(*) Precio de Venta</label>
                   <input
                     type="number"
                     id="precioVenta"
@@ -247,8 +247,10 @@ const ProductoForm = () => {
                     onChange={handleChange}
                   />
                 </div>
+              </div>
+              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="unidadVenta" className="form-label"> Unidad de Venta</label>
+                  <label htmlFor="unidadVenta" className="form-label">(*) Unidad de Venta</label>
                   <input
                     type="number"
                     id="unidadVenta"
@@ -258,10 +260,8 @@ const ProductoForm = () => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
-              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="artDtoGan" className="form-label">Art Dto Gan</label>
+                  <label htmlFor="artDtoGan" className="form-label">(*) Art Dto Gan</label>
                   <input
                     type="number"
                     id="artDtoGan"
@@ -271,13 +271,15 @@ const ProductoForm = () => {
                     onChange={handleChange}
                   />
                 </div>
+              </div>
+              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="categoria" className="form-label"> Categoría</label>
+                  <label htmlFor="idCategoria" className="form-label">(*) Categoría</label>
                   <select
-                    id="categoria"
-                    name="categoria"
+                    id="idCategoria"
+                    name="idCategoria"
                     className="form-select"
-                    value={producto.categoria}
+                    value={producto.idCategoria}
                     onChange={handleCategoriaChange}
                   >
                     <option value="">Seleccione una categoría</option>
@@ -288,46 +290,33 @@ const ProductoForm = () => {
                     ))}
                   </select>
                 </div>
-              </div>
-              <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="subCategoria" className="form-label">SubCategoría</label>
+                  <label htmlFor="idSubCategoria" className="form-label">(*) SubCategoría</label>
                   <select
-                    id="subCategoria"
-                    name="subCategoria"
+                    id="idSubCategoria"
+                    name="idSubCategoria"
                     className="form-select"
-                    value={producto.subCategoria}
+                    value={producto.idSubCategoria}
                     onChange={handleChange}
                   >
                     <option value="">Seleccione una subcategoría</option>
-                    {Array.isArray(subCategorias) && subCategorias.map(subCategoria => (
-                      <option key={subCategoria.idSubCategoria} value={subCategoria.idSubCategoria}>
+                    {subCategorias.map(subCategoria => (
+                      <option key={subCategoria.id} value={subCategoria.id}>
                         {subCategoria.descripcion}
                       </option>
                     ))}
                   </select>
                 </div>
-                <div className="col-md-6">
-                  <label htmlFor="proveedor" className="form-label"> Proveedor</label>
-                  <input
-                    type="text"
-                    id="proveedor"
-                    name="proveedor"
-                    className="form-control"
-                    value={producto.proveedor}
-                    onChange={handleChange}
-                  />
-                </div>
               </div>
               <div className="row mb-3">
-                <div className="col-md-6">
-                  <label htmlFor="unidadMedida" className="form-label"> Unidad de Medida</label> {/* Nuevo campo */}
+                <div className="col-md-12">
+                  <label htmlFor="idProveedor" className="form-label">(*) Proveedor</label>
                   <input
                     type="text"
-                    id="unidadMedida"
-                    name="unidadMedida"
+                    id="idProveedor"
+                    name="idProveedor"
                     className="form-control"
-                    value={producto.unidadMedida}
+                    value={producto.idProveedor}
                     onChange={handleChange}
                   />
                 </div>
@@ -344,7 +333,26 @@ const ProductoForm = () => {
           </div>
         </div>
       </div>
-      {/* <Footer/> */}
+      {showModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Resultado</h5>
+                {/* <button type="button" className="close" onClick={closeModal}>
+                  <span>&times;</span>
+                </button> */}
+              </div>
+              <div className="modal-body">
+                <p>{modalMessage}</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

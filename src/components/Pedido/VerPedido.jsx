@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './VerPedido.css';
-import Footer from './Footer';
+import Footer from '../Others/Footer';
 
 const VerPedido = () => {
   const { id } = useParams();

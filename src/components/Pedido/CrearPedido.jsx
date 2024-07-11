@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import Navbar from '../Others/Navbar';
 import Autosuggest from 'react-autosuggest';
 import { useNavigate, useParams } from 'react-router-dom';
 import './CrearPedido.css';
-import Footer from './Footer';
+import Footer from '../Others/Footer';
 
 const CrearPedido = () => {
   const [productos, setProductos] = useState([{
@@ -285,7 +285,6 @@ const CrearPedido = () => {
         <button className="btn btn-secondary mb-3" onClick={handleBack}>Volver Atrás</button>
         <br />
         {validationError && <div className="alert alert-danger">{validationError}</div>}
-        {/* <label htmlFor="buscarCliente">Buscar cliente:</label> */}
         <Autosuggest
           suggestions={suggestions}
           onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
@@ -312,10 +311,6 @@ const CrearPedido = () => {
           <label htmlFor="cliente"> Cliente:</label>
           <input className='input-defecto' type="text" id="cliente" value={selectedCliente} readOnly />
         </div>
-        <div className="input-container">
-          <label htmlFor="idUser"> Id Usuario:</label>
-          <input className='input-defecto' type="text" id="idUser" value="1" readOnly />
-        </div>
       </div>
       <br />
       <hr />
@@ -337,11 +332,11 @@ const CrearPedido = () => {
             <label htmlFor={`descripcion-${index}`}> Descripción:</label>
             <input type="text" id={`descripcion-${index}`} value={producto.descripcion} readOnly />
           </div>
-          <div className="input-container small">
+          <div className="input-container xsmall">
             <label htmlFor={`cantidad-${index}`}> Cantidad:</label>
             <input type="number" id={`cantidad-${index}`} name="cantidad" value={producto.cantidad} onChange={(e) => handleInputChange(index, e)} />
           </div>
-          <div className="input-container small">
+          <div className="input-container xsmall">
             <label htmlFor={`precio-${index}`}>Precio:</label>
             <input type="number" id={`precio-${index}`} name="precio" value={producto.precio} readOnly />
           </div>
@@ -371,9 +366,6 @@ const CrearPedido = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Pedido Confirmado</h5>
-                <button type="button" className="close" onClick={closeModal}>
-                  <span>&times;</span>
-                </button>
               </div>
               <div className="modal-body">
                 <p>El pedido se ha confirmado con éxito.</p>
@@ -387,8 +379,6 @@ const CrearPedido = () => {
       )}
       {/* <Footer/> */}
     </div>
-
-    
   );
 }
 

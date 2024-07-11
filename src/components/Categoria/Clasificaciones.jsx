@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Navbar from './Navbar';
-import './ProductoScreen.css';
-import Footer from './Footer';
+import Navbar from '../Others/Navbar';
+import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
+import Footer from '../Others/Footer';
 
 const Clasificaciones = () => {
   const [categoria, setCategoria] = useState({
@@ -140,9 +140,9 @@ const Clasificaciones = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Categoría Confirmada</h5>
-                <button type="button" className="close" onClick={closeModal}>
+                {/* <button type="button" className="close" onClick={closeModal}>
                   <span>&times;</span>
-                </button>
+                </button> */}
               </div>
               <div className="modal-body">
                 <p>La categoría se ha confirmado con éxito.</p>

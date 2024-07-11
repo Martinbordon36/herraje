@@ -4,4 +4,8 @@
     justify-content: center;
     width: 100%;
   }
+  .container-centered {
+    display: flex;
+    justify-content: center;
+  }
   

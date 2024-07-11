@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './SignupScreen.css';
-import avatarImage from '../assets/herraje.jpeg'; // Ajusta la ruta según corresponda
+import { useNavigate } from 'react-router-dom'; // Asegúrate de tener react-router-dom instalado
+import './LoginScreen.css';
+import toolImage from '../../assets/herraje.jpeg';
 
-const SignupScreen = () => {
-  const [fullName, setFullName] = useState('');
+const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -17,22 +16,24 @@ const SignupScreen = () => {
     setError(null);
 
     try {
-      const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/auth/signup', {
+      const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, fullName }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Error al crear usuario');
+        throw new Error(data.message || 'Usuario no encontrado');
       }
 
       const data = await response.json();
-      console.log("Registro correcto");
-      navigate('/');
+      console.log("INGRESO CORRECTO");
+      console.log('Token:', data.token);
+      localStorage.setItem('token', data.token);
+      navigate('/productos'); // Redirigir al componente Home
     } catch (error) {
       console.error('Error fetching data:', error);
       setError(error.message);
@@ -41,24 +42,19 @@ const SignupScreen = () => {
     }
   };
 
+  const handleSignupRedirect = () => {
+    navigate('/crearusuario'); // Redirigir al componente de registro
+  };
+
   return (
-    <div className="signup-container">
-      <div className="signup-box">
+    <div className="login-container">
+      <div className="login-box">
         <div className="avatar">
-          <img src={avatarImage} alt="avatar" className="avatar-image"/>
+          <img src={toolImage} alt="avatar" className="avatar-image"/>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="input-container">
             <i className="fa fa-user icon"></i>
-            <input
-              type="text"
-              placeholder="Nombre"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
-          </div>
-          <div className="input-container">
-            <i className="fa fa-envelope icon"></i>
             <input
               type="text"
               placeholder="Email"
@@ -75,14 +71,17 @@ const SignupScreen = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="signup-button" disabled={loading}>
-            {loading ? 'Loading...' : 'Crear Usuario'}
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? 'Loading...' : 'LOGIN'}
           </button>
           {error && <div className="error-message">{error}</div>}
         </form>
+        <button onClick={handleSignupRedirect} className="signup-redirect-button">
+          Crear usuario
+        </button>
       </div>
     </div>
   );
 };
 
-export default SignupScreen;
+export default LoginScreen;

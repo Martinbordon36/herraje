@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
-import './Proveedores.css';
+import Navbar from '../Others/Navbar';
+import './ClienteScreen.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import Footer from './Footer';
+import Footer from '../Others/Footer';
 
-const Proveedores = () => {
-  const [proveedor, setProveedor] = useState({
+const ClienteScreen = () => {
+  const [cliente, setCliente] = useState({
     razonSocial: '',
     cuit: '',
     domicilio: '',
@@ -16,46 +16,44 @@ const Proveedores = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [validationError, setValidationError] = useState('');
-  
+
   const { id } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   useEffect(() => {
     if (id) {
-      const fetchProveedor = async () => {
+      const fetchCliente = async () => {
         try {
-          const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor/${id}`, {
+          const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${id}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
             }
           });
           if (!response.ok) {
-            throw new Error('Error al obtener el proveedor');
+            throw new Error('Error al obtener el cliente');
           }
           const data = await response.json();
-          setProveedor(data);
+          setCliente(data);
         } catch (error) {
-          console.error('Error fetching proveedor:', error);
+          console.error('Error fetching cliente:', error);
         }
       };
 
-      fetchProveedor();
+      fetchCliente();
     }
   }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProveedor({ ...proveedor, [name]: value });
+    setCliente({ ...cliente, [name]: value });
   };
 
   const validateForm = () => {
-    const requiredFields = ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad'];
-
-    for (let field of requiredFields) {
-      if (!proveedor[field]) {
-        return `El campo ${field} es obligatorio.`;
+    for (let key in cliente) {
+      if (!cliente[key]) {
+        return `El campo ${key} es obligatorio.`;
       }
     }
     return '';
@@ -72,8 +70,8 @@ const Proveedores = () => {
     setValidationError('');
 
     const url = id 
-      ? `http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor/${id}` 
-      : 'http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor';
+      ? `http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${id}` 
+      : 'http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente';
     const method = id ? 'PUT' : 'POST';
 
     fetch(url, {
@@ -81,16 +79,16 @@ const Proveedores = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(proveedor)
+      body: JSON.stringify(cliente)
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error(id ? 'Error al editar el proveedor' : 'Error al crear el proveedor');
+        throw new Error(id ? 'Error al editar el cliente' : 'Error al crear el cliente');
       }
       return response.json();
     })
     .then(data => {
-      console.log(id ? 'Proveedor editado:' : 'Proveedor creado:', data);
+      console.log(id ? 'Cliente editado:' : 'Cliente creado:', data);
       setShowModal(true);
     })
     .catch(error => {
@@ -104,10 +102,11 @@ const Proveedores = () => {
 
   const closeModal = () => {
     setShowModal(false);
-    navigate('/proveedores');
+    navigate('/clientes');
   };
 
-  const successMessage = id ? 'Proveedor editado con éxito.' : 'Proveedor creado con éxito.';
+  const modalTitle = id ? 'Cliente Editado' : 'Cliente Creado';
+  const modalMessage = id ? 'Cliente editado con éxito.' : 'Cliente creado con éxito.';
 
   return (
     <>
@@ -115,31 +114,31 @@ const Proveedores = () => {
       <div className="container mt-4">
         <div className="card">
           <div className="card-header">
-            <h1 className="card-title">{id ? 'Editar Proveedor' : 'Crear Proveedor'}</h1>
+            <h1 className="card-title">{id ? 'Editar Cliente' : 'Agregar Nuevo Cliente'}</h1>
           </div>
           <div className="card-body">
             {validationError && <div className="alert alert-danger">{validationError}</div>}
             <form onSubmit={handleSubmit}>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="razonSocial" className="form-label"> Razón Social</label>
+                  <label htmlFor="razonSocial" className="form-label">Razón Social</label>
                   <input
                     type="text"
                     id="razonSocial"
                     name="razonSocial"
                     className="form-control"
-                    value={proveedor.razonSocial}
+                    value={cliente.razonSocial}
                     onChange={handleChange}
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="cuit" className="form-label"> CUIT</label>
+                  <label htmlFor="cuit" className="form-label">CUIT</label>
                   <input
                     type="text"
                     id="cuit"
                     name="cuit"
                     className="form-control"
-                    value={proveedor.cuit}
+                    value={cliente.cuit}
                     onChange={handleChange}
                   />
                 </div>
@@ -152,55 +151,55 @@ const Proveedores = () => {
                     id="domicilio"
                     name="domicilio"
                     className="form-control"
-                    value={proveedor.domicilio}
+                    value={cliente.domicilio}
                     onChange={handleChange}
                   />
                 </div>
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="telefono" className="form-label">Teléfono</label>
+                  <label htmlFor="telefono" className="form-label"> Teléfono</label>
                   <input
                     type="text"
                     id="telefono"
                     name="telefono"
                     className="form-control"
-                    value={proveedor.telefono}
+                    value={cliente.telefono}
                     onChange={handleChange}
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="email" className="form-label">Email</label>
+                  <label htmlFor="email" className="form-label"> Email</label>
                   <input
                     type="email"
                     id="email"
                     name="email"
                     className="form-control"
-                    value={proveedor.email}
+                    value={cliente.email}
                     onChange={handleChange}
                   />
                 </div>
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="provincia" className="form-label">Provincia</label>
+                  <label htmlFor="provincia" className="form-label"> Provincia</label>
                   <input
                     type="text"
                     id="provincia"
                     name="provincia"
                     className="form-control"
-                    value={proveedor.provincia}
+                    value={cliente.provincia}
                     onChange={handleChange}
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="localidad" className="form-label">Localidad</label>
+                  <label htmlFor="localidad" className="form-label"> Localidad</label>
                   <input
                     type="text"
                     id="localidad"
                     name="localidad"
                     className="form-control"
-                    value={proveedor.localidad}
+                    value={cliente.localidad}
                     onChange={handleChange}
                   />
                 </div>
@@ -210,7 +209,7 @@ const Proveedores = () => {
                   <button className="btn btn-secondary w-100" type="button" onClick={handleBack}>Volver Atrás</button>
                 </div>
                 <div className="col-md-6">
-                  <button className="btn btn-primary w-100" type="submit">{id ? 'Guardar Cambios' : 'Crear Proveedor'}</button>
+                  <button className="btn btn-primary w-100" type="submit">{id ? 'Guardar Cambios' : 'Guardar Cliente'}</button>
                 </div>
               </div>
             </form>
@@ -223,13 +222,13 @@ const Proveedores = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">{id ? 'Proveedor Editado' : 'Proveedor Creado'}</h5>
-                <button type="button" className="close" onClick={closeModal}>
+                <h5 className="modal-title">{modalTitle}</h5>
+                {/* <button type="button" className="close" onClick={closeModal}>
                   <span>&times;</span>
-                </button>
+                </button> */}
               </div>
               <div className="modal-body">
-                <p>{successMessage}</p>
+                <p>{modalMessage}</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
@@ -243,4 +242,4 @@ const Proveedores = () => {
   );
 };
 
-export default Proveedores;
+export default ClienteScreen;
