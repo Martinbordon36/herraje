@@ -10,7 +10,7 @@ const ProductoScreen = () => {
   const [productoIdAEliminar, setProductoIdAEliminar] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ const ProductoScreen = () => {
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
+    if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
@@ -147,7 +147,7 @@ const ProductoScreen = () => {
       <div className="pagination">
         <div className="pagination-buttons">
 
-          <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 1}>
+          <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 0}>
             Página Anterior
           </button>
           <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages}>

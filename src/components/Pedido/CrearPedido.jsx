@@ -134,9 +134,9 @@ const CrearPedido = () => {
   };
 
   const agregarProducto = () => {
-    const primerProductoCompleto = productos[0].codigo && productos[0].descripcion && productos[0].cantidad > 0;
-    if (!primerProductoCompleto) {
-      alert("Por favor complete todos los datos del primer producto antes de agregar otro.");
+    const productosValidos = productos.every(producto => producto.codigo && producto.descripcion && producto.cantidad > 0);
+    if (!productosValidos) {
+      alert("Por favor complete todos los datos de los productos antes de agregar otro.");
       return;
     }
     const newProductos = productos.map(producto => ({
@@ -146,7 +146,7 @@ const CrearPedido = () => {
     setProductos([...newProductos, {
       codigo: '',
       descripcion: '',
-      cantidad: 0,
+      cantidad: 1, // Cambiado para iniciar en 1 en vez de 0
       precio: 0,
       removable: false
     }]);
@@ -301,16 +301,16 @@ const CrearPedido = () => {
             suggestionHighlighted: 'autosuggest__suggestion--highlighted'
           }}
         />
+        {/* <br />
         <br />
-        <br />
-        <hr />
+        <hr /> */}
       </div>
       <br />
       <div className="input-row">
-        <div className="input-container">
+        {/* <div className="input-container">
           <label htmlFor="cliente"> Cliente:</label>
           <input className='input-defecto' type="text" id="cliente" value={selectedCliente} readOnly />
-        </div>
+        </div> */}
       </div>
       <br />
       <hr />
@@ -334,7 +334,7 @@ const CrearPedido = () => {
           </div>
           <div className="input-container xsmall">
             <label htmlFor={`cantidad-${index}`}> Cantidad:</label>
-            <input type="number" id={`cantidad-${index}`} name="cantidad" value={producto.cantidad} onChange={(e) => handleInputChange(index, e)} />
+            <input type="number" id={`cantidad-${index}`} name="cantidad" value={producto.cantidad} onChange={(e) => handleInputChange(index, e)} min="1" />
           </div>
           <div className="input-container xsmall">
             <label htmlFor={`precio-${index}`}>Precio:</label>

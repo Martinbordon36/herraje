@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid container-centered">
-        <Link className="navbar-brand" to="/productos">Herrajes Almada</Link>
+        <Link className="navbar-brand btn-logo" to="/productos">Herrajes Almada</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -36,7 +36,7 @@ const Navbar = () => {
               <Link className="nav-link" to="/productos">Productos</Link>
             </li>
           </ul>
-          <button className="btn btn-outline-light" onClick={handleLogout}>Cerrar Sesión</button>
+          <button className="btn btn-outline-light btn-cerrar" onClick={handleLogout}>Cerrar Sesión</button>
         </div>
       </div>
     </nav>

@@ -9,3 +9,11 @@
     justify-content: center;
   }
   
+  .btn-cerrar{
+    width:200px;
+    margin-right: 75px;
+  }
+
+  .btn-logo{
+    margin-left: 60px;
+  }
