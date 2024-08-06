@@ -129,6 +129,14 @@ const Cliente = () => {
     }
   };
 
+  const handleFirstPage = () => {
+    setCurrentPage(0);
+  };
+  
+  const handleLastPage = () => {
+    setCurrentPage(totalPages - 1);
+  };
+
   return (
     <>
       <Navbar />
@@ -199,28 +207,32 @@ const Cliente = () => {
         <span className="numpag">
           Página {currentPage + 1} de {totalPages}
         </span>
+
+        <div className="pagination">
+  <div className="pagination-buttons">
+    <button className="button" id="bt" onClick={handleFirstPage} disabled={currentPage === 0}>
+      Primera Página
+    </button>
+    <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 0}>
+      Página Anterior
+    </button>
+    <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
+      Página Siguiente
+    </button>
+    <button className="button" id="bt" onClick={handleLastPage} disabled={currentPage === totalPages - 1}>
+      Última Página
+    </button>
+  </div>
+</div>
+
       </div>
 
-      <div className="pagination">
-        <div className="pagination-buttons">
-          <button
-            className="button"
-            id="bt"
-            onClick={handlePreviousPage}
-            disabled={currentPage === 0}
-          >
-            Página Anterior
-          </button>
-          <button
-            className="button"
-            id="bt"
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages - 1}
-          >
-            Página Siguiente
-          </button>
-        </div>
-      </div>
+
+      <br />
+      <br />
+      <br />
+
+      <br />
 
       {/* Modal de Confirmación de Eliminación */}
       {showConfirmModal && (
@@ -314,7 +326,6 @@ const Cliente = () => {
         </div>
       )}
 
-      <Footer />
     </>
   );
 };

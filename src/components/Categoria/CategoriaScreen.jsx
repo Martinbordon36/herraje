@@ -160,6 +160,14 @@ const CategoriaScreen = () => {
           </button>
         </div>
       </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
     </>
   );
 };

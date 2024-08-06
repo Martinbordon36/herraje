@@ -331,7 +331,7 @@ const CrearPedido = () => {
           </div>
           <div className="input-container large">
             <label htmlFor={`descripcion-${index}`}> Descripción:</label>
-            <input type="text" id={`descripcion-${index}`} value={producto.descripcion} readOnly />
+            <input type="text" id={`descripcion-${index}`} value={producto.descripcion}  />
           </div>
           <div className="input-container xsmall">
             <label htmlFor={`cantidad-${index}`}> Cantidad:</label>
