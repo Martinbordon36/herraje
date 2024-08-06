@@ -260,6 +260,7 @@ const CrearPedido = () => {
 
   const inputProps = {
     placeholder: "Buscar cliente",
+    className: "searchClient",
     value: searchTerm,
     onChange: (e, { newValue }) => {
       setSearchTerm(newValue);
@@ -317,12 +318,12 @@ const CrearPedido = () => {
       <br />
       {productos.map((producto, index) => (
         <div className="input-row" key={index}>
-          <div className="input-container small">
+          <div className="input-container small" >
             <label htmlFor={`codigo-${index}`}>Código:  </label>
-            <select id={`codigo-${index}`} value={producto.codigo} onChange={(e) => handleCodigoChange(index, e)}>
-              <option value="">Seleccione un código</option>
+            <select className='chico' id={`codigo-${index}`} value={producto.codigo} onChange={(e) => handleCodigoChange(index, e)}>
+              <option className='chico' value="">Seleccione un código</option>
               {productosAPI.map((productoAPI) => (
-                <option key={productoAPI.id} value={productoAPI.codigo}>
+                <option className='chico' key={productoAPI.id} value={productoAPI.codigo}>
                   {productoAPI.codigo}
                 </option>
               ))}
@@ -334,11 +335,11 @@ const CrearPedido = () => {
           </div>
           <div className="input-container xsmall">
             <label htmlFor={`cantidad-${index}`}> Cantidad:</label>
-            <input type="number" id={`cantidad-${index}`} name="cantidad" value={producto.cantidad} onChange={(e) => handleInputChange(index, e)} min="1" />
+            <input className='camps-tama-cant' type="number" id={`cantidad-${index}`} name="cantidad" value={producto.cantidad} onChange={(e) => handleInputChange(index, e)} min="1" />
           </div>
           <div className="input-container xsmall">
             <label htmlFor={`precio-${index}`}>Precio:</label>
-            <input type="number" id={`precio-${index}`} name="precio" value={producto.precio} readOnly />
+            <input className='camps-tama' type="number" id={`precio-${index}`} name="precio" value={producto.precio} readOnly />
           </div>
           <div className="input-container">
             <label htmlFor={`precioTotal-${index}`}>Precio Total:</label>
@@ -356,8 +357,12 @@ const CrearPedido = () => {
       <div className="bottom-controls">
         <h2>Precio Total: {calcularSumaTotal()}</h2>
         <div className="button-container">
-          <button onClick={handleConfirmarVenta} className="confirm-button">{isEditing ? 'Actualizar Pedido' : 'Confirmar Venta'}</button>
+          <button onClick={handleConfirmarVenta} className="confirm-button">{isEditing ? 'Actualizar Pedido' : 'Guardar Pedido'}</button>
         </div>
+        <br/>
+        <br/>
+        <br/>
+
       </div>
 
       {showModal && (

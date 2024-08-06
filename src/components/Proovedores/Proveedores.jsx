@@ -14,14 +14,35 @@ const Proveedores = () => {
     provincia: '',
     localidad: ''
   });
+  const [proveedores, setProveedores] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [validationError, setValidationError] = useState('');
   
   const { id } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
+    // Obtener todos los proveedores
+    const fetchProveedores = async () => {
+      try {
+        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Error al obtener los proveedores');
+        }
+        const data = await response.json();
+        setProveedores(data);
+      } catch (error) {
+        console.error('Error fetching proveedores:', error);
+      }
+    };
+
+    fetchProveedores();
+
     if (id) {
       const fetchProveedor = async () => {
         try {
@@ -58,6 +79,12 @@ const Proveedores = () => {
         return `El campo ${field} es obligatorio.`;
       }
     }
+
+    // Validar si el CUIT ya existe
+    if (!id && proveedores.some(p => p.cuit === proveedor.cuit)) {
+      return 'El CUIT ya está registrado.';
+    }
+
     return '';
   };
 
@@ -112,6 +139,10 @@ const Proveedores = () => {
   return (
     <>
       <Navbar />
+      <br/>
+      <br/>
+      <br/>
+
       <div className="container mt-4">
         <div className="card">
           <div className="card-header">
@@ -224,9 +255,6 @@ const Proveedores = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">{id ? 'Proveedor Editado' : 'Proveedor Creado'}</h5>
-                {/* <button type="button" className="close" onClick={closeModal}>
-                  <span>&times;</span>
-                </button> */}
               </div>
               <div className="modal-body">
                 <p>{successMessage}</p>
@@ -238,7 +266,6 @@ const Proveedores = () => {
           </div>
         </div>
       )}
-      {/* <Footer/> */}
     </>
   );
 };

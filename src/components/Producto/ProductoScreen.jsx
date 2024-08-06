@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
-import { FaEdit, FaTrash } from 'react-icons/fa'; // Importar iconos de react-icons
-// import Footer from './Footer';
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importar iconos de react-icons
 
 const ProductoScreen = () => {
   const [productos, setProductos] = useState([]);
+  const [filteredProductos, setFilteredProductos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [productoIdAEliminar, setProductoIdAEliminar] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false); // Agregado para el modal de detalles
+  const [selectedProducto, setSelectedProducto] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
@@ -23,7 +26,7 @@ const ProductoScreen = () => {
       }
 
       try {
-        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/paginacion?page=${currentPage}&size=50`, {
+        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/paginacion?page=${currentPage}&size=30`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -34,6 +37,7 @@ const ProductoScreen = () => {
         }
         const data = await response.json();
         setProductos(data.content);
+        setFilteredProductos(data.content); // Inicializar productos filtrados
         setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching productos:', error);
@@ -68,6 +72,7 @@ const ProductoScreen = () => {
         throw new Error('Error al eliminar el producto');
       }
       setProductos(productos.filter(producto => producto.id !== productoIdAEliminar));
+      setFilteredProductos(filteredProductos.filter(producto => producto.id !== productoIdAEliminar)); // Actualizar productos filtrados
       setShowConfirmModal(false);
       setShowSuccessModal(true);
     } catch (error) {
@@ -79,6 +84,16 @@ const ProductoScreen = () => {
     setShowSuccessModal(false);
   };
 
+  const openDetailModal = (producto) => {
+    setSelectedProducto(producto);
+    setShowDetailModal(true);
+  };
+
+  const closeDetailModal = () => {
+    setSelectedProducto(null);
+    setShowDetailModal(false);
+  };
+
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
@@ -86,9 +101,17 @@ const ProductoScreen = () => {
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
+  };
+
+  const handleSearch = () => {
+    setFilteredProductos(
+      productos.filter((producto) =>
+        producto.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
   };
 
   return (
@@ -97,6 +120,23 @@ const ProductoScreen = () => {
       <div className="container">
         <h1 className="title">Productos</h1>
         <button className="button" onClick={handleCreateProduct}>Crear Producto</button>
+     
+
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Buscar producto por descripcion"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input-client"
+
+        />
+        <button className="search-button" onClick={handleSearch}>
+          Buscar
+        </button>
+      </div>
+
+
       </div>
 
       <div className="table-container">
@@ -114,7 +154,7 @@ const ProductoScreen = () => {
             </tr>
           </thead>
           <tbody>
-            {productos.map((producto) => (
+            {filteredProductos.map((producto) => (
               <tr key={producto.id}>
                 <td className="td">{producto.id}</td>
                 <td className="td">{producto.codigo}</td>
@@ -124,6 +164,10 @@ const ProductoScreen = () => {
                 <td className="td">{producto.estado}</td>
                 <td className="td">{producto.costo}</td>
                 <td className="td">
+                  <FaEye 
+                    className="icon view-icon" 
+                    onClick={() => openDetailModal(producto)} 
+                  />
                   <FaEdit 
                     className="icon edit-icon" 
                     onClick={() => handleEdit(producto.id)} 
@@ -138,33 +182,31 @@ const ProductoScreen = () => {
           </tbody>
         </table>
       </div>
-        <div className='prueba1'>
-          <div className='prueba2'>
-            <span className='numpag'>{currentPage} de {totalPages}</span>
-          </div>
-      </div>
       
+      <div className='prueba1'>
+        <div className='prueba2'>
+          <span className='numpag'>{currentPage + 1} de {totalPages}</span>
+        </div>
+      </div>
+
       <div className="pagination">
         <div className="pagination-buttons">
-
           <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 0}>
             Página Anterior
           </button>
-          <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages}>
+          <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
             Página Siguiente
           </button>
         </div>
       </div>
 
+      {/* Modal de Confirmación de Eliminación */}
       {showConfirmModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Confirmar Eliminación</h5>
-                {/* <button type="button" className="close" onClick={() => setShowConfirmModal(false)}>
-                  <span>&times;</span>
-                </button> */}
               </div>
               <div className="modal-body">
                 <p>¿Estás seguro de que quieres eliminar este producto?</p>
@@ -178,21 +220,51 @@ const ProductoScreen = () => {
         </div>
       )}
 
+      {/* Modal de Éxito */}
       {showSuccessModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Producto Eliminado</h5>
-                {/* <button type="button" className="close" onClick={closeSuccessModal}>
-                  <span>&times;</span>
-                </button> */}
               </div>
               <div className="modal-body">
                 <p>El producto ha sido eliminado con éxito.</p>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={closeSuccessModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Detalles del Producto */}
+      {showDetailModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Detalles del Producto</h5>
+                {/* <button type="button" className="close" onClick={closeDetailModal}>
+                  <span>&times;</span>
+                </button> */}
+              </div>
+              <div className="modal-body">
+                {selectedProducto && (
+                  <div>
+                    <p><strong>ID:</strong> {selectedProducto.id}</p>
+                    <p><strong>Código:</strong> {selectedProducto.codigo}</p>
+                    <p><strong>Código Original:</strong> {selectedProducto.codigoOrig}</p>
+                    <p><strong>Descripción:</strong> {selectedProducto.descripcion}</p>
+                    <p><strong>Punto de Reposición:</strong> {selectedProducto.puntoReposicion}</p>
+                    <p><strong>Estado:</strong> {selectedProducto.estado}</p>
+                    <p><strong>Costo:</strong> {selectedProducto.costo}</p>
+                  </div>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={closeDetailModal}>Cerrar</button>
               </div>
             </div>
           </div>

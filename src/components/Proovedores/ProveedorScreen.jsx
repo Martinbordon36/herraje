@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa'; // Importar iconos de react-icons
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importar iconos de react-icons
 import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 
 const ProveedorScreen = () => {
   const [proveedores, setProveedores] = useState([]);
+  const [filteredProveedores, setFilteredProveedores] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedProveedor, setSelectedProveedor] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false); // Agregado para el modal de detalles
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Este es el token " + token);
-
     const fetchProveedores = async () => {
       if (!token) {
         console.error('Token no disponible');
@@ -22,7 +25,7 @@ const ProveedorScreen = () => {
       }
 
       try {
-        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor', {
+        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor/paginacion?page=${currentPage}&size=50`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -32,14 +35,16 @@ const ProveedorScreen = () => {
           throw new Error('Error al obtener los proveedores');
         }
         const data = await response.json();
-        setProveedores(data);
+        setProveedores(data.content);
+        setFilteredProveedores(data.content); // Set initial filtered list
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching proveedores:', error);
       }
     };
 
     fetchProveedores();
-  }, [token]);
+  }, [token, currentPage]);
 
   const handleCreateProveedor = () => {
     navigate('/nuevoproveedor');
@@ -60,7 +65,9 @@ const ProveedorScreen = () => {
       if (!response.ok) {
         throw new Error('Error al eliminar el proveedor');
       }
-      setProveedores(proveedores.filter(proveedor => proveedor.id !== selectedProveedor.id));
+      const updatedProveedores = proveedores.filter(proveedor => proveedor.id !== selectedProveedor.id);
+      setProveedores(updatedProveedores);
+      setFilteredProveedores(updatedProveedores); // Update filtered list
       setShowConfirmModal(false);
       setShowSuccessModal(true);
     } catch (error) {
@@ -82,13 +89,65 @@ const ProveedorScreen = () => {
     setShowSuccessModal(false);
   };
 
+  const openDetailModal = (proveedor) => {
+    setSelectedProveedor(proveedor);
+    setShowDetailModal(true);
+  };
+
+  const closeDetailModal = () => {
+    setSelectedProveedor(null);
+    setShowDetailModal(false);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleSearch = () => {
+    const searchResult = proveedores.filter(proveedor =>
+      proveedor.razonSocial.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProveedores(searchResult);
+  };
+
   return (
     <>
       <Navbar />
       <div className="container">
         <h1 className="title">Proveedores</h1>
         <button className="button" onClick={handleCreateProveedor}>Crear Proveedor</button>
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por Razón Social"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input-client"
+          />
+          <button onClick={handleSearch} className="search-button">
+            Buscar
+          </button>
+        </div>
       </div>
+      {/* <div className="search-container">
+        <input
+          type="text"
+          placeholder="Buscar por Razón Social"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+        <button className="button" onClick={handleSearch}>Buscar</button>
+      </div> */}
+
       <div className="table-container">
         <table className="table">
           <thead>
@@ -105,7 +164,7 @@ const ProveedorScreen = () => {
             </tr>
           </thead>
           <tbody>
-            {proveedores.map((proveedor) => (
+            {filteredProveedores.map((proveedor) => (
               <tr key={proveedor.id}>
                 <td className="td">{proveedor.id}</td>
                 <td className="td">{proveedor.razonSocial}</td>
@@ -116,6 +175,10 @@ const ProveedorScreen = () => {
                 <td className="td">{proveedor.provincia}</td>
                 <td className="td">{proveedor.localidad}</td>
                 <td className="td">
+                  <FaEye 
+                    className="icon view-icon" 
+                    onClick={() => openDetailModal(proveedor)} 
+                  />
                   <FaEdit 
                     className="icon edit-icon" 
                     onClick={() => handleEdit(proveedor.id)} 
@@ -131,15 +194,28 @@ const ProveedorScreen = () => {
         </table>
       </div>
 
+      <div className="pagination-info">
+        <span className='numpag'>Página {currentPage + 1} de {totalPages}</span>
+      </div>
+      
+      <div className="pagination">
+        <div className="pagination-buttons">
+          <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 0}>
+            Página Anterior
+          </button>
+          <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
+            Página Siguiente
+          </button>
+        </div>
+      </div>
+
+      {/* Modal de Confirmación de Eliminación */}
       {showConfirmModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Confirmar Eliminación</h5>
-                {/* <button type="button" className="close" onClick={closeConfirmModal}>
-                  <span>&times;</span>
-                </button> */}
               </div>
               <div className="modal-body">
                 <p>¿Estás seguro de que deseas eliminar el proveedor {selectedProveedor.razonSocial}?</p>
@@ -153,15 +229,13 @@ const ProveedorScreen = () => {
         </div>
       )}
 
+      {/* Modal de Éxito */}
       {showSuccessModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Proveedor Eliminado</h5>
-                {/* <button type="button" className="close" onClick={closeSuccessModal}>
-                  <span>&times;</span>
-                </button> */}
               </div>
               <div className="modal-body">
                 <p>Proveedor eliminado con éxito.</p>
@@ -173,7 +247,32 @@ const ProveedorScreen = () => {
           </div>
         </div>
       )}
-      {/* <Footer/> */}
+
+      {/* Modal de Detalles del Proveedor */}
+      {showDetailModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Detalles del Proveedor</h5>
+              </div>
+              <div className="modal-body">
+                <p><strong>ID:</strong> {selectedProveedor.id}</p>
+                <p><strong>Razón Social:</strong> {selectedProveedor.razonSocial}</p>
+                <p><strong>CUIT:</strong> {selectedProveedor.cuit}</p>
+                <p><strong>Domicilio:</strong> {selectedProveedor.domicilio}</p>
+                <p><strong>Teléfono:</strong> {selectedProveedor.telefono}</p>
+                <p><strong>Email:</strong> {selectedProveedor.email}</p>
+                <p><strong>Provincia:</strong> {selectedProveedor.provincia}</p>
+                <p><strong>Localidad:</strong> {selectedProveedor.localidad}</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={closeDetailModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -14,6 +14,7 @@ const ClienteScreen = () => {
     provincia: '',
     localidad: ''
   });
+  const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [validationError, setValidationError] = useState('');
 
@@ -22,6 +23,27 @@ const ClienteScreen = () => {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
+    // Obtener todos los clientes
+    const fetchClientes = async () => {
+      try {
+        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Error al obtener los clientes');
+        }
+        const data = await response.json();
+        setClientes(data);
+      } catch (error) {
+        console.error('Error fetching clientes:', error);
+      }
+    };
+
+    fetchClientes();
+
     if (id) {
       const fetchCliente = async () => {
         try {
@@ -56,6 +78,12 @@ const ClienteScreen = () => {
         return `El campo ${key} es obligatorio.`;
       }
     }
+
+    // Validar si el CUIT ya existe
+    if (!id && clientes.some(c => c.cuit === cliente.cuit)) {
+      return 'El CUIT ya está registrado.';
+    }
+
     return '';
   };
 
@@ -111,6 +139,10 @@ const ClienteScreen = () => {
   return (
     <>
       <Navbar />
+      <br/>
+      <br/>
+      <br/>
+
       <div className="container mt-4">
         <div className="card">
           <div className="card-header">
@@ -223,9 +255,6 @@ const ClienteScreen = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">{modalTitle}</h5>
-                {/* <button type="button" className="close" onClick={closeModal}>
-                  <span>&times;</span>
-                </button> */}
               </div>
               <div className="modal-body">
                 <p>{modalMessage}</p>
@@ -237,7 +266,6 @@ const ClienteScreen = () => {
           </div>
         </div>
       )}
-      {/* <Footer/> */}
     </>
   );
 };

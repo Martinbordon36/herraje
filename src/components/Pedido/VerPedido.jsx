@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './VerPedido.css';
+import Navbar from '../Others/Navbar';
 import Footer from '../Others/Footer';
 
 const VerPedido = () => {
@@ -41,7 +42,18 @@ const VerPedido = () => {
   }
 
   return (
+    <>
+    <br/>
+    <br/>
+
+    <br/>
+
+    <br/>
+
+   <Navbar />
+
     <div className="container">
+      
       <h1>Detalles del Pedido</h1>
       <p><strong>Cliente:</strong> {pedido.idCliente}</p>
       <p><strong>Fecha:</strong> {new Date(pedido.fecha).toLocaleString()}</p>
@@ -72,6 +84,22 @@ const VerPedido = () => {
         {/* <Footer/> */}
 
     </div>
+    <br/>
+    <br/>
+
+    <br/>
+
+    <br/>
+    <br/>
+    <br/>
+
+    <br/>
+
+    <br/>
+    <br/>
+
+<br/>
+    </>
   );
 };
 

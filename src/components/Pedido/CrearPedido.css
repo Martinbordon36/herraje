@@ -683,3 +683,19 @@ html {
   text-align: center;
 }
 
+.searchClient{
+  width: 700px;
+  padding:15px
+}
+
+.chico{
+  max-width: 100px;
+}
+
+.camps-tama-cant{
+  max-width: 70px;
+}
+
+.camps-tama{
+  max-width: 110px;
+}

@@ -1,5 +1,3 @@
-// Este actualiza bien
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -33,16 +31,13 @@ const ProductoForm = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('Este es el token ' + token)
     const fetchCategorias = async () => {
       try {
         const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria', {
-          headers: {
-          }
+          headers: {}
         });
         const data = await response.json();
         setCategorias(data);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching categorias:', error);
       }
@@ -52,8 +47,7 @@ const ProductoForm = () => {
       if (!id) return;
       try {
         const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/${id}`, {
-          headers: {
-          }
+          headers: {}
         });
         const data = await response.json();
         setProducto(data);
@@ -64,7 +58,7 @@ const ProductoForm = () => {
 
     fetchCategorias();
     fetchProducto();
-  }, [token, id]);
+  }, [id]);
 
   const handleCategoriaChange = async (e) => {
     const value = e.target.value;
@@ -90,7 +84,6 @@ const ProductoForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(producto);
     const url = id 
       ? `http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/${id}` 
       : 'http://vps-1915951-x.dattaweb.com:8090/api/v1/producto';
@@ -139,7 +132,7 @@ const ProductoForm = () => {
             <form onSubmit={handleSubmit}>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="codigo" className="form-label">(*) Código</label>
+                  <label htmlFor="codigo" className="form-label">Código</label>
                   <input
                     type="text"
                     id="codigo"
@@ -150,7 +143,7 @@ const ProductoForm = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="codigoOriginal" className="form-label">(*) Código Original</label>
+                  <label htmlFor="codigoOriginal" className="form-label">Código Original</label>
                   <input
                     type="text"
                     id="codigoOriginal"
@@ -163,7 +156,7 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-12">
-                  <label htmlFor="descripcion" className="form-label">(*) Descripción</label>
+                  <label htmlFor="descripcion" className="form-label">Descripción</label>
                   <input
                     type="text"
                     id="descripcion"
@@ -176,7 +169,7 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="unidadMedida" className="form-label">(*) Unidad de Medida</label>
+                  <label htmlFor="unidadMedida" className="form-label">Unidad de Medida</label>
                   <input
                     type="text"
                     id="unidadMedida"
@@ -187,7 +180,7 @@ const ProductoForm = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="puntoReposicion" className="form-label">(*) Punto de Reposición</label>
+                  <label htmlFor="puntoReposicion" className="form-label">Punto de Reposición</label>
                   <input
                     type="number"
                     id="puntoReposicion"
@@ -200,7 +193,7 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="costo" className="form-label">(*) Costo</label>
+                  <label htmlFor="costo" className="form-label">Costo</label>
                   <input
                     type="number"
                     id="costo"
@@ -211,7 +204,7 @@ const ProductoForm = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="estado" className="form-label">(*) Estado</label>
+                  <label htmlFor="estado" className="form-label">Estado</label>
                   <select
                     id="estado"
                     name="estado"
@@ -226,7 +219,7 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="unidadCompra" className="form-label">(*) Unidad de Compra</label>
+                  <label htmlFor="unidadCompra" className="form-label">Unidad de Compra</label>
                   <input
                     type="number"
                     id="unidadCompra"
@@ -237,7 +230,7 @@ const ProductoForm = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="precioVenta" className="form-label">(*) Precio de Venta</label>
+                  <label htmlFor="precioVenta" className="form-label"> Precio de Venta</label>
                   <input
                     type="number"
                     id="precioVenta"
@@ -250,7 +243,7 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="unidadVenta" className="form-label">(*) Unidad de Venta</label>
+                  <label htmlFor="unidadVenta" className="form-label"> Unidad de Venta</label>
                   <input
                     type="number"
                     id="unidadVenta"
@@ -261,7 +254,7 @@ const ProductoForm = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="artDtoGan" className="form-label">(*) Art Dto Gan</label>
+                  <label htmlFor="artDtoGan" className="form-label">Art Dto Gan</label>
                   <input
                     type="number"
                     id="artDtoGan"
@@ -274,7 +267,7 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="idCategoria" className="form-label">(*) Categoría</label>
+                  <label htmlFor="idCategoria" className="form-label"> Categoría</label>
                   <select
                     id="idCategoria"
                     name="idCategoria"
@@ -291,7 +284,7 @@ const ProductoForm = () => {
                   </select>
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="idSubCategoria" className="form-label">(*) SubCategoría</label>
+                  <label htmlFor="idSubCategoria" className="form-label"> SubCategoría</label>
                   <select
                     id="idSubCategoria"
                     name="idSubCategoria"
@@ -310,7 +303,7 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-12">
-                  <label htmlFor="idProveedor" className="form-label">(*) Proveedor</label>
+                  <label htmlFor="idProveedor" className="form-label">Proveedor</label>
                   <input
                     type="text"
                     id="idProveedor"
@@ -339,9 +332,6 @@ const ProductoForm = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Resultado</h5>
-                {/* <button type="button" className="close" onClick={closeModal}>
-                  <span>&times;</span>
-                </button> */}
               </div>
               <div className="modal-body">
                 <p>{modalMessage}</p>

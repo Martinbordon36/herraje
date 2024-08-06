@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import Footer from '../Others/Footer';
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 
 const PedidoScreen = () => {
   const [pedidos, setPedidos] = useState([]);
+  const [filteredPedidos, setFilteredPedidos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Este es el token " + token);
-
     const fetchPedidos = async () => {
       if (!token) {
         console.error('Token no disponible');
@@ -20,7 +21,7 @@ const PedidoScreen = () => {
       }
 
       try {
-        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/pedido', {
+        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/pedido/paginacion?page=${currentPage}&size=5`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -30,14 +31,16 @@ const PedidoScreen = () => {
           throw new Error('Error al obtener los pedidos');
         }
         const data = await response.json();
-        setPedidos(data);
+        setPedidos(data.content);
+        setFilteredPedidos(data.content); // Inicializar pedidos filtrados
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching pedidos:', error);
       }
     };
 
     fetchPedidos();
-  }, [token]);
+  }, [token, currentPage]);
 
   const handleCreatePedido = () => {
     navigate('/nuevopedido');
@@ -59,6 +62,7 @@ const PedidoScreen = () => {
         throw new Error('Error al eliminar el pedido');
       }
       setPedidos(pedidos.filter(pedido => pedido.id !== id));
+      setFilteredPedidos(filteredPedidos.filter(pedido => pedido.id !== id)); // Actualizar pedidos filtrados
     } catch (error) {
       console.error('Error deleting pedido:', error);
     }
@@ -68,13 +72,46 @@ const PedidoScreen = () => {
     navigate(`/verPedido/${id}`);
   };
 
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleSearch = () => {
+    setFilteredPedidos(
+      pedidos.filter((pedido) =>
+        pedido.id.toString().includes(searchTerm) || pedido.idCliente.toString().includes(searchTerm)
+      )
+    );
+  };
+
   return (
     <>
       <Navbar />
       <div className="container">
         <h1 className="title">Pedidos</h1>
         <button className="button" onClick={handleCreatePedido}>Crear Pedido</button>
+
+        <div className="search-container">
+        <input
+          type="text"
+          placeholder="Buscar por ID de pedido o ID de cliente"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button className="search-button" onClick={handleSearch}>Buscar</button>
       </div>
+
+      </div>
+
+    
       <div className="table-container">
         <table className="table">
           <thead>
@@ -89,7 +126,7 @@ const PedidoScreen = () => {
             </tr>
           </thead>
           <tbody>
-            {pedidos.map((pedido) => (
+            {filteredPedidos.map((pedido) => (
               <tr key={pedido.id}>
                 <td className="td">{pedido.id}</td>
                 <td className="td">{new Date(pedido.fecha).toLocaleString()}</td>
@@ -98,6 +135,10 @@ const PedidoScreen = () => {
                 <td className="td">{pedido.idUsuario}</td>
                 <td className="td">{pedido.enviado ? 'Sí' : 'No'}</td>
                 <td className="td">
+                  <FaEye 
+                      className="icon view-icon" 
+                      onClick={() => handleViewPedido(pedido.id)}
+                   />
                   <FaEdit 
                     className="icon edit-icon" 
                     onClick={() => handleEdit(pedido.id)} 
@@ -106,14 +147,33 @@ const PedidoScreen = () => {
                     className="icon delete-icon" 
                     onClick={() => handleDelete(pedido.id)} 
                   />
-                  <button className='button-subcategoria' onClick={() => handleViewPedido(pedido.id)}>Ver Pedido</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {/* <Footer/> */}
+
+      <div className="pagination-info">
+        <span className='numpag'>Página {currentPage + 1} de {totalPages}</span>
+      </div>
+
+      <div className="pagination">
+        <div className="pagination-buttons">
+          <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 0}>
+            Página Anterior
+          </button>
+          <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages}>
+            Página Siguiente
+          </button>
+        </div>
+      </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </>
   );
 };
