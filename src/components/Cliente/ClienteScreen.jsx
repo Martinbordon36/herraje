@@ -12,7 +12,19 @@ const ClienteScreen = () => {
     telefono: '',
     email: '',
     provincia: '',
-    localidad: ''
+    localidad: '',
+    nroIngresosBrutos: '',
+    numeroDocumento:'',
+    celular:'',
+    idVendedor: '',
+    zona: ' ',
+    grupo: ' ',
+    codPostal : 5300,
+    ctaContame: ' ',
+    ivtCodigo:1, 
+    estado: 'Activo',
+    pais: 'Argentina'
+
   });
   const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -69,13 +81,17 @@ const ClienteScreen = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log("Esto hay en name y value" + name, value)
     setCliente({ ...cliente, [name]: value });
   };
 
   const validateForm = () => {
-    for (let key in cliente) {
-      if (!cliente[key]) {
-        return `El campo ${key} es obligatorio.`;
+    const requiredFields = id ? ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'ivtCodigo', 'pais', 'idVendedor', 'estado', 'numeroDocumento', 'nroIngresosBrutos', 'celular'] 
+                              : ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'ivtCodigo', 'pais', 'idVendedor', 'estado'];
+  
+    for (let field of requiredFields) {
+      if (!cliente[field]) {
+        return `El campo ${field} es obligatorio.`;
       }
     }
 
@@ -213,17 +229,45 @@ const ClienteScreen = () => {
                 </div>
               </div>
               <div className="row mb-3">
-                <div className="col-md-6">
-                  <label htmlFor="provincia" className="form-label"> Provincia</label>
-                  <input
-                    type="text"
-                    id="provincia"
-                    name="provincia"
-                    className="form-control"
-                    value={cliente.provincia}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div className="col-md-6">
+                
+                <label htmlFor="provincia" className="form-label">Provincia </label>
+                <select
+                   id="provincia"
+                   name="provincia"
+                   className="form-select"
+                   value={cliente.provincia}
+                   onChange={handleChange}
+                 >
+                <option value="Buenos Aires">Buenos Aires</option>
+                 <option value="CABA">Ciudad Autónoma de Buenos Aires</option>
+                 <option value="Catamarca">Catamarca</option>
+                 <option value="Chaco">Chaco</option>
+                 <option value="Chubut">Chubut</option>
+                 <option value="Córdoba">Córdoba</option>
+                 <option value="Corrientes">Corrientes</option>
+                 <option value="Entre Ríos">Entre Ríos</option>
+                 <option value="Formosa">Formosa</option>
+                 <option value="Jujuy">Jujuy</option>
+                 <option value="La Pampa">La Pampa</option>
+                 <option value="La Rioja">La Rioja</option>
+                 <option value="Mendoza">Mendoza</option>
+                 <option value="Misiones">Misiones</option>
+                 <option value="Neuquén">Neuquén</option>
+                 <option value="Río Negro">Río Negro</option>
+                 <option value="Salta">Salta</option>
+                 <option value="San Juan">San Juan</option>
+                 <option value="San Luis">San Luis</option>
+                 <option value="Santa Cruz">Santa Cruz</option>
+                 <option value="Santa Fe">Santa Fe</option>
+                 <option value="Santiago del Estero">Santiago del Estero</option>
+                 <option value="Tierra del Fuego">Tierra del Fuego</option>
+                 <option value="Tucumán">Tucumán</option>
+                 </select>
+
+              </div> 
+
+
                 <div className="col-md-6">
                   <label htmlFor="localidad" className="form-label"> Localidad</label>
                   <input
@@ -235,6 +279,107 @@ const ClienteScreen = () => {
                     onChange={handleChange}
                   />
                 </div>
+                <div className="col-md-6">
+                  <label htmlFor="ivtCodigo" className="form-label">Condicion IVA</label>
+                  <select
+                    id="ivtCodigo"
+                    name="ivtCodigo"
+                    className="form-select"
+                    value={cliente.ivtCodigo}
+                    onChange={handleChange}
+                  >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+                
+                <div className="col-md-6">
+                  <label htmlFor="pais" className="form-label">Pais</label>
+                  <select
+                    id="pais"
+                    name="pais"
+                    className="form-select"
+                    value={cliente.pais}
+                    onChange={handleChange}
+                  >
+                    <option value="Argentina">Argentina</option>
+                    <option value="Brasil">Brasil</option>
+                    <option value="Uruguay">Uruguay</option>
+                    <option value="Paraguay">Paraguay</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Bolivia">Bolivia</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="idVendedor" className="form-label">ID vendedor</label>
+                  <input
+                    type="text"
+                    id="idVendedor"
+                    name="idVendedor"
+                    className="form-control"
+                    value={cliente.idVendedor}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="estado" className="form-label">Estado</label>
+                  <select
+                    id="estado"
+                    name="estado"
+                    className="form-select"
+                    value={cliente.estado}
+                    onChange={handleChange}
+                  >
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
+
+                {/* Hasta aca campos para creacion */}
+
+                {id ? (
+                  <>
+                  
+                 
+                <div className="col-md-6">
+                  <label htmlFor="numeroDocumento" className="form-label">DNI</label>
+                  <input
+                    type="text"
+                    id="numeroDocumento"
+                    name="numeroDocumento"
+                    className="form-control"
+                    value={cliente.numeroDocumento}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-6">
+                 <label htmlFor="nroIngresosBrutos" className="form-label">Numero de Ingresos Brutos</label>
+                 <input
+                   type="text"
+                   id="nroIngresosBrutos"
+                   name="nroIngresosBrutos"
+                   className="form-control"
+                   value={cliente.nroIngresosBrutos}
+                   onChange={handleChange}
+                 />
+               </div> 
+
+             
+                <div className="col-md-6">
+                  <label htmlFor="celular" className="form-label"> Celular</label>
+                  <input
+                    type="text"
+                    id="celular"
+                    name="celular"
+                    className="form-control"
+                    value={cliente.celular}
+                    onChange={handleChange}
+                  />
+                </div>
+                </>
+
+) : null}
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
@@ -248,6 +393,12 @@ const ClienteScreen = () => {
           </div>
         </div>
       </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
 
       {showModal && (
         <div className="modal show" style={{ display: 'block' }}>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importar iconos de react-icons
+import search from '../../assets/lupa.png';
 import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 
 const ProveedorScreen = () => {
@@ -132,18 +133,7 @@ const ProveedorScreen = () => {
       <div className="container">
         <h1 className="title">Proveedores</h1>
         <button className="button" onClick={handleCreateProveedor}>Crear Proveedor</button>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Buscar por Razón Social"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input-client"
-          />
-          <button onClick={handleSearch} className="search-button">
-            Buscar
-          </button>
-        </div>
+
       </div>
       {/* <div className="search-container">
         <input
@@ -155,6 +145,24 @@ const ProveedorScreen = () => {
         />
         <button className="button" onClick={handleSearch}>Buscar</button>
       </div> */}
+
+      <div className='container-search'>
+      <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por Razón Social"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input-client"
+          />
+          <a onClick={handleSearch}>
+            <img src={search} className='search-button'/>
+          </a>
+          {/* <button onClick={handleSearch} className="search-button">
+            Buscar
+          </button> */}
+        </div>
+      </div>
 
       <div className="table-container">
         <table className="table">

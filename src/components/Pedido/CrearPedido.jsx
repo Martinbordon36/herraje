@@ -11,7 +11,9 @@ const CrearPedido = () => {
     descripcion: '',
     cantidad: 0,
     precio: 0,
-    removable: false
+    descuento:0,
+    total:0,
+    removable: true
   }]);
   
   const [productosAPI, setProductosAPI] = useState([]);
@@ -24,6 +26,7 @@ const CrearPedido = () => {
   const [pedidoId, setPedidoId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const token = localStorage.getItem('token');
   const { id } = useParams();
@@ -43,6 +46,7 @@ const CrearPedido = () => {
         }
         const data = await response.json();
         setProductosAPI(data);
+        console.log("Esto hay en productosAPI " + JSON.stringify(productosAPI));
       } catch (error) {
         console.error('Error fetching productosAPI:', error);
       }
@@ -68,6 +72,7 @@ const CrearPedido = () => {
           setPedidoId(data.id);
           setIsEditing(true);
           setSelectedClienteId(data.idCliente);
+          console.log(JSON.stringify(data.idCliente));
           const cliente = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${data.idCliente}`, {
             method: 'GET',
             headers: {
@@ -76,6 +81,8 @@ const CrearPedido = () => {
           });
           const clienteData = await cliente.json();
           setSelectedCliente(clienteData.razonSocial);
+          console.log('clientedata' + clienteData.razonSocial);
+          console.log( "Data.pedidoDetalle " + JSON.stringify(data.pedidoDetalles));
           const detalles = data.pedidoDetalles.map(detalle => {
             const producto = detalle.producto;
             return {
@@ -83,9 +90,13 @@ const CrearPedido = () => {
               descripcion: producto.descripcion,
               cantidad: detalle.cantidad,
               precio: producto.costo,
+              descuento: detalle.descuento,
+              total:detalle.total,
               removable: true
             };
           });
+          console.log("Esto hay en detalles " + JSON.stringify(detalles));
+
           setProductos(detalles);
         } catch (error) {
           console.error('Error fetching pedido:', error);
@@ -111,6 +122,7 @@ const CrearPedido = () => {
     setProductos(newProductos);
   };
 
+
   const handleInputChange = (index, e) => {
     const { name, value } = e.target;
     const newProductos = [...productos];
@@ -118,12 +130,30 @@ const CrearPedido = () => {
     setProductos(newProductos);
   };
 
-  const calcularPrecioTotal = (index) => {
+  // const calcularPrecioTotal = (index) => {
+  //   const producto = productos[index];
+  //   if (producto.cantidad === 0 || !producto.cantidad) {
+  //     return null;
+  //   }
+  //   return producto.precio * producto.cantidad;
+  // };
+
+  // const calcularSumaTotal = () => {
+  //   return productos.reduce((acc, producto, index) => {
+  //     const precioTotal = calcularPrecioTotal(index);
+  //     return acc + (precioTotal ? precioTotal : 0);
+  //   }, 0).toFixed(2);
+  // };
+
+    const calcularPrecioTotal = (index) => {
     const producto = productos[index];
     if (producto.cantidad === 0 || !producto.cantidad) {
       return null;
     }
-    return producto.precio * producto.cantidad;
+    producto.total = ((producto.precio - (producto.precio  * (producto.descuento / 100))) * producto.cantidad).toFixed(2);
+
+  
+    return (producto.precio - (producto.precio  * (producto.descuento / 100))) * producto.cantidad;
   };
 
   const calcularSumaTotal = () => {
@@ -132,7 +162,6 @@ const CrearPedido = () => {
       return acc + (precioTotal ? precioTotal : 0);
     }, 0).toFixed(2);
   };
-
   const agregarProducto = () => {
     const productosValidos = productos.every(producto => producto.codigo && producto.descripcion && producto.cantidad > 0);
     if (!productosValidos) {
@@ -148,7 +177,9 @@ const CrearPedido = () => {
       descripcion: '',
       cantidad: 1, // Cambiado para iniciar en 1 en vez de 0
       precio: 0,
-      removable: false
+      descuento:0,
+      total:0,
+      removable: true
     }]);
   };
 
@@ -158,7 +189,7 @@ const CrearPedido = () => {
     setProductos(newProductos);
   };
 
-  const handleConfirmarVenta = async () => {
+  const handleConfirmarVenta = () => {
     const productosCompletos = productos.every(producto => producto.codigo && producto.descripcion && producto.cantidad > 0 && producto.precio > 0);
     if (!productosCompletos) {
       setValidationError("Por favor asegúrese de que todos los productos tengan todos los datos completos.");
@@ -174,17 +205,24 @@ const CrearPedido = () => {
     }
 
     setValidationError('');
+    setShowConfirmModal(true);
+  };
 
+  const confirmarGuardarPedido = async () => {
     const detalles = productos.map(producto => ({
       idProducto: productosAPI.find(p => p.codigo === producto.codigo)?.id,
-      cantidad: producto.cantidad
+      cantidad: producto.cantidad,
+      descuento: producto.descuento,
+      total: producto.total
     })).filter(detalle => detalle.idProducto && detalle.cantidad);
 
     const pedido = {
       idUsuario: 1,
-      idCliente: selectedClienteId,
+      idCliente: selectedClienteId, // Asegúrate de incluir el ID del cliente aquí
       detalles
     };
+
+    console.log(JSON.stringify(pedido));
 
     try {
       const response = await fetch(isEditing ? `http://vps-1915951-x.dattaweb.com:8090/api/v1/pedido/${pedidoId}` : 'http://vps-1915951-x.dattaweb.com:8090/api/v1/pedido', {
@@ -193,12 +231,14 @@ const CrearPedido = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(pedido)
-      });
+       });
       if (!response.ok) {
         throw new Error('Error al confirmar la venta');
       }
       const data = await response.json();
+      console.log(JSON.stringify(pedido));
       console.log('Venta confirmada:', data);
+      setShowConfirmModal(false);
       setShowModal(true);
     } catch (error) {
       console.error('Error confirming venta:', error);
@@ -286,6 +326,11 @@ const CrearPedido = () => {
         <button className="btn btn-secondary mb-3" onClick={handleBack}>Volver Atrás</button>
         <br />
         {validationError && <div className="alert alert-danger">{validationError}</div>}
+        
+
+        {id ? 
+         <h1> Cliente : {selectedCliente}</h1>
+        :
         <Autosuggest
           suggestions={suggestions}
           onSuggestionsFetchRequested={handleSuggestionsFetchRequested}
@@ -302,16 +347,10 @@ const CrearPedido = () => {
             suggestionHighlighted: 'autosuggest__suggestion--highlighted'
           }}
         />
-        {/* <br />
-        <br />
-        <hr /> */}
+        }
       </div>
       <br />
       <div className="input-row">
-        {/* <div className="input-container">
-          <label htmlFor="cliente"> Cliente:</label>
-          <input className='input-defecto' type="text" id="cliente" value={selectedCliente} readOnly />
-        </div> */}
       </div>
       <br />
       <hr />
@@ -329,9 +368,20 @@ const CrearPedido = () => {
               ))}
             </select>
           </div>
+
           <div className="input-container large">
-            <label htmlFor={`descripcion-${index}`}> Descripción:</label>
-            <input type="text" id={`descripcion-${index}`} value={producto.descripcion}  />
+            {/* <label htmlFor={`descripcion-${index}`}> Descripción:</label>
+            <input type="text" id={`descripcion-${index}`} value={producto.descripcion}  /> */}
+
+            <label htmlFor={`codigo-${index}`}>Descripcion:  </label>
+            <select className='large' id={`Descripcion-${index}`} value={producto.codigo} onChange={(e) => handleCodigoChange(index, e)}>
+              <option className='chico' value="">Descripcion</option>
+              {productosAPI.map((productoAPI) => (
+                <option className='chico' key={productoAPI.id} value={productoAPI.codigo}>
+                  {productoAPI.descripcion}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="input-container xsmall">
             <label htmlFor={`cantidad-${index}`}> Cantidad:</label>
@@ -342,8 +392,12 @@ const CrearPedido = () => {
             <input className='camps-tama' type="number" id={`precio-${index}`} name="precio" value={producto.precio} readOnly />
           </div>
           <div className="input-container">
+            <label htmlFor={`descuento-${index}`}>Descuento (%):</label>
+            <input type="number" id={`descuento-${index}`} name="descuento" value={producto.descuento} onChange={(e) => handleInputChange(index, e)} />
+          </div>
+          <div className="input-container">
             <label htmlFor={`precioTotal-${index}`}>Precio Total:</label>
-            <input type="text" id={`precioTotal-${index}`} value={calcularPrecioTotal(index) === null ? 'Completar cantidad por favor' : calcularPrecioTotal(index).toFixed(2)} readOnly />
+            <input type="number" id={`precioTotal-${index}`} value={calcularPrecioTotal(index) === null ? 'Completar cantidad por favor' : calcularPrecioTotal(index).toFixed(2)} readOnly />
           </div>
           {producto.removable && (
             <button onClick={() => eliminarProducto(index)}>x</button>
@@ -359,6 +413,14 @@ const CrearPedido = () => {
         <div className="button-container">
           <button onClick={handleConfirmarVenta} className="confirm-button">{isEditing ? 'Actualizar Pedido' : 'Guardar Pedido'}</button>
         </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
         <br/>
         <br/>
         <br/>
@@ -382,7 +444,25 @@ const CrearPedido = () => {
           </div>
         </div>
       )}
-      {/* <Footer/> */}
+
+      {showConfirmModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirmar Guardado</h5>
+              </div>
+              <div className="modal-body">
+                <p>¿Está seguro de que desea guardar el pedido?</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>Cancelar</button>
+                <button type="button" className="btn btn-primary" onClick={confirmarGuardarPedido}>Confirmar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

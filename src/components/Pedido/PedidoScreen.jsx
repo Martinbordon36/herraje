@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
+import search from '../../assets/lupa.png';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 
 const PedidoScreen = () => {
@@ -99,16 +100,23 @@ const PedidoScreen = () => {
         <h1 className="title">Pedidos</h1>
         <button className="button" onClick={handleCreatePedido}>Crear Pedido</button>
 
-        <div className="search-container">
+
+      </div>
+
+      <div className='container-search'>
+      <div className="search-container">
         <input
           type="text"
           placeholder="Buscar por ID de pedido o ID de cliente"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button className="search-button" onClick={handleSearch}>Buscar</button>
+          className="search-input-client"
+          />
+                  <a onClick={handleSearch}>
+            <img src={search} className='search-button'/>
+          </a>
+        {/* <button className="search-button" onClick={handleSearch}>Buscar</button> */}
       </div>
-
       </div>
 
     
@@ -168,7 +176,15 @@ const PedidoScreen = () => {
           </button>
         </div>
       </div>
-
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />   
+      <br />
+      <br />
+      <br />
+      <br />
       <br />
       <br />
       <br />

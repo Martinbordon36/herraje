@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import Navbar from '../Others/Navbar';
 import '../Producto/ProductoScreen.css';
+import search from '../../assets/lupa.png';
 import Footer from '../Others/Footer';
 
 const Cliente = () => {
@@ -27,7 +28,7 @@ const Cliente = () => {
 
       try {
         const response = await fetch(
-          `http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/paginacion?page=${currentPage}&size=5`,
+          `http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/paginacion?page=${currentPage}&size=30`,
           {
             method: 'GET',
             headers: {
@@ -145,7 +146,11 @@ const Cliente = () => {
         <button className="button" onClick={handleCreateCliente}>
           Crear Cliente
         </button>
-        <div className="search-container">
+       
+      </div>
+
+      <div className='container-search'>
+      <div className="search-container">
           <input
             type="text"
             placeholder="Buscar por Razón Social"
@@ -153,9 +158,12 @@ const Cliente = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input-client"
           />
-          <button onClick={handleSearch} className="search-button">
+          <a onClick={handleSearch}>
+            <img src={search} className='search-button'/>
+          </a>
+          {/* <button onClick={handleSearch} className="search-button">
             Buscar
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="table-container">
@@ -233,7 +241,14 @@ const Cliente = () => {
       <br />
 
       <br />
-
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
       {/* Modal de Confirmación de Eliminación */}
       {showConfirmModal && (
         <div className="modal show" style={{ display: 'block' }}>

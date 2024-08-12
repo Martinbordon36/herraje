@@ -6,9 +6,8 @@ import './ProductoForm.css';
 const ProductoForm = () => {
   const [producto, setProducto] = useState({
     codigo: '',
-    codigoOriginal: '',
+    codigoOrig: '',
     descripcion: '',
-    unidadMedida: '',
     puntoReposicion: '',
     costo: '',
     estado: 'activo',
@@ -16,7 +15,7 @@ const ProductoForm = () => {
     precioVenta: '',
     unidadVenta: '',
     artDtoGan: '',
-    idProveedor: '',
+    proveedor: '',
     idCategoria: '',
     idSubCategoria: '',
     idUsuario: 1 // Asignar un idUsuario fijo o dinámico según sea necesario
@@ -51,8 +50,25 @@ const ProductoForm = () => {
         });
         const data = await response.json();
         setProducto(data);
+        console.log("Esto es producto " + JSON.stringify(data))
+        fetchSubCategorias(data.idCategoria); // Cargar subcategorías basadas en la categoría del producto
       } catch (error) {
         console.error('Error fetching producto:', error);
+      }
+    };
+
+    const fetchSubCategorias = async (categoriaId) => {
+      try {
+        const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/subcategoria', {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.json();
+        const filteredSubCategorias = data.filter(subCategoria => subCategoria.categoria === parseInt(categoriaId));
+        setSubCategorias(filteredSubCategorias);
+      } catch (error) {
+        console.error('Error fetching subcategorias:', error);
       }
     };
 
@@ -147,13 +163,13 @@ const ProductoForm = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="codigoOriginal" className="form-label">Código Original</label>
+                  <label htmlFor="codigoOrig" className="form-label">Código Original</label>
                   <input
                     type="text"
-                    id="codigoOriginal"
-                    name="codigoOriginal"
+                    id="codigoOrig"
+                    name="codigoOrig"
                     className="form-control"
-                    value={producto.codigoOriginal}
+                    value={producto.codigoOrig}
                     onChange={handleChange}
                   />
                 </div>
@@ -172,17 +188,7 @@ const ProductoForm = () => {
                 </div>
               </div>
               <div className="row mb-3">
-                <div className="col-md-6">
-                  <label htmlFor="unidadMedida" className="form-label">Unidad de Medida</label>
-                  <input
-                    type="text"
-                    id="unidadMedida"
-                    name="unidadMedida"
-                    className="form-control"
-                    value={producto.unidadMedida}
-                    onChange={handleChange}
-                  />
-                </div>
+                
                 <div className="col-md-6">
                   <label htmlFor="puntoReposicion" className="form-label">Punto de Reposición</label>
                   <input
@@ -236,7 +242,7 @@ const ProductoForm = () => {
                 <div className="col-md-6">
                   <label htmlFor="precioVenta" className="form-label"> Precio de Venta</label>
                   <input
-                    type="number"
+                    type="text"
                     id="precioVenta"
                     name="precioVenta"
                     className="form-control"
@@ -307,13 +313,13 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-12">
-                  <label htmlFor="idProveedor" className="form-label">Proveedor</label>
+                  <label htmlFor="proveedor" className="form-label">Proveedor</label>
                   <input
                     type="text"
-                    id="idProveedor"
-                    name="idProveedor"
+                    id="proveedor"
+                    name="proveedor"
                     className="form-control"
-                    value={producto.idProveedor}
+                    value={producto.proveedor}
                     onChange={handleChange}
                   />
                 </div>

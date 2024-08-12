@@ -101,6 +101,10 @@ const Categorias = () => {
   return (
     <>
       <Navbar />
+      <br/>
+      <br/>
+
+
       <div className="container mt-4">
         {showCategoriaForm ? (
           <div className="card">
@@ -196,6 +200,31 @@ const Categorias = () => {
           </div>
         </div>
       )}
+            <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>      
+      <br/>
+      <br/>
+
     </>
   );
 };

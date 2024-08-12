@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
+import search from '../../assets/lupa.png';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importar iconos de react-icons
 
 const ProductoScreen = () => {
@@ -38,6 +39,7 @@ const ProductoScreen = () => {
         const data = await response.json();
         setProductos(data.content);
         setFilteredProductos(data.content); // Inicializar productos filtrados
+        console.log(data);
         setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching productos:', error);
@@ -126,11 +128,16 @@ const ProductoScreen = () => {
   return (
     <>
       <Navbar />
+
       <div className="container">
         <h1 className="title">Productos</h1>
+        
         <button className="button" onClick={handleCreateProduct}>Crear Producto</button>
      
+      </div>
 
+      
+      <div className ="container-search">
       <div className="search-container">
         <input
           type="text"
@@ -140,13 +147,15 @@ const ProductoScreen = () => {
           className="search-input-client"
 
         />
-        <button className="search-button" onClick={handleSearch}>
+          <a onClick={handleSearch}>
+            <img src={search} className='search-button'/>
+          </a>
+        {/* <button className="search-button" onClick={handleSearch}>
           Buscar
-        </button>
+        </button> */}
       </div>
 
-
-      </div>
+  </div>
 
       <div className="table-container">
         <table className="table">

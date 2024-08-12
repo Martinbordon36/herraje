@@ -12,7 +12,26 @@ const Proveedores = () => {
     telefono: '',
     email: '',
     provincia: '',
-    localidad: ''
+    localidad: '',
+    ivtCodigo:'', 
+    pais: 'Argentina', 
+    tipoProveedor: '', 
+    estado: "Activo",
+    referencia:'',
+    celular:'',
+    transporte:'',
+    cuentaBancaria:'',
+    nroIngresosBrutos:'',
+    tipoCuenta:'',
+    cbu1:'',
+    bancoCodigo1:'',
+    tipoCuenta2:'',
+    cbu2:'',
+    bancoCodigo2:'',
+    depCodigo:'0',
+    esBanco:false,
+    esProveedor:true,
+    esGasto:false
   });
   const [proveedores, setProveedores] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -57,6 +76,7 @@ const Proveedores = () => {
           }
           const data = await response.json();
           setProveedor(data);
+          console.log(JSON.stringify(data));
         } catch (error) {
           console.error('Error fetching proveedor:', error);
         }
@@ -69,11 +89,15 @@ const Proveedores = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProveedor({ ...proveedor, [name]: value });
+    console.log("Proveedor " + proveedor);
   };
 
   const validateForm = () => {
-    const requiredFields = ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad'];
-
+    // Lista de campos requeridos en función de si se está creando o editando un proveedor
+    const requiredFields = id
+      ? ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'ivtCodigo', 'pais', 'tipoProveedor', 'estado', 'referencia', 'celular', 'transporte', 'cuentaBancaria', 'nroIngresosBrutos', 'tipoCuenta', 'cbu1', 'bancoCodigo1', 'tipoCuenta2', 'cbu2', 'bancoCodigo2']
+      : ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'ivtCodigo', 'pais', 'tipoProveedor', 'estado'];
+  
     for (let field of requiredFields) {
       if (!proveedor[field]) {
         return `El campo ${field} es obligatorio.`;
@@ -213,7 +237,7 @@ const Proveedores = () => {
                 </div>
               </div>
               <div className="row mb-3">
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                   <label htmlFor="provincia" className="form-label">Provincia</label>
                   <input
                     type="text"
@@ -223,7 +247,45 @@ const Proveedores = () => {
                     value={proveedor.provincia}
                     onChange={handleChange}
                   />
-                </div>
+                </div> */}
+                <div className="col-md-6">
+                
+                <label htmlFor="provincia" className="form-label">Provincia </label>
+                <select
+                   id="provincia"
+                   name="provincia"
+                   className="form-select"
+                   value={proveedor.provincia}
+                   onChange={handleChange}
+                 >
+                <option value="Buenos Aires">Buenos Aires</option>
+                 <option value="CABA">Ciudad Autónoma de Buenos Aires</option>
+                 <option value="Catamarca">Catamarca</option>
+                 <option value="Chaco">Chaco</option>
+                 <option value="Chubut">Chubut</option>
+                 <option value="Córdoba">Córdoba</option>
+                 <option value="Corrientes">Corrientes</option>
+                 <option value="Entre Ríos">Entre Ríos</option>
+                 <option value="Formosa">Formosa</option>
+                 <option value="Jujuy">Jujuy</option>
+                 <option value="La Pampa">La Pampa</option>
+                 <option value="La Rioja">La Rioja</option>
+                 <option value="Mendoza">Mendoza</option>
+                 <option value="Misiones">Misiones</option>
+                 <option value="Neuquén">Neuquén</option>
+                 <option value="Río Negro">Río Negro</option>
+                 <option value="Salta">Salta</option>
+                 <option value="San Juan">San Juan</option>
+                 <option value="San Luis">San Luis</option>
+                 <option value="Santa Cruz">Santa Cruz</option>
+                 <option value="Santa Fe">Santa Fe</option>
+                 <option value="Santiago del Estero">Santiago del Estero</option>
+                 <option value="Tierra del Fuego">Tierra del Fuego</option>
+                 <option value="Tucumán">Tucumán</option>
+                 </select>
+
+              </div> 
+
                 <div className="col-md-6">
                   <label htmlFor="localidad" className="form-label">Localidad</label>
                   <input
@@ -235,6 +297,197 @@ const Proveedores = () => {
                     onChange={handleChange}
                   />
                 </div>
+                <div className="col-md-6">
+                  <label htmlFor="ivtCodigo" className="form-label">Condicion IVA</label>
+                  <select
+                    id="ivtCodigo"
+                    name="ivtCodigo"
+                    className="form-select"
+                    value={proveedor.ivtCodigo}
+                    onChange={handleChange}
+                  >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+                
+                <div className="col-md-6">
+                  <label htmlFor="pais" className="form-label">Pais</label>
+                  <select
+                    id="condicionIva"
+                    name="condicionIva"
+                    className="form-select"
+                    value={proveedor.pais}
+                    onChange={handleChange}
+                  >
+                    <option value="Argentina">Argentina</option>
+                    <option value="Brasil">Brasil</option>
+                    <option value="Uruguay">Uruguay</option>
+                    <option value="Paraguay">Paraguay</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Bolivia">Bolivia</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="tipoProveedor" className="form-label">Tipo Proveedor</label>
+                  <select
+                    id="tipoProveedor"
+                    name="tipoProveedor"
+                    className="form-select"
+                    value={proveedor.tipoProveedor}
+                    onChange={handleChange}
+                  >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="estado" className="form-label">Estado</label>
+                  <select
+                    id="estado"
+                    name="estado"
+                    className="form-select"
+                    value={proveedor.estado}
+                    onChange={handleChange}
+                  >
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
+
+                {/* Hasta aca para crear nuevo proveedor- desde aca para editar */}
+                {id ? 
+              ( <>  <div className="col-md-6">
+                 <label htmlFor="referencia" className="form-label">Nombre de contacto para compras</label>
+                 <input
+                   type="text"
+                   id="referencia"
+                   name="referencia"
+                   className="form-control"
+                   value={proveedor.referencia}
+                   onChange={handleChange}
+                 />
+               </div>
+               <div className="col-md-6">
+                 <label htmlFor="celular" className="form-label">Teléfono para contacto</label>
+                 <input
+                   type="text"
+                   id="celular"
+                   name="celular"
+                   className="form-control"
+                   value={proveedor.celular}
+                   onChange={handleChange}
+                 />
+               </div>
+               <div className="col-md-6">
+                 <label htmlFor="transporte" className="form-label">Transporte</label>
+                 <input
+                   type="text"
+                   id="transporte"
+                   name="transporte"
+                   className="form-control"
+                   value={proveedor.transporte}
+                   onChange={handleChange}
+                 />
+               </div> 
+               <div className="col-md-6">
+                 <label htmlFor="cuentaBancaria" className="form-label">Cuenta Bancaria</label>
+                 <input
+                   type="text"
+                   id="cuentaBancaria"
+                   name="cuentaBancaria"
+                   className="form-control"
+                   value={proveedor.cuentaBancaria}
+                   onChange={handleChange}
+                 />
+               </div> 
+               <div className="col-md-6">
+                 <label htmlFor="nroIngresosBrutos" className="form-label">Numero de Ingresos Brutos</label>
+                 <input
+                   type="text"
+                   id="nroIngresosBrutos"
+                   name="nroIngresosBrutos"
+                   className="form-control"
+                   value={proveedor.nroIngresosBrutos}
+                   onChange={handleChange}
+                 />
+               </div> 
+
+               <div className="col-md-6">
+                 <label htmlFor="tipoCuenta" className="form-label">Tipo Cuenta</label>
+                 <input
+                   type="text"
+                   id="tipoCuenta"
+                   name="tipoCuenta"
+                   className="form-control"
+                   value={proveedor.tipoCuenta}
+                   onChange={handleChange}
+                 />
+               </div> 
+               <div className="col-md-6">
+                 <label htmlFor="cbu1" className="form-label">CBU 1 </label>
+                 <input
+                   type="text"
+                   id="cbu1"
+                   name="cbu1"
+                   className="form-control"
+                   value={proveedor.cbu1}
+                   onChange={handleChange}
+                 />
+               </div> 
+               <div className="col-md-6">
+                  <label htmlFor="bancoCodigo1" className="form-label">Codigo de Banco</label>
+                  <input
+                    type="bancoCodigo1"
+                    id="bancoCodigo1"
+                    name="bancoCodigo1"
+                    className="form-control"
+                    value={proveedor.bancoCodigo1}
+                    onChange={handleChange}
+                  />
+                </div>
+                
+                <div className="col-md-6">
+                 <label htmlFor="tipoCuenta2" className="form-label">Tipo Cuenta 2</label>
+                 <input
+                   type="text"
+                   id="tipoCuenta2"
+                   name="tipoCuenta2"
+                   className="form-control"
+                   value={proveedor.tipoCuenta2}
+                   onChange={handleChange}
+                 />
+               </div> 
+               <div className="col-md-6">
+                 <label htmlFor="cbu2" className="form-label">CBU 2 </label>
+                 <input
+                   type="text"
+                   id="cbu2"
+                   name="cbu2"
+                   className="form-control"
+                   value={proveedor.cbu2}
+                   onChange={handleChange}
+                 />
+               </div> 
+               <div className="col-md-6">
+                  <label htmlFor="bancoCodigo2" className="form-label">Codigo de Banco 2</label>
+                  <input
+                    type="bancoCodigo2"
+                    id="bancoCodigo2"
+                    name="bancoCodigo2"
+                    className="form-control"
+                    value={proveedor.bancoCodigo2}
+                    onChange={handleChange}
+                  />
+                </div>
+               </>)
+                :
+                null
+                }
+               
+               
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
@@ -248,6 +501,12 @@ const Proveedores = () => {
           </div>
         </div>
       </div>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+
 
       {showModal && (
         <div className="modal show" style={{ display: 'block' }}>

@@ -18,6 +18,7 @@ import ProveedorScreen from './components/Proovedores/ProveedorScreen';
 import Cliente from './components/Cliente/Cliente';
 import VerPedido from './components/Pedido/VerPedido';
 import Footer from './components/Others/Footer';
+import ActualizarPrecios from './components/Producto/ActualizarPrecios';
 const App = () => {
   return (
     <Router>
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="/editarCliente/:id" element={<ClienteScreen />} />
         <Route path="/editarCategoria/:id" element={<Clasificaciones />} />
         <Route path="/verPedido/:id" element={<VerPedido />} />
+        <Route path="/actualizarPrecios" element={<ActualizarPrecios />} />
 
       </Routes>
       <Footer/>

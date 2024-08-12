@@ -9,6 +9,7 @@ const ProductoForm = () => {
     codigo: '',
     codigoOrig: '',
     descripcion: '',
+    unidadMedida: '',
     puntoReposicion: '',
     costo: '',
     estado: 'activo',
@@ -19,7 +20,6 @@ const ProductoForm = () => {
     proveedor: '',
     categoria: '',
     subCategoria: '',
-    unidadMedida: '' // Nuevo campo agregado aquí
   });
 
   const [categorias, setCategorias] = useState([]);

@@ -29,6 +29,7 @@ const VerPedido = () => {
         }
         const data = await response.json();
         setPedido(data);
+        
       } catch (error) {
         console.error('Error fetching pedido:', error);
       }
@@ -53,7 +54,6 @@ const VerPedido = () => {
    <Navbar />
 
     <div className="container">
-      
       <h1>Detalles del Pedido</h1>
       <p><strong>Cliente:</strong> {pedido.idCliente}</p>
       <p><strong>Fecha:</strong> {new Date(pedido.fecha).toLocaleString()}</p>
@@ -63,6 +63,9 @@ const VerPedido = () => {
             <th className='cabecera'>Código</th>
             <th className='cabecera'>Artículo</th>
             <th className='cabecera'>Cant.</th>
+            <th className='cabecera'>Dto %</th>
+            <th className='cabecera'>Total </th>
+
           </tr>
         </thead>
         <tbody>
@@ -71,6 +74,9 @@ const VerPedido = () => {
               <td className='cabecera'>{detalle.producto.codigo}</td>
               <td className='cabecera'>{detalle.producto.descripcion}</td>
               <td className='cabecera'>{detalle.cantidad}</td>
+              <td className='cabecera'>{detalle.descuento}</td>
+              <td className='cabecera'>{(detalle.total).toFixed(2)}</td>
+
             </tr>
           ))}
         </tbody>
