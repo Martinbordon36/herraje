@@ -101,7 +101,7 @@ const PedidoScreen = () => {
         <button className="button" onClick={handleCreatePedido}>Crear Pedido</button>
 
 
-      </div>
+   
 
       <div className='container-search'>
       <div className="search-container">
@@ -160,6 +160,7 @@ const PedidoScreen = () => {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="pagination-info">
@@ -176,20 +177,7 @@ const PedidoScreen = () => {
           </button>
         </div>
       </div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />   
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+
     </>
   );
 };

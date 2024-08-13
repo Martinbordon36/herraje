@@ -210,3 +210,32 @@
     
 
   }
+
+  .table-container {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
+  }
+  
+  .table {
+    width: 100%;
+    max-width: 1200px; /* Limita el ancho máximo de la tabla */
+    border-collapse: collapse;
+  }
+  
+  .th, .td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    max-width: 200px; /* Ajusta este valor según tus necesidades */
+    white-space: nowrap; /* Evita que el texto se vaya a la siguiente línea */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Muestra "..." si el contenido es demasiado largo */
+  }
+  
+  /* Opcional: Asegúrate de que la tabla no sea más ancha que la pantalla */
+  .table-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  

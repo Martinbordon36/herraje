@@ -121,7 +121,6 @@ const CategoriaScreen = () => {
         <button className="button" onClick={handleCreateCategoria}>Crear Categoría</button>
 
 
-      </div>
 
       <div className='container-search'>
       <div className="search-container">
@@ -173,7 +172,7 @@ const CategoriaScreen = () => {
           </tbody>
         </table>
       </div>
-
+      </div>
       <div className="pagination-info">
         <span className='numpag'>Página {currentPage + 1} de {totalPages}</span>
       </div>
@@ -225,18 +224,7 @@ const CategoriaScreen = () => {
           </div>
         </div>
       )}
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+
     </>
   );
 };

@@ -11,8 +11,8 @@ const CrearPedido = () => {
     descripcion: '',
     cantidad: 0,
     precio: 0,
-    descuento:0,
-    total:0,
+    descuento: 0,
+    total: 0,
     removable: true
   }]);
   
@@ -27,6 +27,7 @@ const CrearPedido = () => {
   const [showModal, setShowModal] = useState(false);
   const [validationError, setValidationError] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [descuentoGeneral, setDescuentoGeneral] = useState(0); // Estado para el descuento general
 
   const token = localStorage.getItem('token');
   const { id } = useParams();
@@ -91,7 +92,7 @@ const CrearPedido = () => {
               cantidad: detalle.cantidad,
               precio: producto.costo,
               descuento: detalle.descuento,
-              total:detalle.total,
+              total: detalle.total,
               removable: true
             };
           });
@@ -122,7 +123,6 @@ const CrearPedido = () => {
     setProductos(newProductos);
   };
 
-
   const handleInputChange = (index, e) => {
     const { name, value } = e.target;
     const newProductos = [...productos];
@@ -130,38 +130,29 @@ const CrearPedido = () => {
     setProductos(newProductos);
   };
 
-  // const calcularPrecioTotal = (index) => {
-  //   const producto = productos[index];
-  //   if (producto.cantidad === 0 || !producto.cantidad) {
-  //     return null;
-  //   }
-  //   return producto.precio * producto.cantidad;
-  // };
-
-  // const calcularSumaTotal = () => {
-  //   return productos.reduce((acc, producto, index) => {
-  //     const precioTotal = calcularPrecioTotal(index);
-  //     return acc + (precioTotal ? precioTotal : 0);
-  //   }, 0).toFixed(2);
-  // };
-
-    const calcularPrecioTotal = (index) => {
+  const calcularPrecioTotal = (index) => {
     const producto = productos[index];
     if (producto.cantidad === 0 || !producto.cantidad) {
       return null;
     }
-    producto.total = ((producto.precio - (producto.precio  * (producto.descuento / 100))) * producto.cantidad).toFixed(2);
-
+    producto.total = ((producto.precio - (producto.precio * (producto.descuento / 100))) * producto.cantidad).toFixed(2);
   
-    return (producto.precio - (producto.precio  * (producto.descuento / 100))) * producto.cantidad;
+    return (producto.precio - (producto.precio * (producto.descuento / 100))) * producto.cantidad;
   };
 
   const calcularSumaTotal = () => {
-    return productos.reduce((acc, producto, index) => {
+    const sumaSinDescuento = productos.reduce((acc, producto, index) => {
       const precioTotal = calcularPrecioTotal(index);
       return acc + (precioTotal ? precioTotal : 0);
-    }, 0).toFixed(2);
+    }, 0);
+
+    // Aplicar el descuento general
+    const descuento = sumaSinDescuento * (descuentoGeneral / 100);
+    const sumaConDescuento = sumaSinDescuento - descuento;
+
+    return sumaConDescuento.toFixed(2);
   };
+
   const agregarProducto = () => {
     const productosValidos = productos.every(producto => producto.codigo && producto.descripcion && producto.cantidad > 0);
     if (!productosValidos) {
@@ -175,10 +166,10 @@ const CrearPedido = () => {
     setProductos([...newProductos, {
       codigo: '',
       descripcion: '',
-      cantidad: 1, // Cambiado para iniciar en 1 en vez de 0
+      cantidad: 1,
       precio: 0,
-      descuento:0,
-      total:0,
+      descuento: 0,
+      total: 0,
       removable: true
     }]);
   };
@@ -218,7 +209,7 @@ const CrearPedido = () => {
 
     const pedido = {
       idUsuario: 1,
-      idCliente: selectedClienteId, // Asegúrate de incluir el ID del cliente aquí
+      idCliente: selectedClienteId,
       detalles
     };
 
@@ -307,6 +298,11 @@ const CrearPedido = () => {
     }
   };
 
+  const handleDescuentoGeneralChange = (e) => {
+    const value = parseFloat(e.target.value) || 0;
+    setDescuentoGeneral(value);
+  };
+
   const handleBack = () => {
     navigate(-1);
   };
@@ -327,7 +323,6 @@ const CrearPedido = () => {
         <br />
         {validationError && <div className="alert alert-danger">{validationError}</div>}
         
-
         {id ? 
          <h1> Cliente : {selectedCliente}</h1>
         :
@@ -348,6 +343,22 @@ const CrearPedido = () => {
           }}
         />
         }
+
+        {/* Aquí se añade el nuevo campo para el descuento general */}
+        <div className="input-row">
+          <div className="input-container-descuento">
+            <label htmlFor="descuento-general">Descuento General (%):</label>
+            <input
+              type="number"
+              id="descuento-general"
+              value={descuentoGeneral}
+              onChange={handleDescuentoGeneralChange}
+              min="0"
+              max="100"
+            />
+          </div>
+        </div>
+
       </div>
       <br />
       <div className="input-row">
@@ -370,9 +381,6 @@ const CrearPedido = () => {
           </div>
 
           <div className="input-container large">
-            {/* <label htmlFor={`descripcion-${index}`}> Descripción:</label>
-            <input type="text" id={`descripcion-${index}`} value={producto.descripcion}  /> */}
-
             <label htmlFor={`codigo-${index}`}>Descripcion:  </label>
             <select className='large' id={`Descripcion-${index}`} value={producto.codigo} onChange={(e) => handleCodigoChange(index, e)}>
               <option className='chico' value="">Descripcion</option>
@@ -413,10 +421,6 @@ const CrearPedido = () => {
         <div className="button-container">
           <button onClick={handleConfirmarVenta} className="confirm-button">{isEditing ? 'Actualizar Pedido' : 'Guardar Pedido'}</button>
         </div>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
         <br/>
         <br/>
         <br/>

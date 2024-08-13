@@ -394,11 +394,6 @@ const ClienteScreen = () => {
         </div>
       </div>
 
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
 
       {showModal && (
         <div className="modal show" style={{ display: 'block' }}>

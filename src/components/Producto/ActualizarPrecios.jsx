@@ -82,6 +82,7 @@ const ActualizarPrecios = () => {
   const fetchProductosByDescripcion = async (descripcion) => {
     try {
       const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/descripcion?query=${descripcion}`);
+      console.log("Esto hay en response..data" + response.data)
       setProductos(response.data);
       console.log('Desde producto por descripcion' + response.data)
       setAllSelected(true);

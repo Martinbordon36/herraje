@@ -236,19 +236,6 @@ const Cliente = () => {
       </div>
 
 
-      <br />
-      <br />
-      <br />
-
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
       {/* Modal de Confirmación de Eliminación */}
       {showConfirmModal && (
         <div className="modal show" style={{ display: 'block' }}>

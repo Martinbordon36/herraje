@@ -295,3 +295,27 @@ h1 {
   }
 }
  */
+
+ html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.container-principal {
+  flex: 1; /* Esto permite que el contenido crezca y empuje el footer hacia abajo */
+}
+
+footer {
+  background-color: #f1f1f1;
+  padding: 10px;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}

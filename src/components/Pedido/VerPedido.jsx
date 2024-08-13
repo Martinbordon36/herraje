@@ -90,21 +90,7 @@ const VerPedido = () => {
         {/* <Footer/> */}
 
     </div>
-    <br/>
-    <br/>
 
-    <br/>
-
-    <br/>
-    <br/>
-    <br/>
-
-    <br/>
-
-    <br/>
-    <br/>
-
-<br/>
     </>
   );
 };

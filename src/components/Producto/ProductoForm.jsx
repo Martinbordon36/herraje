@@ -8,16 +8,17 @@ const ProductoForm = () => {
     codigo: '',
     codigoOrig: '',
     descripcion: '',
+    unidadMedida: null,
     puntoReposicion: '',
     costo: '',
     estado: 'activo',
     unidadCompra: '',
     precioVenta: '',
-    unidadVenta: '',
+    unidadVenta: null,
     artDtoGan: '',
     proveedor: '',
-    idCategoria: '',
-    idSubCategoria: '',
+    categoria: '',
+    subCategoria: '',
     idUsuario: 1 // Asignar un idUsuario fijo o dinámico según sea necesario
   });
 
@@ -50,8 +51,7 @@ const ProductoForm = () => {
         });
         const data = await response.json();
         setProducto(data);
-        console.log("Esto es producto " + JSON.stringify(data))
-        fetchSubCategorias(data.idCategoria); // Cargar subcategorías basadas en la categoría del producto
+        fetchSubCategorias(data.categoria); // Cargar subcategorías basadas en la categoría del producto
       } catch (error) {
         console.error('Error fetching producto:', error);
       }
@@ -78,7 +78,7 @@ const ProductoForm = () => {
 
   const handleCategoriaChange = async (e) => {
     const value = e.target.value;
-    setProducto({ ...producto, idCategoria: value });
+    setProducto({ ...producto, categoria: value });
     try {
       const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/subcategoria', {
         headers: {
@@ -188,7 +188,17 @@ const ProductoForm = () => {
                 </div>
               </div>
               <div className="row mb-3">
-                
+                <div className="col-md-6">
+                  <label htmlFor="unidadMedida" className="form-label">Unidad de Medida</label>
+                  <input
+                    type="text"
+                    id="unidadMedida"
+                    name="unidadMedida"
+                    className="form-control"
+                    value={producto.unidadMedida}
+                    onChange={handleChange}
+                  />
+                </div>
                 <div className="col-md-6">
                   <label htmlFor="puntoReposicion" className="form-label">Punto de Reposición</label>
                   <input
@@ -242,7 +252,7 @@ const ProductoForm = () => {
                 <div className="col-md-6">
                   <label htmlFor="precioVenta" className="form-label"> Precio de Venta</label>
                   <input
-                    type="text"
+                    type="number"
                     id="precioVenta"
                     name="precioVenta"
                     className="form-control"
@@ -277,12 +287,12 @@ const ProductoForm = () => {
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
-                  <label htmlFor="idCategoria" className="form-label"> Categoría</label>
+                  <label htmlFor="categoria" className="form-label"> Categoría</label>
                   <select
-                    id="idCategoria"
-                    name="idCategoria"
+                    id="categoria"
+                    name="categoria"
                     className="form-select"
-                    value={producto.idCategoria}
+                    value={producto.categoria}
                     onChange={handleCategoriaChange}
                   >
                     <option value="">Seleccione una categoría</option>
@@ -294,12 +304,12 @@ const ProductoForm = () => {
                   </select>
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="idSubCategoria" className="form-label"> SubCategoría</label>
+                  <label htmlFor="subCategoria" className="form-label"> SubCategoría</label>
                   <select
-                    id="idSubCategoria"
-                    name="idSubCategoria"
+                    id="subCategoria"
+                    name="subCategoria"
                     className="form-select"
-                    value={producto.idSubCategoria}
+                    value={producto.subCategoria}
                     onChange={handleChange}
                   >
                     <option value="">Seleccione una subcategoría</option>
