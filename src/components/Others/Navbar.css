@@ -1,19 +1,40 @@
-
 .navbar-nav {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-  .container-centered {
-    display: flex;
-    justify-content: center;
-  }
-  
-  .btn-cerrar{
-    width:200px;
-    margin-right: 75px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.container-centered {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-cerrar {
+  margin-right: 1rem;
+}
+
+.btn-logo {
+  margin-left: 1rem;
+}
+
+/* Ajustes para pantallas más pequeñas */
+@media (max-width: 991.98px) {
+  .btn-cerrar {
+    margin-right: 0;
+    width: auto;
   }
 
-  .btn-logo{
-    margin-left: 60px;
+  .btn-logo {
+    margin-left: 0;
   }
+
+  .navbar-nav {
+    justify-content: flex-start;
+  }
+
+  .container-centered {
+    justify-content: flex-start;
+  }
+}

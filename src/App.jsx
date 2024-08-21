@@ -19,6 +19,11 @@ import Cliente from './components/Cliente/Cliente';
 import VerPedido from './components/Pedido/VerPedido';
 import Footer from './components/Others/Footer';
 import ActualizarPrecios from './components/Producto/ActualizarPrecios';
+import CrearFactura from './components/Factura/CrearFactura';
+import FacturaScreen from './components/Factura/FacturaScreen';
+import FacturaView from './components/Factura/FacturaView';
+import CrearPresupuesto from './components/Presupuesto/CrearPresupuesto';
+
 const App = () => {
   return (
     <Router>
@@ -44,6 +49,10 @@ const App = () => {
         <Route path="/editarCategoria/:id" element={<Clasificaciones />} />
         <Route path="/verPedido/:id" element={<VerPedido />} />
         <Route path="/actualizarPrecios" element={<ActualizarPrecios />} />
+        <Route path="/crearFactura" element={<CrearFactura />} />
+        <Route path="/facturas" element={<FacturaScreen />} />
+        <Route path="/verFactura/:id" element={<FacturaView />} />
+        <Route path="/nuevoPresupuesto" element={<CrearPresupuesto />} />
 
       </Routes>
       <Footer/>

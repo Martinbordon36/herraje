@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../Others/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
-import "./CrearPedido.css";
+import "./CrearPresupuesto.css";
 import Footer from "../Others/Footer";
 import Select from "react-select";
 
-const CrearPedido = () => {
+const CrearPresupuesto = () => {
   const [productos, setProductos] = useState([
     {
       codigo: "",
@@ -364,7 +364,7 @@ const CrearPedido = () => {
       <br />
       <br />
       <div className="container-principal">
-        <h1>{isEditing ? "Editar Pedido" : "Crear Nuevo Pedido"}</h1>
+        <h1>{isEditing ? "Editar Presupuesto" : "Crear Nuevo presupuesto"}</h1>
         <button className="btn btn-secondary mb-3" onClick={handleBack}>
           Volver Atrás
         </button>
@@ -540,7 +540,7 @@ const CrearPedido = () => {
         <h2>Precio Total: {calcularSumaTotal()}</h2>
         <div className="button-container">
           <button onClick={handleConfirmarVenta} className="confirm-button">
-            {isEditing ? "Actualizar Pedido" : "Guardar Pedido"}
+            {isEditing ? "Actualizar Pedido" : "Guardar Presupuesto"}
           </button>
         </div>
         <br />
@@ -610,4 +610,4 @@ const CrearPedido = () => {
   );
 };
 
-export default CrearPedido;
+export default CrearPresupuesto;

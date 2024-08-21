@@ -134,6 +134,7 @@ const ActualizarPrecios = () => {
 
     if (selectedOption === 'proveedor') {
       payload.idProveedor = searchTerm;
+      console.log('Esto hay' + searchTerm)
     } else if (selectedOption === 'categoria') {
       payload.idCategoria = searchTerm;
     } else if (selectedOption === 'descripcion') {
@@ -141,7 +142,7 @@ const ActualizarPrecios = () => {
     }
 
     try {
-      console.log(payload); // Puedes revisar aquí cómo se construye el payload
+      console.log(JSON.stringify(payload)); // Puedes revisar aquí cómo se construye el payload
       const response = await axios.post('http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/actualizarPrecio', payload);
       console.log('Precios actualizados:', response.data);
       // Aquí podrías mostrar una notificación de éxito o actualizar el estado si es necesario

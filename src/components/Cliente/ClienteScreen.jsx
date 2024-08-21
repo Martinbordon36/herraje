@@ -17,7 +17,9 @@ const ClienteScreen = () => {
     numeroDocumento:'',
     celular:'',
     idVendedor: '',
-    zona: ' ',
+    zona: {
+      id:''
+    },
     grupo: ' ',
     codPostal : 5300,
     ctaContame: ' ',
@@ -336,6 +338,24 @@ const ClienteScreen = () => {
                   </select>
                 </div>
 
+                <div className="col-md-6">
+                  <label htmlFor="zona" className="form-label">Zona </label>
+                  <select
+                    id="zona"
+                    name="zona"
+                    className="form-select"
+                    value={cliente.zona.id}
+                    onChange={handleChange}
+                  >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+
+                  </select>
+                </div>
+
                 {/* Hasta aca campos para creacion */}
 
                 {id ? (
@@ -377,7 +397,11 @@ const ClienteScreen = () => {
                     onChange={handleChange}
                   />
                 </div>
+
+               
                 </>
+
+                
 
 ) : null}
               </div>

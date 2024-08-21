@@ -1,0 +1,55 @@
+.factura-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #000;
+    font-family: Arial, sans-serif;
+  }
+  
+  .factura-header, .factura-client-info, .factura-table, .factura-totales, .factura-footer {
+    margin-bottom: 20px;
+  }
+  
+  .factura-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+  }
+  
+  .factura-logo img {
+    width: 150px;
+  }
+  
+  .factura-info h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .factura-client-info p {
+    margin: 0;
+  }
+  
+  .factura-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .factura-table th, .factura-table td {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: left;
+  }
+  
+  .factura-totales .totales-grid {
+    display: flex;
+    justify-content: space-between;
+    border-top: 2px solid #000;
+    padding-top: 10px;
+  }
+  
+  .factura-footer {
+    text-align: center;
+    font-size: 12px;
+  }
+  

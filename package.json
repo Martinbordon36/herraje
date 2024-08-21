@@ -10,11 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^5.16.7",
     "axios": "^1.7.3",
     "boostrap": "^2.0.0",
     "bootstrap": "^5.3.3",
     "git": "^0.1.5",
     "react": "^18.2.0",
+    "react-autocomplete": "^1.8.1",
     "react-autosuggest": "^10.1.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",
