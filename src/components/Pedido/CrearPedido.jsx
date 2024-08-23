@@ -458,6 +458,7 @@ const CrearPedido = () => {
             <div className="input-container small">
               <label htmlFor={`codigo-${index}`}>Código  </label>
               <Select
+                className="fixed-select"
                 options={productOptionsCod}
                 value={productOptionsCod.find(option => option.value === producto.codigo)}
                 onChange={(selectedOption) => handleCodigoChange(index, selectedOption)}
@@ -468,6 +469,7 @@ const CrearPedido = () => {
             <div className="input-container large">
               <label htmlFor={`descripcion-${index}`}>Descripción </label>
               <Select
+              className="fixed-select"
                 options={productOptionsDes}
                 value={productOptionsDes.find(option => option.value === producto.codigo)}
                 onChange={(selectedOption) => handleCodigoChange(index, selectedOption)}

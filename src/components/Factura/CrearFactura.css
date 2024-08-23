@@ -730,3 +730,14 @@ html {
   margin: 0 auto;
 }
 
+.fixed-select {
+  width: 100%; /* Puedes ajustar esto a un tamaño fijo como 400px */
+  max-width: 400px; /* Fijar el tamaño máximo */
+  min-width: 300px; /* Fijar el tamaño mínimo */
+  padding:10px;
+}
+
+.input-container.fixed {
+  flex: 1; /* Para que el contenedor ocupe el espacio disponible */
+  margin-right: 10px;
+}
