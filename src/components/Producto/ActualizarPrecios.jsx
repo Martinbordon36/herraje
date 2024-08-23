@@ -109,11 +109,20 @@ const ActualizarPrecios = () => {
   const handlePercentageChange = (e) => {
     setPorcentaje(e.target.value);
   };
-
-  const handleSelectAll = (e) => {
+  const handleSelectAll = async (e) => {
     setAllSelected(e.target.checked);
-    setSelectedProducts(e.target.checked ? productos.map(producto => producto.id) : []);
-  };
+    if (e.target.checked) {
+      try {
+        const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto`); 
+        // Aquí se asume que tienes un endpoint que devuelve todos los productos sin paginación
+        setSelectedProducts(response.data.map(producto => producto.id));
+      } catch (error) {
+        console.error('Error al obtener todos los productos:', error);
+      }
+    } else {
+      setSelectedProducts([]); // Deseleccionar todos los productos
+    }
+  }
 
   const handleProductSelect = (id) => {
     if (selectedProducts.includes(id)) {
@@ -143,7 +152,7 @@ const ActualizarPrecios = () => {
 
     try {
       console.log(JSON.stringify(payload)); // Puedes revisar aquí cómo se construye el payload
-      const response = await axios.post('http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/actualizarPrecio', payload);
+      const response = await axios.post('http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/actualizarprecio', payload);
       console.log('Precios actualizados:', response.data);
       // Aquí podrías mostrar una notificación de éxito o actualizar el estado si es necesario
     } catch (error) {

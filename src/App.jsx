@@ -23,6 +23,7 @@ import CrearFactura from './components/Factura/CrearFactura';
 import FacturaScreen from './components/Factura/FacturaScreen';
 import FacturaView from './components/Factura/FacturaView';
 import CrearPresupuesto from './components/Presupuesto/CrearPresupuesto';
+import CoeficienteScreen from './components/Zonas/CoeficienteScreen';
 
 const App = () => {
   return (
@@ -53,6 +54,7 @@ const App = () => {
         <Route path="/facturas" element={<FacturaScreen />} />
         <Route path="/verFactura/:id" element={<FacturaView />} />
         <Route path="/nuevoPresupuesto" element={<CrearPresupuesto />} />
+        <Route path="/modificarCoeficientes" element={<CoeficienteScreen />} />
 
       </Routes>
       <Footer/>
