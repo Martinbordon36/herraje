@@ -13,8 +13,9 @@ const CoeficienteScreen = () => {
   const [coeficienteIdAEliminar, setCoeficienteIdAEliminar] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false); // Agregado para el modal de detalles
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedCoeficiente, setSelectedCoeficiente] = useState(null);
+  const [editingCoeficiente, setEditingCoeficiente] = useState(null); // Estado para manejar la edición
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
@@ -40,7 +41,6 @@ const CoeficienteScreen = () => {
         const data = await response.json();
         setCoeficientes(data);
         setFilteredCoeficientes(data); // Inicializar coeficientes filtrados
-        console.log(JSON.stringify(data));
         setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching coeficientes:', error);
@@ -54,8 +54,46 @@ const CoeficienteScreen = () => {
     navigate('/nuevocoeficiente');
   };
 
-  const handleEdit = (id) => {
-    navigate(`/editarcoeficiente/${id}`);
+  const handleEdit = (coeficiente) => {
+    setEditingCoeficiente({ ...coeficiente }); // Clona el coeficiente que se va a editar
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditingCoeficiente((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/coeficiente/${editingCoeficiente.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editingCoeficiente),
+      });
+      if (!response.ok) {
+        throw new Error('Error al guardar el coeficiente');
+      }
+
+      // Actualiza el estado con el coeficiente editado
+      setCoeficientes((prevCoeficientes) =>
+        prevCoeficientes.map((coef) =>
+          coef.id === editingCoeficiente.id ? editingCoeficiente : coef
+        )
+      );
+      setFilteredCoeficientes((prevCoeficientes) =>
+        prevCoeficientes.map((coef) =>
+          coef.id === editingCoeficiente.id ? editingCoeficiente : coef
+        )
+      );
+      setEditingCoeficiente(null); // Salir del modo edición
+    } catch (error) {
+      console.error('Error saving coeficiente:', error);
+    }
   };
 
   const handleDelete = (id) => {
@@ -75,7 +113,7 @@ const CoeficienteScreen = () => {
         throw new Error('Error al eliminar el coeficiente');
       }
       setCoeficientes(coeficientes.filter(coef => coef.id !== coeficienteIdAEliminar));
-      setFilteredCoeficientes(filteredCoeficientes.filter(coef => coef.id !== coeficienteIdAEliminar)); // Actualizar coeficientes filtrados
+      setFilteredCoeficientes(filteredCoeficientes.filter(coef => coef.id !== coeficienteIdAEliminar));
       setShowConfirmModal(false);
       setShowSuccessModal(true);
     } catch (error) {
@@ -162,25 +200,42 @@ const CoeficienteScreen = () => {
             </tr>
           </thead>
           <tbody>
-          {filteredCoeficientes && filteredCoeficientes.map((coeficiente) => (
+            {filteredCoeficientes && filteredCoeficientes.map((coeficiente) => (
               <tr key={coeficiente.id}>
                 <td className="td">{coeficiente.proveedor.razonSocial}</td>
                 <td className="td">{coeficiente.zona.nombre}</td>
                 <td className="td">{coeficiente.coeficienteTotal}</td>
-                <td className="td">{coeficiente.detalleCoeficientes}</td>
                 <td className="td">
-                  <FaEye 
-                    className="icon view-icon" 
-                    onClick={() => openDetailModal(coeficiente)} 
-                  />
-                  <FaEdit 
-                    className="icon edit-icon" 
-                    onClick={() => handleEdit(coeficiente.id)} 
-                  />
-                  <FaTrash 
-                    className="icon delete-icon" 
-                    onClick={() => handleDelete(coeficiente.id)} 
-                  />
+                  {editingCoeficiente && editingCoeficiente.id === coeficiente.id ? (
+                    <input
+                      type="text"
+                      name="detalleCoeficientes"
+                      value={editingCoeficiente.detalleCoeficientes}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    coeficiente.detalleCoeficientes
+                  )}
+                </td>
+                <td className="td">
+                  {editingCoeficiente && editingCoeficiente.id === coeficiente.id ? (
+                    <button onClick={handleSave}>Guardar</button>
+                  ) : (
+                    <>
+                      <FaEye
+                        className="icon view-icon"
+                        onClick={() => openDetailModal(coeficiente)}
+                      />
+                      <FaEdit
+                        className="icon edit-icon"
+                        onClick={() => handleEdit(coeficiente)}
+                      />
+                      <FaTrash
+                        className="icon delete-icon"
+                        onClick={() => handleDelete(coeficiente.id)}
+                      />
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
@@ -188,12 +243,7 @@ const CoeficienteScreen = () => {
         </table>
       </div>
 
-      <div className='prueba1'>
-        <div className='prueba2'>
-          <span className='numpag'>{currentPage + 1} de {totalPages}</span>
-        </div>
-      </div>
-
+      {/* Paginación */}
       <div className="pagination">
         <div className="pagination-buttons">
           <button className="button" id="bt" onClick={handleFirstPage} disabled={currentPage === 0}>
