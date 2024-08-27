@@ -1,33 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
-import './CoeficienteScreen.css'; // Asegúrate de importar tu archivo CSS
+import './CoeficienteScreen.css';
 import search from '../../assets/lupa.png';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importar iconos de react-icons
+import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 
 const CoeficienteScreen = () => {
   const [coeficientes, setCoeficientes] = useState([]);
   const [filteredCoeficientes, setFilteredCoeficientes] = useState([]);
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [coeficienteIdAEliminar, setCoeficienteIdAEliminar] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedCoeficiente, setSelectedCoeficiente] = useState(null);
-  const [editingCoeficiente, setEditingCoeficiente] = useState(null); // Estado para manejar la edición
+  const [editingCoeficiente, setEditingCoeficiente] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [showCreateModal, setShowCreateModal] = useState(false); // Estado para mostrar/ocultar modal de creación
+  const [newCoeficiente, setNewCoeficiente] = useState({
+    idCoeficiente: '',  // Agregado para reflejar el id del coeficiente
+    idProveedor: '',
+    idZona: '',
+    coeficienteTotal: '',
+    descripcionCoeficiente: ''
+  });
+  const [proveedores, setProveedores] = useState([]);
+  const [zonas, setZonas] = useState([]);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCoeficientes = async () => {
-      if (!token) {
-        console.error('Token no disponible');
-        return;
-      }
-
       try {
         const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/coeficiente`, {
           method: 'GET',
@@ -40,18 +44,87 @@ const CoeficienteScreen = () => {
         }
         const data = await response.json();
         setCoeficientes(data);
-        setFilteredCoeficientes(data); // Inicializar coeficientes filtrados
+        setFilteredCoeficientes(data);
         setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching coeficientes:', error);
       }
     };
 
+    const fetchProveedores = async () => {
+      try {
+        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json();
+        setProveedores(data);
+      } catch (error) {
+        console.error('Error fetching proveedores:', error);
+      }
+    };
+
+    const fetchZonas = async () => {
+      try {
+        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/zona`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json();
+        setZonas(data);
+      } catch (error) {
+        console.error('Error fetching zonas:', error);
+      }
+    };
+
     fetchCoeficientes();
+    fetchProveedores();
+    fetchZonas();
   }, [token, currentPage]);
 
   const handleCreateCoeficiente = () => {
-    navigate('/nuevocoeficiente');
+    setShowCreateModal(true); // Mostrar modal de creación
+  };
+
+  const handleSaveNewCoeficiente = async () => {
+    // Formatear el JSON correctamente
+    const coeficienteData = {
+      idCoeficiente: parseInt(newCoeficiente.idCoeficiente),
+      idProveedor: parseInt(newCoeficiente.idProveedor),
+      idZona: parseInt(newCoeficiente.idZona),
+      coeficienteTotal: parseFloat(newCoeficiente.coeficienteTotal),
+      descripcionCoeficiente: newCoeficiente.descripcionCoeficiente
+    };
+
+    try {
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/coeficiente`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(coeficienteData),
+      });
+      if (!response.ok) {
+        throw new Error('Error al guardar el coeficiente');
+      }
+      const createdCoeficiente = await response.json();
+      setCoeficientes([...coeficientes, createdCoeficiente]);
+      setFilteredCoeficientes([...filteredCoeficientes, createdCoeficiente]);
+      setShowCreateModal(false); // Ocultar modal después de guardar
+      setNewCoeficiente({
+        idCoeficiente: '',
+        idProveedor: '',
+        idZona: '',
+        coeficienteTotal: '',
+        descripcionCoeficiente: ''
+      });
+    } catch (error) {
+      console.error('Error saving new coeficiente:', error);
+    }
   };
 
   const handleEdit = (coeficiente) => {
@@ -260,6 +333,79 @@ const CoeficienteScreen = () => {
           </button>
         </div>
       </div>
+
+      {/* Modal de Creación */}
+      {showCreateModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Crear Coeficiente</h5>
+              </div>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label>ID Coeficiente</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={newCoeficiente.idCoeficiente}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, idCoeficiente: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Proveedor</label>
+                  <select
+                    className="form-control"
+                    value={newCoeficiente.idProveedor}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, idProveedor: e.target.value })}
+                  >
+                    <option value="">Seleccionar Proveedor</option>
+                    {proveedores.map((proveedor) => (
+                      <option key={proveedor.id} value={proveedor.id}>{proveedor.razonSocial}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Zona</label>
+                  <select
+                    className="form-control"
+                    value={newCoeficiente.idZona}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, idZona: e.target.value })}
+                  >
+                    <option value="">Seleccionar Zona</option>
+                    {zonas.map((zona) => (
+                      <option key={zona.id} value={zona.id}>{zona.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Coeficiente Total</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="form-control"
+                    value={newCoeficiente.coeficienteTotal}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, coeficienteTotal: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Descripción Coeficiente</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={newCoeficiente.descripcionCoeficiente}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, descripcionCoeficiente: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowCreateModal(false)}>Cancelar</button>
+                <button type="button" className="btn btn-primary" onClick={handleSaveNewCoeficiente}>Guardar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Confirmación de Eliminación */}
       {showConfirmModal && (

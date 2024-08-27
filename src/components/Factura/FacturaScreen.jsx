@@ -129,11 +129,17 @@ const FacturaScreen = () => {
             </tr>
           </thead>
           <tbody>
+            
             {filteredFacturas.length > 0 ? (
               filteredFacturas.map((factura) => (
+                
                 <tr key={factura.id}>
+                                    {factura.tipoFactura == 1 ? factura.tipoFactura = 'A' : null}
+                                    {factura.tipoFactura == 2 ? factura.tipoFactura = 'N' : null}
+
                   <td className="td">{factura.id}</td>
                   <td className="td">{new Date(factura.fecha).toLocaleString()}</td>
+
                   <td className="td">{factura.tipoFactura}</td>
                   <td className="td">{factura.cliente}</td>
                   <td className="td">{factura.total}</td>

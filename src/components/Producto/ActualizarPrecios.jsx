@@ -7,7 +7,10 @@ const ActualizarPrecios = () => {
   const [productos, setProductos] = useState([]);
   const [proveedores, setProveedores] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [subcategorias, setSubcategorias] = useState([]);
   const [selectedOption, setSelectedOption] = useState('proveedor');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [porcentaje, setPorcentaje] = useState(0);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -21,6 +24,13 @@ const ActualizarPrecios = () => {
     fetchProveedores();
     fetchCategorias();
   }, []);
+
+  useEffect(() => {
+    // Obtener subcategorías cuando se selecciona una categoría
+    if (selectedCategory) {
+      fetchSubcategorias(selectedCategory);
+    }
+  }, [selectedCategory]);
 
   useEffect(() => {
     fetchProductos();
@@ -38,10 +48,19 @@ const ActualizarPrecios = () => {
   const fetchCategorias = async () => {
     try {
       const response = await axios.get('http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria');
-      console.log('Categorias:', response.data); // Verifica la estructura de los datos
       setCategorias(response.data);
     } catch (error) {
       console.error('Error al obtener categorías:', error);
+    }
+  };
+
+  const fetchSubcategorias = async (categoriaId) => {
+    try {
+      const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria/${categoriaId}/subcategorias`);
+      setSubcategorias(Array.isArray(response.data.listaSubCategoria) ? response.data.listaSubCategoria : []);
+    } catch (error) {
+      console.error('Error al obtener subcategorías:', error);
+      setSubcategorias([]);
     }
   };
 
@@ -68,9 +87,12 @@ const ActualizarPrecios = () => {
     }
   };
 
-  const fetchProductosByCategoria = async (categoriaId) => {
+  const fetchProductosByCategoria = async (categoriaId, subcategoriaId) => {
     try {
-      const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/categoria/${categoriaId}`);
+      const url = subcategoriaId 
+        ? `http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/categoria/${categoriaId}/subcategoria/${subcategoriaId}` 
+        : `http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/categoria/${categoriaId}`;
+      const response = await axios.get(url);
       setProductos(response.data);
       setAllSelected(true);
       setSelectedProducts(response.data.map(producto => producto.id));
@@ -82,13 +104,22 @@ const ActualizarPrecios = () => {
   const fetchProductosByDescripcion = async (descripcion) => {
     try {
       const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/descripcion?query=${descripcion}`);
-      console.log("Esto hay en response..data" + response.data)
       setProductos(response.data);
-      console.log('Desde producto por descripcion' + response.data)
       setAllSelected(true);
       setSelectedProducts(response.data.map(producto => producto.id));
     } catch (error) {
       console.error('Error al obtener productos por descripción:', error);
+    }
+  };
+
+  const fetchProductosBySubcategoria = async (subcategoriaId) => {
+    try {
+      const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/subcategoria/${subcategoriaId}`);
+      setProductos(response.data);
+      setAllSelected(true);
+      setSelectedProducts(response.data.map(producto => producto.id));
+    } catch (error) {
+      console.error('Error al obtener productos por subcategoría:', error);
     }
   };
 
@@ -100,7 +131,11 @@ const ActualizarPrecios = () => {
     if (selectedOption === 'proveedor') {
       fetchProductosByProveedor(searchTerm);
     } else if (selectedOption === 'categoria') {
-      fetchProductosByCategoria(searchTerm);
+      if (selectedSubcategory) {
+        fetchProductosBySubcategoria(selectedSubcategory); // Llamar al endpoint de productos por subcategoría
+      } else {
+        fetchProductosByCategoria(selectedCategory);
+      }
     } else if (selectedOption === 'descripcion') {
       fetchProductosByDescripcion(searchTerm);
     }
@@ -109,20 +144,20 @@ const ActualizarPrecios = () => {
   const handlePercentageChange = (e) => {
     setPorcentaje(e.target.value);
   };
+
   const handleSelectAll = async (e) => {
     setAllSelected(e.target.checked);
     if (e.target.checked) {
       try {
-        const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto`); 
-        // Aquí se asume que tienes un endpoint que devuelve todos los productos sin paginación
+        const response = await axios.get(`http://vps-1915951-x.dattaweb.com:8090/api/v1/producto`);
         setSelectedProducts(response.data.map(producto => producto.id));
       } catch (error) {
         console.error('Error al obtener todos los productos:', error);
       }
     } else {
-      setSelectedProducts([]); // Deseleccionar todos los productos
+      setSelectedProducts([]);
     }
-  }
+  };
 
   const handleProductSelect = (id) => {
     if (selectedProducts.includes(id)) {
@@ -143,21 +178,17 @@ const ActualizarPrecios = () => {
 
     if (selectedOption === 'proveedor') {
       payload.idProveedor = searchTerm;
-      console.log('Esto hay' + searchTerm)
     } else if (selectedOption === 'categoria') {
-      payload.idCategoria = searchTerm;
-    } else if (selectedOption === 'descripcion') {
-      // En este caso no hay que modificar el payload, ya está preparado
+      payload.idCategoria = selectedCategory;
+      payload.idSubcategoria = selectedSubcategory;
     }
 
     try {
-      console.log(JSON.stringify(payload)); // Puedes revisar aquí cómo se construye el payload
+      console.log(payload);
       const response = await axios.post('http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/actualizarprecio', payload);
       console.log('Precios actualizados:', response.data);
-      // Aquí podrías mostrar una notificación de éxito o actualizar el estado si es necesario
     } catch (error) {
       console.error('Error al actualizar precios:', error);
-      // Manejar errores según sea necesario
     }
   };
 
@@ -178,7 +209,6 @@ const ActualizarPrecios = () => {
         }
       });
       console.log('Archivo subido:', response.data);
-      // Aquí puedes manejar la respuesta después de subir el archivo
     } catch (error) {
       console.error('Error al subir el archivo:', error);
     }
@@ -202,6 +232,16 @@ const ActualizarPrecios = () => {
 
   const handleLastPage = () => {
     setCurrentPage(totalPages - 1);
+  };
+
+  const handleCategoryChange = (e) => {
+    const categoriaId = e.target.value;
+    setSelectedCategory(categoriaId);
+    setSelectedSubcategory(''); // Resetear la subcategoría seleccionada cuando cambia la categoría
+  };
+
+  const handleSubcategoryChange = (e) => {
+    setSelectedSubcategory(e.target.value);
   };
 
   return (
@@ -255,6 +295,7 @@ const ActualizarPrecios = () => {
         <div className="mb-3">
           {selectedOption === 'proveedor' && (
             <select className="form-select" onChange={(e) => setSearchTerm(e.target.value)}>
+              <option value="">Seleccione un proveedor</option>
               {proveedores.map(proveedor => (
                 <option key={proveedor.id} value={proveedor.id}>
                   {proveedor.razonSocial}
@@ -263,13 +304,27 @@ const ActualizarPrecios = () => {
             </select>
           )}
           {selectedOption === 'categoria' && (
-            <select className="form-select" onChange={(e) => setSearchTerm(e.target.value)}>
-              {categorias.map(categoria => (
-                <option key={categoria.id} value={categoria.id}>
-                  {categoria.descripcion} {/* Asegúrate de usar la propiedad correcta aquí */}
-                </option>
-              ))}
-            </select>
+            <>
+              <select className="form-select mb-3" onChange={handleCategoryChange} value={selectedCategory}>
+                <option value="">Seleccione una categoría</option>
+                {categorias.map(categoria => (
+                  <option key={categoria.id} value={categoria.id}>
+                    {categoria.descripcion}
+                  </option>
+                ))}
+              </select>
+              {selectedCategory && Array.isArray(subcategorias) && subcategorias.length > 0 && (
+  <select className="form-select" onChange={handleSubcategoryChange} value={selectedSubcategory}>
+    <option value="">Seleccione una subcategoría</option>
+    {subcategorias.map(subcategoria => (
+      <option key={subcategoria.idSubCategoria} value={subcategoria.idSubCategoria}>
+        {subcategoria.descripcion}
+      </option>
+    ))}
+  </select>
+)}
+
+            </>
           )}
           {selectedOption === 'descripcion' && (
             <input
