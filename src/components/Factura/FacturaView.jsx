@@ -71,7 +71,7 @@ const FacturaView = () => {
     };
 
     fetchCliente();
-  }, [idCliente, token]); // Esta llamada a `useEffect` depende de idCliente
+  },); // Esta llamada a `useEffect` depende de idCliente
 
   return (
     <>

@@ -6,8 +6,9 @@ import search from '../../assets/lupa.png';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 
 const FacturaScreen = () => {
-  const [facturas, setFacturas] = useState([]); // Inicializamos como array vacío
-  const [filteredFacturas, setFilteredFacturas] = useState([]); // También inicializamos como array vacío
+  const [facturas, setFacturas] = useState([]);
+  const [filteredFacturas, setFilteredFacturas] = useState([]);
+  const [clientes, setClientes] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -31,9 +32,24 @@ const FacturaScreen = () => {
           throw new Error('Error al obtener las facturas');
         }
         const data = await response.json();
-        setFacturas(data || []); // Asegúrate de que 'data' es un array
-        setFilteredFacturas(data || []); // Inicializa 'filteredFacturas' con un array
-        // setTotalPages(data.totalPages); // Si usas paginación en el servidor
+        setFacturas(data || []);
+        setFilteredFacturas(data || []);
+        // Aquí obtienes los IDs de clientes y haces las solicitudes necesarias
+        const clientePromises = data.map(factura =>
+          fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${factura.cliente}`)
+            .then(res => res.json())
+            .then(clienteData => ({
+              id: factura.cliente,
+              razonSocial: clienteData.razonSocial,
+            }))
+        );
+
+        const clientesData = await Promise.all(clientePromises);
+        const clientesMap = {};
+        clientesData.forEach(cliente => {
+          clientesMap[cliente.id] = cliente.razonSocial;
+        });
+        setClientes(clientesMap);
       } catch (error) {
         console.error('Error fetching facturas:', error);
       }
@@ -62,7 +78,7 @@ const FacturaScreen = () => {
         throw new Error('Error al eliminar la factura');
       }
       setFacturas(facturas.filter(factura => factura.id !== id));
-      setFilteredFacturas(filteredFacturas.filter(factura => factura.id !== id)); // Actualizar facturas filtradas
+      setFilteredFacturas(filteredFacturas.filter(factura => factura.id !== id));
     } catch (error) {
       console.error('Error deleting factura:', error);
     }
@@ -122,26 +138,23 @@ const FacturaScreen = () => {
               <th className="th">#ID de Factura</th>
               <th className="th">Fecha</th>
               <th className="th">Tipo de Factura</th>
-              <th className="th">ID Cliente</th>
+              <th className="th">Razón Social Cliente</th>
               <th className="th">Total</th>
               <th className="th">Estado</th>
               <th className="th">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            
             {filteredFacturas.length > 0 ? (
               filteredFacturas.map((factura) => (
-                
                 <tr key={factura.id}>
-                                    {factura.tipoFactura == 1 ? factura.tipoFactura = 'A' : null}
-                                    {factura.tipoFactura == 2 ? factura.tipoFactura = 'N' : null}
+                  {factura.tipoFactura == 1 ? factura.tipoFactura = 'A' : null}
+                  {factura.tipoFactura == 2 ? factura.tipoFactura = 'N' : null}
 
                   <td className="td">{factura.id}</td>
                   <td className="td">{new Date(factura.fecha).toLocaleString()}</td>
-
                   <td className="td">{factura.tipoFactura}</td>
-                  <td className="td">{factura.cliente}</td>
+                  <td className="td">{clientes[factura.cliente] || factura.cliente}</td>
                   <td className="td">{factura.total}</td>
                   <td className="td">{factura.estado}</td>
                   <td className="td">
@@ -149,10 +162,6 @@ const FacturaScreen = () => {
                       className="icon view-icon" 
                       onClick={() => handleViewFactura(factura.id)}
                     />
-                    {/* <FaEdit 
-                      className="icon edit-icon" 
-                      onClick={() => handleEdit(factura.id)} 
-                    /> */}
                     <FaTrash 
                       className="icon delete-icon" 
                       onClick={() => handleDelete(factura.id)} 

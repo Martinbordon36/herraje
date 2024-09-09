@@ -68,6 +68,8 @@ const Navbar = () => {
               <ul className="dropdown-menu" aria-labelledby="productosDropdown">
                 <li><Link className="dropdown-item" to="/productos">Listado de Productos</Link></li>
                 <li><Link className="dropdown-item" to="/actualizarPrecios">Actualizar Precios Productos</Link></li>
+                <li><Link className="dropdown-item" to="/generarExcel">Generar lista de precios</Link></li>
+
               </ul>
             </li>
             <li className="nav-item dropdown">
@@ -75,7 +77,7 @@ const Navbar = () => {
                 Zonas
               </Link>
               <ul className="dropdown-menu" aria-labelledby="productosDropdown">
-                <li><Link className="dropdown-item" to="/productos">Listado de Zonas</Link></li>
+                <li><Link className="dropdown-item" to="/zonas">Listado de Zonas</Link></li>
                 <li><Link className="dropdown-item" to="/actualizarPrecios">Crear Zonas</Link></li>
                 <li><Link className="dropdown-item" to="/modificarCoeficientes">Modificar Coeficientes</Link></li>
 

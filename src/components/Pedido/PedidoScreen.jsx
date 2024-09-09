@@ -8,6 +8,7 @@ import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 const PedidoScreen = () => {
   const [pedidos, setPedidos] = useState([]);
   const [filteredPedidos, setFilteredPedidos] = useState([]);
+  const [clientes, setClientes] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -35,6 +36,23 @@ const PedidoScreen = () => {
         setPedidos(data.content);
         setFilteredPedidos(data.content); // Inicializar pedidos filtrados
         setTotalPages(data.totalPages);
+
+        // Aquí obtienes los IDs de clientes y haces las solicitudes necesarias
+        const clientePromises = data.content.map(pedido =>
+          fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${pedido.idCliente}`)
+            .then(res => res.json())
+            .then(clienteData => ({
+              id: pedido.idCliente,
+              razonSocial: clienteData.razonSocial,
+            }))
+        );
+
+        const clientesData = await Promise.all(clientePromises);
+        const clientesMap = {};
+        clientesData.forEach(cliente => {
+          clientesMap[cliente.id] = cliente.razonSocial;
+        });
+        setClientes(clientesMap);
       } catch (error) {
         console.error('Error fetching pedidos:', error);
       }
@@ -88,7 +106,7 @@ const PedidoScreen = () => {
   const handleSearch = () => {
     setFilteredPedidos(
       pedidos.filter((pedido) =>
-        pedido.id.toString().includes(searchTerm) || pedido.idCliente.toString().includes(searchTerm)
+        pedido.id.toString().includes(searchTerm) || clientes[pedido.idCliente]?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
   };
@@ -100,66 +118,61 @@ const PedidoScreen = () => {
         <h1 className="title">Pedidos</h1>
         <button className="button" onClick={handleCreatePedido}>Crear Pedido</button>
 
+        <div className='container-search'>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Buscar por ID de pedido o Razón Social de cliente"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input-client"
+            />
+            <a onClick={handleSearch}>
+              <img src={search} className='search-button'/>
+            </a>
+          </div>
+        </div>
 
-   
-
-      <div className='container-search'>
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Buscar por ID de pedido o ID de cliente"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input-client"
-          />
-                  <a onClick={handleSearch}>
-            <img src={search} className='search-button'/>
-          </a>
-        {/* <button className="search-button" onClick={handleSearch}>Buscar</button> */}
-      </div>
-      </div>
-
-    
-      <div className="table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th className="th">#ID de pedido</th>
-              <th className="th">Fecha</th>
-              <th className="th">Fecha Actualización</th>
-              <th className="th">ID Cliente</th>
-              <th className="th">ID Usuario</th>
-              <th className="th">Enviado</th>
-              <th className="th">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPedidos.map((pedido) => (
-              <tr key={pedido.id}>
-                <td className="td">{pedido.id}</td>
-                <td className="td">{new Date(pedido.fecha).toLocaleString()}</td>
-                <td className="td">{pedido.fechaActualizacion ? new Date(pedido.fechaActualizacion).toLocaleString() : 'N/A'}</td>
-                <td className="td">{pedido.idCliente}</td>
-                <td className="td">{pedido.idUsuario}</td>
-                <td className="td">{pedido.enviado ? 'Sí' : 'No'}</td>
-                <td className="td">
-                  <FaEye 
+        <div className="table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th className="th">#ID de pedido</th>
+                <th className="th">Fecha</th>
+                <th className="th">Fecha Actualización</th>
+                <th className="th">Razón Social Cliente</th>
+                <th className="th">ID Usuario</th>
+                <th className="th">Enviado</th>
+                <th className="th">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPedidos.map((pedido) => (
+                <tr key={pedido.id}>
+                  <td className="td">{pedido.id}</td>
+                  <td className="td">{new Date(pedido.fecha).toLocaleString()}</td>
+                  <td className="td">{pedido.fechaActualizacion ? new Date(pedido.fechaActualizacion).toLocaleString() : 'N/A'}</td>
+                  <td className="td">{clientes[pedido.idCliente] || pedido.idCliente}</td>
+                  <td className="td">{pedido.idUsuario}</td>
+                  <td className="td">{pedido.enviado ? 'Sí' : 'No'}</td>
+                  <td className="td">
+                    <FaEye 
                       className="icon view-icon" 
                       onClick={() => handleViewPedido(pedido.id)}
-                   />
-                  <FaEdit 
-                    className="icon edit-icon" 
-                    onClick={() => handleEdit(pedido.id)} 
-                  />
-                  <FaTrash 
-                    className="icon delete-icon" 
-                    onClick={() => handleDelete(pedido.id)} 
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    />
+                    <FaEdit 
+                      className="icon edit-icon" 
+                      onClick={() => handleEdit(pedido.id)} 
+                    />
+                    <FaTrash 
+                      className="icon delete-icon" 
+                      onClick={() => handleDelete(pedido.id)} 
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -177,7 +190,6 @@ const PedidoScreen = () => {
           </button>
         </div>
       </div>
-
     </>
   );
 };

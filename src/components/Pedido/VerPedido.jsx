@@ -7,8 +7,8 @@ import logo from '../../assets/herrajelogo.jpeg';
 const VerPedido = () => {
   const { id } = useParams();
   const [pedido, setPedido] = useState(null);
-  const [cliente, setCliente] = useState(null); // Cambié el nombre a singular porque estamos manejando un solo cliente
-  const [idCliente, setIdCliente] = useState(null); // Cambié el nombre a singular
+  const [cliente, setCliente] = useState(null);
+  const [idCliente, setIdCliente] = useState(null);
   
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -31,8 +31,9 @@ const VerPedido = () => {
           throw new Error('Error al obtener la factura');
         }
         const data = await response.json();
+        console.log(JSON.stringify(data));
         setPedido(data);
-       // setIdCliente(data.cliente); // Aquí se establece el idCliente
+        setIdCliente(data.idCliente); // Aquí se establece el idCliente con el valor correcto
       } catch (error) {
         console.error('Error fetching factura:', error);
       }
@@ -41,7 +42,34 @@ const VerPedido = () => {
     fetchPedido();
   }, [id, token]);
 
- 
+  useEffect(() => {
+    const fetchCliente = async () => {
+      if (!token || !idCliente) {
+        return; // Asegurarse de que idCliente esté disponible
+      }
+
+      try {
+        const response = await fetch(
+          `http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${idCliente}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Error al obtener el cliente");
+        }
+        const data = await response.json();
+        console.log("Esto hay en clientes" + JSON.stringify(data));
+        setCliente(data); // Ahora se establece el cliente
+      } catch (error) {
+        console.error("Error fetching cliente:", error);
+      }
+    };
+    fetchCliente();
+  }, [idCliente, token]); // Cambié la dependencia a idCliente
 
   return (
     <>
@@ -65,6 +93,36 @@ const VerPedido = () => {
    
           </div>
         </header>
+
+        <section>
+          <div className="factura-client-info">
+            <div className="factura-client-info-header">
+              <div className="container1">
+                <p>
+                  <strong>CUIT:</strong> {cliente?.cuit}{" "}
+                </p>
+                <p>
+                  <strong>Condición frente al IVA:</strong> {cliente?.ivtCodigo}{" "}
+                </p>
+                <p>
+                  <strong>Condición de venta:</strong>{" "}
+                </p>
+              </div>
+              <div className="container2">
+                <p>
+                  <strong>Razón social:</strong> {cliente?.razonSocial}{" "}
+                </p>
+                <p>
+                  <strong>Domicilio:</strong> {cliente?.domicilio}{" "}
+                </p>
+                <p>
+                  <strong>Vendedor: {pedido?.vendedor}</strong>{" "}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
 
       
         <section className="factura-table">
