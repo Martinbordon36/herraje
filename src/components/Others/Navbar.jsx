@@ -83,6 +83,15 @@ const Navbar = () => {
 
               </ul>
             </li>
+            <li className="nav-item dropdown">
+              <Link className="nav-link dropdown-toggle" to="#" id="productosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                FacturaCompras
+              </Link>
+              <ul className="dropdown-menu" aria-labelledby="productosDropdown">
+                <li><Link className="dropdown-item" to="/crearFacturaCompra">Crear FacturaCompras</Link></li>
+                <li><Link className="dropdown-item" to="/FacturaSCompra">Ver Todas</Link></li>
+              </ul>
+            </li>
           </ul>
           <button className="btn btn-outline-light btn-cerrar" onClick={handleLogout}>Cerrar Sesión</button>
         </div>

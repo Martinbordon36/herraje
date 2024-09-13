@@ -141,33 +141,64 @@ const CoeficienteScreen = () => {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/coeficiente/${editingCoeficiente.id}`, {
-        method: 'PUT',
+      if (!editingCoeficiente) {
+        throw new Error("No hay ningún coeficiente en edición.");
+      }
+  
+      // Validar que el coeficiente en edición tiene un ID válido
+      if (!editingCoeficiente.id) {
+        throw new Error("El ID del coeficiente es requerido para la actualización.");
+      }
+  
+      // Crear el arreglo de coeficientes, que contendrá todos los datos actuales pero solo modificará `descripcionCoeficiente`
+      const coeficienteData = coeficientes.map((coef) => {
+        if (!coef.id) {
+          throw new Error(`El coeficiente con idProveedor ${coef.proveedor.razonSocial} no tiene un id válido.`);
+        }
+  
+        // Solo actualiza el coeficiente que se está editando
+        if (coef.id === editingCoeficiente.id) {
+          return {
+            id: editingCoeficiente.id, // Usamos `id` en lugar de `idCoeficiente`
+            idProveedor: editingCoeficiente.idProveedor, // Se mantienen los mismos
+            idZona: editingCoeficiente.idZona,           // Se mantienen los mismos
+            coeficienteTotal: editingCoeficiente.coeficienteTotal, // Se mantienen los mismos
+            descripcionCoeficiente: editingCoeficiente.descripcionCoeficiente // Este es el único que se edita
+          };
+        } else {
+          // Los demás coeficientes se mantienen igual
+          return coef;
+        }
+      });
+  
+      console.log("Datos que se enviarán:", coeficienteData);
+  
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/coeficiente`, {
+        method: 'PUT', // Usamos PUT para la actualización
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(editingCoeficiente),
+        body: JSON.stringify(coeficienteData), // Enviar el arreglo completo de coeficientes
       });
+  
       if (!response.ok) {
-        throw new Error('Error al guardar el coeficiente');
+        const responseText = await response.text();
+        throw new Error(`Error en la API: ${response.status} - ${response.statusText}. Respuesta: ${responseText}`);
       }
-
-      // Actualiza el estado con el coeficiente editado
-      setCoeficientes((prevCoeficientes) =>
-        prevCoeficientes.map((coef) =>
-          coef.id === editingCoeficiente.id ? editingCoeficiente : coef
-        )
-      );
-      setFilteredCoeficientes((prevCoeficientes) =>
-        prevCoeficientes.map((coef) =>
-          coef.id === editingCoeficiente.id ? editingCoeficiente : coef
-        )
-      );
-      setEditingCoeficiente(null); // Salir del modo edición
+  
+      const updatedCoeficientes = await response.json();
+  
+      // Actualizamos el estado con los coeficientes actualizados
+      setCoeficientes(updatedCoeficientes); // Asumimos que el backend retorna la lista completa actualizada
+      setFilteredCoeficientes(updatedCoeficientes); // Actualizamos también la lista filtrada
+      setEditingCoeficiente(null); // Salimos del modo edición
     } catch (error) {
       console.error('Error saving coeficiente:', error);
     }
   };
+  
+  
+  
 
   const handleDelete = (id) => {
     setCoeficienteIdAEliminar(id);

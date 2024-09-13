@@ -1,0 +1,241 @@
+.container {
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse; /* Asegura que las celdas compartan los bordes */
+  }
+
+  .button{
+    background-color: orange;
+    padding:8px;
+    color: white;
+    font-weight: 700;
+    border-radius: 10px;
+  }
+  
+  .th, .td {
+    padding: 10px;
+    border: 1px solid #ddd; /* Añadir bordes a las celdas */
+    text-align: left;
+    white-space: nowrap; /* Evita que el contenido se desborde */
+  }
+  
+  .button {
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .th, .td {
+      font-size: 12px; /* Ajustar tamaño de fuente para pantallas pequeñas */
+    }
+  }
+  
+  .edit-icon {
+    color: blue;
+    cursor: pointer;
+  }
+  
+  .delete-icon {
+    color: red;
+    cursor: pointer;
+  }
+
+  .icon {
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .edit-icon {
+    color: blue;
+  }
+  
+  .delete-icon {
+    color: red;
+  }
+
+  .button-subcategoria{
+    color: white;
+    background-color: blueviolet;
+    border-radius: 10px;
+  }
+  
+
+  .button-back {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .button-back:hover {
+    background-color: #0056b3;
+  }
+  
+  .pagination {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .pagination span {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .pagination-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin:0 auto;
+    
+  }
+
+  
+  
+  .button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+/*   
+  .button:disabled {
+    background-color: #411818;
+    cursor: not-allowed;
+  }
+
+  .button:active{
+    background-color: #411818;
+    cursor: not-allowed;
+  } */
+  
+  .numpag{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin:0 auto;
+  }
+
+  .prueba1{
+    display: block;
+  }
+
+  .prueba2{
+    
+  }
+
+  #bt{
+    background-color: #0056b3;
+  }
+
+
+  .container-centered {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .table-container {
+    margin: 0 auto;
+    max-width: 90%; /* Ajusta este valor según sea necesario */
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th, .table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .table th {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #ddd;
+  }
+  
+  .button {
+    margin-bottom: 20px;
+  }
+  
+  .icon {
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .edit-icon {
+    color: #007bff;
+  }
+  
+  .delete-icon {
+    color: #dc3545;
+  }
+  
+  .title{
+    margin-top: 60px;
+  }
+
+   .search-container{
+    background-color: #faf7f7;
+    margin-left: 100px;
+    max-width: 400px;
+  }
+
+  .search-input-client{
+    background-color: #faf7f7;
+    padding: 20px;
+    border: none;
+  }
+
+
+  .search-button{
+    padding:10px;
+    width: 40px;
+    cursor: pointer;
+    background-color: #faf7f7;
+    
+
+  }
+
+  .table-container {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
+  }
+  
+  .table {
+    width: 100%;
+    max-width: 1200px; /* Limita el ancho máximo de la tabla */
+    border-collapse: collapse;
+  }
+  
+  .th, .td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    max-width: 200px; /* Ajusta este valor según tus necesidades */
+    white-space: nowrap; /* Evita que el texto se vaya a la siguiente línea */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Muestra "..." si el contenido es demasiado largo */
+  }
+  
+  /* Opcional: Asegúrate de que la tabla no sea más ancha que la pantalla */
+  .table-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  

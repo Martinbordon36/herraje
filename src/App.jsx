@@ -26,6 +26,9 @@ import CrearPresupuesto from './components/Presupuesto/CrearPresupuesto';
 import CoeficienteScreen from './components/Zonas/CoeficienteScreen';
 import ZonasView from './components/Zonas/ZonasView';
 import ListaPrecioExcel from './components/Producto/ListaPrecioExcel';
+import CrearFacturaCompra from './components/FacturaCompra/CrearFacturaCompra';
+import FacturaCompraScreen from './components/FacturaCompra/FacturaCompraScreen';
+import FacturaCompraView from './components/FacturaCompra/FacturaCompraView';
 
 const App = () => {
   return (
@@ -59,6 +62,10 @@ const App = () => {
         <Route path="/modificarCoeficientes" element={<CoeficienteScreen />} />
         <Route path="/zonas" element={<ZonasView />} />
         <Route path="/generarExcel" element={<ListaPrecioExcel />} />
+        <Route path="/crearFacturaCompra" element={<CrearFacturaCompra />} />
+        <Route path="/FacturasCompra" element={<FacturaCompraScreen/>} />
+        <Route path="/verFacturaCompra/:id" element={<FacturaCompraView />} />
+
 
       </Routes>
       <Footer/>

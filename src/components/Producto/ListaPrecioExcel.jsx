@@ -95,7 +95,7 @@ const ListaPrecioExcel = () => {
     XLSX.utils.sheet_add_aoa(ws, [['Código', 'Descripción', 'Precio Unitario']], { origin: 'A4' });
 
     // Agregar los productos a partir de la quinta fila
-    const productosData = productos.map((producto) => [producto.codigo, producto.descripcion, producto.costo]);
+    const productosData = productos.map((producto) => [producto.codigo, producto.descripcion, producto.precioVenta.toFixed(2)]);
     XLSX.utils.sheet_add_aoa(ws, productosData, { origin: 'A5' });
 
     const wb = XLSX.utils.book_new();
