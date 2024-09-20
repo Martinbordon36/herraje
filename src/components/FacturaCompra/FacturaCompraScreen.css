@@ -239,3 +239,7 @@
     overflow-x: auto;
   }
   
+  .provider-details{
+    background-color: rgb(240, 240, 214);
+    display: flex;
+  }

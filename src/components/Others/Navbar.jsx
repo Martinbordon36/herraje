@@ -47,9 +47,12 @@ const Navbar = () => {
                 <li><Link className="dropdown-item" to="/pedidos">Ver Pedidos</Link></li>
                 <li><Link className="dropdown-item" to="/facturas">Ver Facturas</Link></li>
                 <li><Link className="dropdown-item" to="/facturas">Ver Presupuestos</Link></li>
+                <li><Link className="dropdown-item" to="/crearFacturaCompra">Crear FacturaCompras</Link></li>
+                <li><Link className="dropdown-item" to="/FacturasCompra">Ver Todas facturas de compra</Link></li>
                 <li><Link className="dropdown-item" to="/nuevoPedido">Crear Pedidos</Link></li>
                 <li><Link className="dropdown-item" to="/nuevoPresupuesto">Crear Presupuesto</Link></li>
                 <li><Link className="dropdown-item" to="/crearFactura">Crear Factura</Link></li>
+  
               </ul>
             </li>
             <li className="nav-item dropdown">
@@ -78,20 +81,11 @@ const Navbar = () => {
               </Link>
               <ul className="dropdown-menu" aria-labelledby="productosDropdown">
                 <li><Link className="dropdown-item" to="/zonas">Listado de Zonas</Link></li>
-                <li><Link className="dropdown-item" to="/actualizarPrecios">Crear Zonas</Link></li>
                 <li><Link className="dropdown-item" to="/modificarCoeficientes">Modificar Coeficientes</Link></li>
 
               </ul>
             </li>
-            <li className="nav-item dropdown">
-              <Link className="nav-link dropdown-toggle" to="#" id="productosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                FacturaCompras
-              </Link>
-              <ul className="dropdown-menu" aria-labelledby="productosDropdown">
-                <li><Link className="dropdown-item" to="/crearFacturaCompra">Crear FacturaCompras</Link></li>
-                <li><Link className="dropdown-item" to="/FacturaSCompra">Ver Todas</Link></li>
-              </ul>
-            </li>
+
           </ul>
           <button className="btn btn-outline-light btn-cerrar" onClick={handleLogout}>Cerrar Sesión</button>
         </div>

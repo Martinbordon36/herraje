@@ -239,3 +239,10 @@
     overflow-x: auto;
   }
   
+  .container-search a{
+    cursor: pointer;
+  }
+
+  .th.active {
+  font-weight: bold;
+}

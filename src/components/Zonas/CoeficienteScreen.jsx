@@ -23,7 +23,7 @@ const CoeficienteScreen = () => {
     idProveedor: '',
     idZona: '',
     coeficienteTotal: '',
-    descripcionCoeficiente: ''
+    detalleCoeficiente: ''
   });
   const [proveedores, setProveedores] = useState([]);
   const [zonas, setZonas] = useState([]);
@@ -97,7 +97,7 @@ const CoeficienteScreen = () => {
       idProveedor: parseInt(newCoeficiente.idProveedor),
       idZona: parseInt(newCoeficiente.idZona),
       coeficienteTotal: parseFloat(newCoeficiente.coeficienteTotal),
-      descripcionCoeficiente: newCoeficiente.descripcionCoeficiente
+      detalleCoeficiente: newCoeficiente.detalleCoeficiente
     };
 
     try {
@@ -116,11 +116,11 @@ const CoeficienteScreen = () => {
       setFilteredCoeficientes([...filteredCoeficientes, createdCoeficiente]);
       setShowCreateModal(false); // Ocultar modal después de guardar
       setNewCoeficiente({
-        idCoeficiente: '',
+        id: '',
         idProveedor: '',
         idZona: '',
         coeficienteTotal: '',
-        descripcionCoeficiente: ''
+        detalleCoeficiente: ''
       });
     } catch (error) {
       console.error('Error saving new coeficiente:', error);
@@ -129,6 +129,7 @@ const CoeficienteScreen = () => {
 
   const handleEdit = (coeficiente) => {
     setEditingCoeficiente({ ...coeficiente }); // Clona el coeficiente que se va a editar
+    console.log(editingCoeficiente);
   };
 
   const handleInputChange = (e) => {
@@ -158,12 +159,13 @@ const CoeficienteScreen = () => {
   
         // Solo actualiza el coeficiente que se está editando
         if (coef.id === editingCoeficiente.id) {
+          console.log(editingCoeficiente.proveedor.id);
           return {
             id: editingCoeficiente.id, // Usamos `id` en lugar de `idCoeficiente`
-            idProveedor: editingCoeficiente.idProveedor, // Se mantienen los mismos
-            idZona: editingCoeficiente.idZona,           // Se mantienen los mismos
+            idProveedor: editingCoeficiente.proveedor.id, // Se mantienen los mismos
+            idZona: editingCoeficiente.zona.id,           // Se mantienen los mismos
             coeficienteTotal: editingCoeficiente.coeficienteTotal, // Se mantienen los mismos
-            descripcionCoeficiente: editingCoeficiente.descripcionCoeficiente // Este es el único que se edita
+            detalleCoeficiente: editingCoeficiente.detalleCoeficiente // Este es el único que se edita
           };
         } else {
           // Los demás coeficientes se mantienen igual
@@ -179,8 +181,10 @@ const CoeficienteScreen = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(coeficienteData), // Enviar el arreglo completo de coeficientes
+        
       });
-  
+      console.log(coeficienteData);
+
       if (!response.ok) {
         const responseText = await response.text();
         throw new Error(`Error en la API: ${response.status} - ${response.statusText}. Respuesta: ${responseText}`);
@@ -424,8 +428,8 @@ const CoeficienteScreen = () => {
                   <input
                     type="text"
                     className="form-control"
-                    value={newCoeficiente.descripcionCoeficiente}
-                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, descripcionCoeficiente: e.target.value })}
+                    value={newCoeficiente.detalleCoeficiente}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, detalleCoeficiente: e.target.value })}
                   />
                 </div>
               </div>

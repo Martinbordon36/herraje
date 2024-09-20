@@ -99,12 +99,12 @@ const FacturaScreen = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-
   const handleSearch = () => {
     setFilteredFacturas(
       facturas.filter((factura) =>
         factura.id.toString().includes(searchTerm) || 
-        factura.cliente.toString().includes(searchTerm)
+        factura.cliente.toString().includes(searchTerm) || // Buscar por ID del cliente
+        clientes[factura.cliente]?.toLowerCase().includes(searchTerm.toLowerCase()) // Buscar por razón social del cliente
       )
     );
   };

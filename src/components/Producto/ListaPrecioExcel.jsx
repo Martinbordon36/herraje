@@ -125,6 +125,7 @@ const ListaPrecioExcel = () => {
         {/* Botón para exportar a Excel */}
         <div className="container-search">
           <a onClick={handleExportExcel}>
+              Generar lista de precios en formato .XLS
             <img src={excel} className="search-button" alt="Descargar" />
           </a>
         </div>
