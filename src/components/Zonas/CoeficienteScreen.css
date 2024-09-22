@@ -207,6 +207,7 @@
     width: 40px;
     cursor: pointer;
     background-color: #faf7f7;
+    margin-left: 20px;
     
 
   }
@@ -240,13 +241,17 @@
   }
   
   .button-edit {
-    padding: 10px 20px;
+    margin-top: 15px;
     background-color: #a1a556;
+    padding:8px;
     color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor:pointer;
+    width:150px;
+    height: 50px;
   }
+   container-botones
   
   .button-edit:hover {
     background-color: #a1a556;
@@ -266,3 +271,7 @@
     cursor: pointer;
   }
 
+.container-botones{
+  display: flex;
+  line-height: 1.5;
+}

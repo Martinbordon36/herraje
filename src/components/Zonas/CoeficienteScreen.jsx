@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import './CoeficienteScreen.css';
+import search from '../../assets/lupa.png';
 
 const CoeficienteScreen = () => {
   const [coeficientes, setCoeficientes] = useState([]);
@@ -8,6 +9,17 @@ const CoeficienteScreen = () => {
   const [isEditing, setIsEditing] = useState(false);  // Estado para alternar entre vista y edición
   const [proveedores, setProveedores] = useState([]);
   const [zonas, setZonas] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false); // Estado para mostrar/ocultar modal de creación
+  const [newCoeficiente, setNewCoeficiente] = useState({
+    idProveedor: '',
+    idZona: '',
+    coeficienteTotal: '',
+    descripcionCoeficiente: ''
+  });
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -129,16 +141,91 @@ const CoeficienteScreen = () => {
     }
   };
 
+
+  const handleCreateCoeficiente = () => {
+    setShowCreateModal(true); // Mostrar modal de creación
+  };
+  const handleNewCoeficienteChange = (e) => {
+    const { name, value } = e.target;
+    setNewCoeficiente(prevState => ({
+      ...prevState,
+      [name]: value,
+      coeficienteTotal: name === 'descripcionCoeficiente' ? calcularCoeficienteTotal(value) : prevState.coeficienteTotal
+    }));
+  };
+  const createCoeficiente = async () => {
+    const newCoeficienteData = {
+      idProveedor: newCoeficiente.idProveedor,
+      idZona: newCoeficiente.idZona,
+      coeficienteTotal: newCoeficiente.coeficienteTotal,
+      descripcionCoeficiente: newCoeficiente.descripcionCoeficiente
+    };
+
+    console.log(newCoeficienteData);
+
+    try {
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/coeficiente`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCoeficienteData)
+      });
+      console.log(newCoeficienteData)
+
+      if (!response.ok) {
+        const errorDetails = await response.json(); // Intentar obtener el cuerpo de la respuesta en formato JSON
+        throw new Error(`Error al crear el coeficiente: ${response.status} - ${errorDetails.message || 'Detalles no disponibles'}`);
+      }
+
+      alert('Coeficiente creado con éxito');
+      setIsCreating(false); // Cerrar modal después de la creación
+    } catch (error) {
+      console.error('Error creating coeficiente:', error);
+    }
+  };
+
+  const handleSearch = () => {
+    setFilteredCoeficientes(
+      coeficientes.filter((coef) =>
+        coef.proveedor.razonSocial.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  };
+
   return (
     <>
       <Navbar />
+      <br/>
       <div className="container">
         <h1 className="title">Coeficientes</h1>
         {/* Botón para alternar entre modo de vista y edición */}
+        
+        <div className='container-botones'>
+        <button className="button" onClick={handleCreateCoeficiente}>Crear Coeficiente</button>
+
         <button onClick={() => setIsEditing(!isEditing)} className='button-edit'>
           {isEditing ? 'Ver' : 'Editar'}
         </button>
+        </div>
+        <div className="container-search">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por proveedor"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input-client"
+          />
+          <a onClick={handleSearch}>
+            <img src={search} className='search-button'/>
+          </a>
+        </div>
       </div>
+
+      </div>
+
+
 
       <div className="table-container">
         <table className="table">
@@ -182,6 +269,66 @@ const CoeficienteScreen = () => {
           </tbody>
         </table>
       </div>
+
+            {/* Modal de Creación */}
+            {showCreateModal && (
+        <div className="modal show" style={{ display: 'block' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Crear Coeficiente</h5>
+              </div>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label>Proveedor</label>
+                  <select
+                    className="form-control"
+                    value={newCoeficiente.idProveedor}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, idProveedor: e.target.value })}
+                  >
+                    <option value="">Seleccionar Proveedor</option>
+                    {proveedores.map((proveedor) => (
+                      <option key={proveedor.id} value={proveedor.id}>{proveedor.razonSocial}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Zona</label>
+                  <select
+                    className="form-control"
+                    value={newCoeficiente.idZona}
+                    onChange={(e) => setNewCoeficiente({ ...newCoeficiente, idZona: e.target.value })}
+                  >
+                    <option value="">Seleccionar Zona</option>
+                    {zonas.map((zona) => (
+                      <option key={zona.id} value={zona.id}>{zona.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+                <label>Descripción Coeficiente:</label>
+            <input
+              type="text"
+              name="descripcionCoeficiente"
+              value={newCoeficiente.descripcionCoeficiente}
+              onChange={handleNewCoeficienteChange}
+            />
+            <label>Coeficiente Total:</label>
+            <input
+              type="text"
+              name="coeficienteTotal"
+              value={newCoeficiente.coeficienteTotal}
+              readOnly
+            />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowCreateModal(false)}>Cancelar</button>
+                <button type="button" className="btn btn-primary" onClick={createCoeficiente}>Guardar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 };
