@@ -239,3 +239,30 @@
     overflow-x: auto;
   }
   
+  .button-edit {
+    padding: 10px 20px;
+    background-color: #a1a556;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .button-edit:hover {
+    background-color: #a1a556;
+  }
+  
+  .button-edit:active {
+    background-color: #a1a556;
+  }
+  
+    
+  .button-guardar {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+

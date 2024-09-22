@@ -6,8 +6,6 @@ const CoeficienteScreen = () => {
   const [coeficientes, setCoeficientes] = useState([]);
   const [filteredCoeficientes, setFilteredCoeficientes] = useState([]);
   const [isEditing, setIsEditing] = useState(false);  // Estado para alternar entre vista y edición
-  const [proveedores, setProveedores] = useState([]);
-  const [zonas, setZonas] = useState([]);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -30,39 +28,7 @@ const CoeficienteScreen = () => {
       }
     };
 
-    const fetchProveedores = async () => {
-      try {
-        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        const data = await response.json();
-        setProveedores(data);
-      } catch (error) {
-        console.error('Error fetching proveedores:', error);
-      }
-    };
-
-    const fetchZonas = async () => {
-      try {
-        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/zona`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        const data = await response.json();
-        setZonas(data);
-      } catch (error) {
-        console.error('Error fetching zonas:', error);
-      }
-    };
-
     fetchCoeficientes();
-    fetchProveedores();
-    fetchZonas();
 
   }, [token]);
 
