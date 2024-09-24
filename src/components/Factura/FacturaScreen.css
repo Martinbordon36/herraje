@@ -239,3 +239,114 @@
     overflow-x: auto;
   }
   
+  .container-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+  }
+  
+  .left-panel, .right-panel {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .th, .td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .btn-pay {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .btn-pay:hover {
+    background-color: #45a049;
+  }
+  
+  .btn-submit {
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .btn-submit:hover {
+    background-color: #007bb5;
+  }
+  
+  .payment-form select, .payment-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    
+  }
+
+  .payment-form {
+    margin-top: 40px;
+  }
+  
+  h1.title {
+    color: #333;
+    font-size: 24px;
+  }
+  
+  h3 {
+    color: #444;
+  }
+
+/* Estilo moderno para el select */
+.select-pay {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  color: #333;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+/* Cambiar el borde y color cuando el select está enfocado */
+.select-pay:focus {
+  border-color: #008CBA;
+  outline: none;
+}
+
+/* Estilo para las opciones dentro del select */
+.select-pay option {
+  padding: 10px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+}

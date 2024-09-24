@@ -3,6 +3,9 @@ import Navbar from '../Others/Navbar';
 import './Proveedores.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../Others/Footer';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Proveedores = () => {
   const [proveedor, setProveedor] = useState({
@@ -142,10 +145,14 @@ const Proveedores = () => {
     })
     .then(data => {
       console.log(id ? 'Proveedor editado:' : 'Proveedor creado:', data);
+      toast.success(id ? 'Proveedor editado con éxito' : 'Proveedor creado con éxito'); // Notificación de éxito
+
       setShowModal(true);
     })
     .catch(error => {
       console.error('Error:', error);
+      toast.error(id ? 'Error al editar el proveedor' : 'Error al crear el proveedor'); // Mostrar error en el toast
+
     });
   };
 
@@ -501,6 +508,7 @@ const Proveedores = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
 
 
       {showModal && (
