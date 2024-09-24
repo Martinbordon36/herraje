@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
-import './FacturaScreen.css';
+import './FacturaScreen.css'; // Puedes mantener el mismo estilo o crear uno para proveedores
 import search from '../../assets/lupa.png';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaTrash, FaEye } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
 
-const FacturaScreen = () => {
-  
+const FacturaProveedores = () => {
+
   const [facturas, setFacturas] = useState([]);
   const [filteredFacturas, setFilteredFacturas] = useState([]);
-  const [clientes, setClientes] = useState({});
+  const [proveedores, setProveedores] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+  const { id } = useParams();  // Obtener el ID del proveedor desde la URL
 
   useEffect(() => {
     const fetchFacturas = async () => {
@@ -23,53 +25,60 @@ const FacturaScreen = () => {
         return;
       }
       try {
-        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/facturaventa`, {
+        // Obtienes todas las facturas de proveedores
+        const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/facturacompra`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           },
         });
         if (!response.ok) {
-          throw new Error('Error al obtener las facturas');
+          throw new Error('Error al obtener las facturas de proveedores');
         }
         const data = await response.json();
-        setFacturas(data || []);
-        setFilteredFacturas(data || []);
-        // Aquí obtienes los IDs de clientes y haces las solicitudes necesarias
-        const clientePromises = data.map(factura =>
-          fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${factura.cliente}`)
+
+        // Filtras las facturas por proveedor
+        const facturasFiltradas = data.filter(factura => factura.proveedor.toString() === id);
+
+        // Obtiene la razón social de cada proveedor usando el ID de proveedor
+        const proveedorPromises = facturasFiltradas.map(factura => 
+          fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/proveedor/${factura.proveedor}`)
             .then(res => res.json())
-            .then(clienteData => ({
-              id: factura.cliente,
-              razonSocial: clienteData.razonSocial,
+            .then(proveedorData => ({
+              id: factura.proveedor,
+              razonSocial: proveedorData.razonSocial
             }))
         );
 
-        const clientesData = await Promise.all(clientePromises);
-        const clientesMap = {};
-        clientesData.forEach(cliente => {
-          clientesMap[cliente.id] = cliente.razonSocial;
+        const proveedoresData = await Promise.all(proveedorPromises);
+        const proveedoresMap = {};
+        proveedoresData.forEach(proveedor => {
+          proveedoresMap[proveedor.id] = proveedor.razonSocial;
         });
-        setClientes(clientesMap);
+
+        setProveedores(proveedoresMap);
+        setFacturas(facturasFiltradas || []);
+        setFilteredFacturas(facturasFiltradas || []);
+        
       } catch (error) {
         console.error('Error fetching facturas:', error);
       }
     };
 
     fetchFacturas();
-  }, [token, currentPage]);
+  }, [token, id]);
 
   const handleCreateFactura = () => {
-    navigate('/crearFactura');
+    navigate('/crearFacturaProveedor'); // Cambia la ruta para crear una factura de proveedores
   };
 
   const handleEdit = (id) => {
-    navigate(`/editarfactura/${id}`);
+    navigate(`/editarfacturaProveedor/${id}`); // Cambia la ruta para editar la factura de proveedores
   };
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/facturaventa/${id}`, {
+      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/facturacompra/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -86,51 +95,39 @@ const FacturaScreen = () => {
   };
 
   const handleViewFactura = (id) => {
-    navigate(`/verFactura/${id}`);
+    navigate(`/verFacturaCompra/${id}`);
   };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
   const handleSearch = () => {
     setFilteredFacturas(
       facturas.filter((factura) =>
         factura.id.toString().includes(searchTerm) || 
-        factura.cliente.toString().includes(searchTerm) || // Buscar por ID del cliente
-        clientes[factura.cliente]?.toLowerCase().includes(searchTerm.toLowerCase()) // Buscar por razón social del cliente
+        factura.proveedor.toString().includes(searchTerm) || // Buscar por ID del proveedor
+        proveedores[factura.proveedor]?.toLowerCase().includes(searchTerm.toLowerCase()) // Buscar por razón social del proveedor
       )
     );
+  };
+
+  // Convertir tipoFactura en número y mapear el valor
+  const mapTipoFactura = (tipo) => {
+    const tipoNumerico = Number(tipo); // Convertimos el tipo a número
+    switch(tipoNumerico) {
+      case 1:
+        return 'A';
+      case 2:
+        return 'N';
+      case 3:
+        return '50 50'; // Si el tipo de factura es 3, devolver "50 50"
+      default:
+        return tipo; // Si no es 1, 2 o 3, devolver el valor tal como está
+    }
   };
 
   return (
     <>
       <Navbar />
-      <br/>
       <div className="container">
-        <h1 className="title">Facturas</h1>
-        <button className="button" onClick={handleCreateFactura}>Crear Factura</button>
-      <div className='container-search'>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Buscar por ID de factura o ID de cliente"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input-client"
-          />
-          <a onClick={handleSearch}>
-            <img src={search} className='search-button'/>
-          </a>
-        </div>
-      </div>
+        <h1 className="title"> Facturas de Proveedores</h1>
 
       <div className="table-container">
         <table className="table">
@@ -139,7 +136,7 @@ const FacturaScreen = () => {
               <th className="th">#ID de Factura</th>
               <th className="th">Fecha</th>
               <th className="th">Tipo de Factura</th>
-              <th className="th">Razón Social Cliente</th>
+              <th className="th">Razón Social Proveedor</th>
               <th className="th">Total</th>
               <th className="th">Estado</th>
               <th className="th">Acciones</th>
@@ -149,13 +146,10 @@ const FacturaScreen = () => {
             {filteredFacturas.length > 0 ? (
               filteredFacturas.map((factura) => (
                 <tr key={factura.id}>
-                  {factura.tipoFactura == 1 ? factura.tipoFactura = 'A' : null}
-                  {factura.tipoFactura == 2 ? factura.tipoFactura = 'N' : null}
-
                   <td className="td">{factura.id}</td>
                   <td className="td">{new Date(factura.fecha).toLocaleString()}</td>
-                  <td className="td">{factura.tipoFactura}</td>
-                  <td className="td">{clientes[factura.cliente] || factura.cliente}</td>
+                  <td className="td">{mapTipoFactura(factura.tipoFactura)}</td> {/* Se usa la función para mapear tipoFactura */}
+                  <td className="td">{proveedores[factura.proveedor] || factura.proveedor}</td>
                   <td className="td">{factura.total}</td>
                   <td className="td">{factura.estado}</td>
                   <td className="td">
@@ -172,7 +166,7 @@ const FacturaScreen = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="td">No se encontraron facturas.</td>
+                <td colSpan="7" className="td">No se encontraron facturas de proveedores.</td>
               </tr>
             )}
           </tbody>
@@ -180,22 +174,8 @@ const FacturaScreen = () => {
       </div>
       </div>
 
-      <div className="pagination-info">
-        <span className='numpag'>Página {currentPage } de {totalPages}</span>
-      </div>
-
-      <div className="pagination">
-        <div className="pagination-buttons">
-          <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 0}>
-            Página Anterior
-          </button>
-          <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages}>
-            Página Siguiente
-          </button>
-        </div>
-      </div>
     </>
   );
 };
 
-export default FacturaScreen;
+export default FacturaProveedores;

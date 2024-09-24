@@ -3,10 +3,11 @@ import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './FacturaScreen.css';
 import search from '../../assets/lupa.png';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaTrash, FaEye } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
 
-const FacturaScreen = () => {
-  
+const FacturaCliente = () => {
+
   const [facturas, setFacturas] = useState([]);
   const [filteredFacturas, setFilteredFacturas] = useState([]);
   const [clientes, setClientes] = useState({});
@@ -15,6 +16,7 @@ const FacturaScreen = () => {
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+  const { id } = useParams();  // Obtener el ID del cliente desde la URL
 
   useEffect(() => {
     const fetchFacturas = async () => {
@@ -23,6 +25,7 @@ const FacturaScreen = () => {
         return;
       }
       try {
+        // Obtienes todas las facturas
         const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/facturaventa`, {
           method: 'GET',
           headers: {
@@ -33,15 +36,17 @@ const FacturaScreen = () => {
           throw new Error('Error al obtener las facturas');
         }
         const data = await response.json();
-        setFacturas(data || []);
-        setFilteredFacturas(data || []);
-        // Aquí obtienes los IDs de clientes y haces las solicitudes necesarias
-        const clientePromises = data.map(factura =>
+
+        // Filtras las facturas por cliente
+        const facturasFiltradas = data.filter(factura => factura.cliente.toString() === id);
+
+        // Obtiene la razón social de cada cliente usando el ID de cliente
+        const clientePromises = facturasFiltradas.map(factura => 
           fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${factura.cliente}`)
             .then(res => res.json())
             .then(clienteData => ({
               id: factura.cliente,
-              razonSocial: clienteData.razonSocial,
+              razonSocial: clienteData.razonSocial
             }))
         );
 
@@ -50,14 +55,18 @@ const FacturaScreen = () => {
         clientesData.forEach(cliente => {
           clientesMap[cliente.id] = cliente.razonSocial;
         });
+
         setClientes(clientesMap);
+        setFacturas(facturasFiltradas || []);
+        setFilteredFacturas(facturasFiltradas || []);
+        
       } catch (error) {
         console.error('Error fetching facturas:', error);
       }
     };
 
     fetchFacturas();
-  }, [token, currentPage]);
+  }, [token, id]);
 
   const handleCreateFactura = () => {
     navigate('/crearFactura');
@@ -89,17 +98,6 @@ const FacturaScreen = () => {
     navigate(`/verFactura/${id}`);
   };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
   const handleSearch = () => {
     setFilteredFacturas(
       facturas.filter((factura) =>
@@ -110,27 +108,24 @@ const FacturaScreen = () => {
     );
   };
 
+  // Convertir tipoFactura en número y mapear el valor
+  const mapTipoFactura = (tipo) => {
+    const tipoNumerico = Number(tipo); // Convertimos el tipo a número
+    switch(tipoNumerico) {
+      case 1:
+        return 'A';
+      case 2:
+        return 'N';
+      default:
+        return tipo; // Si no es 1 o 2, devolver el valor tal como está
+    }
+  };
+
   return (
     <>
       <Navbar />
-      <br/>
       <div className="container">
-        <h1 className="title">Facturas</h1>
-        <button className="button" onClick={handleCreateFactura}>Crear Factura</button>
-      <div className='container-search'>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Buscar por ID de factura o ID de cliente"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input-client"
-          />
-          <a onClick={handleSearch}>
-            <img src={search} className='search-button'/>
-          </a>
-        </div>
-      </div>
+        <h1 className="title"> Facturas de Cliente</h1>
 
       <div className="table-container">
         <table className="table">
@@ -149,12 +144,9 @@ const FacturaScreen = () => {
             {filteredFacturas.length > 0 ? (
               filteredFacturas.map((factura) => (
                 <tr key={factura.id}>
-                  {factura.tipoFactura == 1 ? factura.tipoFactura = 'A' : null}
-                  {factura.tipoFactura == 2 ? factura.tipoFactura = 'N' : null}
-
                   <td className="td">{factura.id}</td>
                   <td className="td">{new Date(factura.fecha).toLocaleString()}</td>
-                  <td className="td">{factura.tipoFactura}</td>
+                  <td className="td">{mapTipoFactura(factura.tipoFactura)}</td> {/* Se usa la función para mapear tipoFactura */}
                   <td className="td">{clientes[factura.cliente] || factura.cliente}</td>
                   <td className="td">{factura.total}</td>
                   <td className="td">{factura.estado}</td>
@@ -181,21 +173,10 @@ const FacturaScreen = () => {
       </div>
 
       <div className="pagination-info">
-        <span className='numpag'>Página {currentPage } de {totalPages}</span>
-      </div>
-
-      <div className="pagination">
-        <div className="pagination-buttons">
-          <button className="button" id="bt" onClick={handlePreviousPage} disabled={currentPage === 0}>
-            Página Anterior
-          </button>
-          <button className="button" id="bt" onClick={handleNextPage} disabled={currentPage === totalPages}>
-            Página Siguiente
-          </button>
-        </div>
+        <span className='numpag'>Página {currentPage} de {totalPages}</span>
       </div>
     </>
   );
 };
 
-export default FacturaScreen;
+export default FacturaCliente;

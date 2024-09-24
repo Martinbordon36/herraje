@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importar iconos de react-icons
+import { FaEdit, FaTrash, FaEye, FaFileAlt } from 'react-icons/fa'; // Importar iconos de react-icons
 import search from '../../assets/lupa.png';
 import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 
@@ -191,6 +191,10 @@ const ProveedorScreen = () => {
                 <td className="td">{proveedor.provincia}</td>
                 <td className="td">{proveedor.localidad}</td>
                 <td className="td">
+                <FaFileAlt 
+                    className="icon view-icon" 
+                    onClick={() => navigate(`/facturaProveedores/${proveedor.id}`)} // Redirigir a la vista de facturas del cliente
+                  />
                   <FaEye 
                     className="icon view-icon" 
                     onClick={() => openDetailModal(proveedor)} 

@@ -29,6 +29,8 @@ import ListaPrecioExcel from './components/Producto/ListaPrecioExcel';
 import CrearFacturaCompra from './components/FacturaCompra/CrearFacturaCompra';
 import FacturaCompraScreen from './components/FacturaCompra/FacturaCompraScreen';
 import FacturaCompraView from './components/FacturaCompra/FacturaCompraView';
+import FacturaCliente from './components/Factura/FacturaCliente';
+import FacturaProveedores from './components/Factura/FacturaProveedores';
 
 const App = () => {
   return (
@@ -65,7 +67,8 @@ const App = () => {
         <Route path="/crearFacturaCompra" element={<CrearFacturaCompra />} />
         <Route path="/FacturasCompra" element={<FacturaCompraScreen/>} />
         <Route path="/verFacturaCompra/:id" element={<FacturaCompraView />} />
-
+        <Route path="/facturaCliente/:id" element={<FacturaCliente />} />
+        <Route path="/facturaProveedores/:id" element={<FacturaProveedores />} />
 
       </Routes>
       <Footer/>

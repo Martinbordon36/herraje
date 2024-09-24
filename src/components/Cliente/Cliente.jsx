@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaEye,FaFileAlt } from 'react-icons/fa';
 import Navbar from '../Others/Navbar';
 import '../Producto/ProductoScreen.css';
 import search from '../../assets/lupa.png';
@@ -193,6 +193,10 @@ const Cliente = () => {
                 <td className="td">{cliente.provincia}</td>
                 <td className="td">{cliente.localidad}</td>
                 <td className="td">
+                <FaFileAlt
+                    className="icon view-icon"
+                    onClick={() => navigate(`/facturaCliente/${cliente.id}`)} // Redirigir a la vista de facturas del cliente
+                    />                  
                   <FaEye
                     className="icon view-icon"
                     onClick={() => openDetailModal(cliente)}
