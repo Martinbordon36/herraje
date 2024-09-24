@@ -36,6 +36,7 @@ const FacturaCompraView = () => {
         const data = await response.json();
         setFactura(data);
         setIdProveedor(data.proveedor); // Cambiado a idProveedor
+        console.log(data.setFacturaCompraDetalles); // Verificar los detalles
       } catch (error) {
         console.error("Error fetching factura:", error);
       }
@@ -160,15 +161,15 @@ const FacturaCompraView = () => {
       </tr>
     </thead>
     <tbody>
-      {factura?.facturaCompraDetalles && factura.facturaCompraDetalles.length > 0 ? (
-        factura.facturaCompraDetalles.map((detalle, index) => (
+      {factura?.setFacturaCompraDetalles && factura.setFacturaCompraDetalles.length > 0 ? (
+        factura.setFacturaCompraDetalles.map((detalle, index) => (
           <tr key={index}>
             <td>{detalle.producto.codigo}</td>
             <td>{detalle.producto.descripcion}</td>
             <td>{detalle.cantidad}</td>
-            <td>{detalle.producto.precioCompra?.toFixed(2)}</td>
+            <td>{detalle.producto.precioVenta?.toFixed(2)}</td> {/* Ajustar según tu necesidad */}
             <td>{detalle.descuento}</td>
-            <td>{detalle.total?.toFixed(2)}</td>
+            <td>{(detalle.cantidad * detalle.producto.precioVenta)?.toFixed(2)}</td>
           </tr>
         ))
       ) : (
@@ -179,7 +180,6 @@ const FacturaCompraView = () => {
     </tbody>
   </table>
 </section>
-
 
         <section className="factura-totales">
           <table className="totales-table">
