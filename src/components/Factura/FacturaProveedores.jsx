@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
-import './FacturaScreen.css'; // Puedes mantener el mismo estilo o crear uno para proveedores
+import './FacturaScreen.css';
 import { FaEye } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 
@@ -12,6 +12,8 @@ const FacturaProveedores = () => {
   const [selectedFacturas, setSelectedFacturas] = useState([]); // Facturas seleccionadas para pago
   const [paymentType, setPaymentType] = useState(''); // Tipo de pago seleccionado
   const [chequeInfo, setChequeInfo] = useState(''); // Información del cheque en caso de ser seleccionado
+  const [monto, setMonto] = useState(''); // Monto a ingresar para pago parcial
+  const [montoPagoTotal, setMontoPagoTotal] = useState(false); // Estado para controlar si es "pago total"
   const [showPaymentForm, setShowPaymentForm] = useState(false); // Mostrar formulario de pago
   const [payments, setPayments] = useState([]); // Historial de pagos
   const token = localStorage.getItem('token');
@@ -62,6 +64,13 @@ const FacturaProveedores = () => {
     fetchFacturas();
   }, [token, id]);
 
+  const calcularMontoTotalFacturas = () => {
+    return selectedFacturas.reduce((total, facturaId) => {
+      const factura = facturas.find(f => f.id === facturaId);
+      return total + (factura ? factura.total : 0);
+    }, 0);
+  };
+
   const handleSelectFactura = (facturaId) => {
     setSelectedFacturas((prevSelected) =>
       prevSelected.includes(facturaId)
@@ -71,10 +80,54 @@ const FacturaProveedores = () => {
   };
 
   const handlePaymentSubmit = async () => {
+    const totalFacturas = calcularMontoTotalFacturas();
+
+    // Caso N° 1: Pago total con contado o transferencia
+    if (montoPagoTotal && (paymentType === 'contado' || paymentType === 'transferencia')) {
+      setMonto(totalFacturas); // El monto será el total de las facturas
+      // Continuar con el proceso de pago
+    }
+
+    // Caso N° 2: Pago con cheque (generar nota de crédito si el cheque es mayor)
+    if (montoPagoTotal && paymentType === 'cheque') {
+      if (chequeInfo > totalFacturas) {
+        const notaCredito = chequeInfo - totalFacturas;
+        alert(`Cheque mayor al total. Se generará una nota de crédito de ${notaCredito} pesos.`);
+        // Generar nota de crédito y registrar el pago
+      }
+      // Si el cheque es igual al total, registrar el pago directamente
+    }
+
+    // Caso N° 3: Pago parcial (repartir el monto entre las facturas seleccionadas)
+    if (!montoPagoTotal && monto > 0) {
+      let montoRestante = monto;
+
+      // Ordenar las facturas para pagar en secuencia
+      const facturasOrdenadas = selectedFacturas.map(facturaId => facturas.find(f => f.id === facturaId)).sort((a, b) => a.total - b.total);
+
+      for (let factura of facturasOrdenadas) {
+        if (montoRestante >= factura.total) {
+          montoRestante -= factura.total;
+          factura.estado = 'pagada'; // Pagar la factura completamente
+        } else {
+          // Pagar parte de la factura
+          factura.total -= montoRestante;
+          montoRestante = 0;
+          break;
+        }
+      }
+
+      if (paymentType === 'cheque' && chequeInfo > monto) {
+        alert('El monto del cheque no puede ser mayor al monto ingresado. Debe seleccionar un cheque exacto.');
+        return;
+      }
+    }
+
     try {
       const paymentData = {
-        facturaIds: selectedFacturas, // Pagar todas las facturas seleccionadas
+        facturaIds: selectedFacturas,
         tipoPago: paymentType,
+        monto: montoPagoTotal ? totalFacturas : monto,
         chequeInfo: paymentType === 'cheque' ? chequeInfo : null,
       };
 
@@ -97,15 +150,8 @@ const FacturaProveedores = () => {
         )
       );
 
-      // Agregar pago al historial
-      const newPayments = selectedFacturas.map((facturaId) => ({
-        id: facturaId,
-        tipoPago: paymentType,
-        monto: facturas.find(factura => factura.id === facturaId).total,
-        chequeInfo: paymentType === 'cheque' ? chequeInfo : null
-      }));
-      setPayments((prevPayments) => [...prevPayments, ...newPayments]);
-
+      setMonto(''); // Limpiar el campo de monto
+      setChequeInfo(''); // Limpiar el campo de cheque
       setSelectedFacturas([]); // Limpiar la selección después del pago
       setShowPaymentForm(false); // Ocultar el formulario de pago
     } catch (error) {
@@ -199,25 +245,57 @@ const FacturaProveedores = () => {
           {showPaymentForm && (
             <div className="payment-form">
               <h3>Pagar {selectedFacturas.length} Factura(s)</h3>
+              
+              <label>¿Es un pago total?</label>
+              <select
+                value={montoPagoTotal}
+                onChange={(e) => setMontoPagoTotal(e.target.value === 'true')}
+              >
+                <option value="false">Pagar otro monto</option>
+                <option value="true">Pagar el total</option>
+              </select>
+
+              {/* Si es un pago total, mostramos el total calculado */}
+              {montoPagoTotal && (
+                <div>
+                  <p><strong>Total a pagar:</strong> {calcularMontoTotalFacturas().toFixed(2)} pesos</p>
+                </div>
+              )}
+
+              {/* Si no es un pago total, se muestra el campo para ingresar monto */}
+              {!montoPagoTotal && (
+                <>
+                  <label>Monto:</label>
+                  <input
+                    type="number"
+                    value={monto}
+                    onChange={(e) => setMonto(e.target.value)}
+                    placeholder="Ingrese el monto"
+                  />
+                </>
+              )}
+
               <label>Tipo de Pago:</label>
               <select
                 value={paymentType}
                 onChange={(e) => setPaymentType(e.target.value)}
                 className="select-pay"
               >
+                <option value="">Seleccionar</option>
                 <option value="contado">Contado</option>
                 <option value="transferencia">Transferencia</option>
                 <option value="cheque">Cheque</option>
               </select>
 
+              {/* Mostrar campo para registrar cheque si el pago es "cheque" */}
               {paymentType === 'cheque' && (
                 <>
                   <label>Registrar Cheque:</label>
                   <input
-                    type="text"
+                    type="number"
                     value={chequeInfo}
                     onChange={(e) => setChequeInfo(e.target.value)}
-                    placeholder="Ingrese los datos del cheque"
+                    placeholder="Ingrese el monto del cheque"
                   />
                 </>
               )}

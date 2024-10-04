@@ -3,7 +3,7 @@ import Navbar from '../Others/Navbar';
 import { useNavigate } from 'react-router-dom';
 import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 import search from '../../assets/lupa.png';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaEye,FaFileAlt } from 'react-icons/fa';
 
 const PedidoScreen = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -168,6 +168,11 @@ const PedidoScreen = () => {
                       className="icon delete-icon" 
                       onClick={() => handleDelete(pedido.id)} 
                     />
+                  <FaFileAlt 
+                    className="icon view-icon" 
+                    onClick={() => navigate(`/crearfactura/${pedido.id}`)}  // Navegar a CrearFactura con el ID del pedido
+                    />                    
+
                   </td>
                 </tr>
               ))}
