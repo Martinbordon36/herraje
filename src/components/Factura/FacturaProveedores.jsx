@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './FacturaScreen.css';
 import { FaEye } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
+import Modal from 'react-modal'; // Asegúrate de tener react-modal correctamente importado
 
 const FacturaProveedores = () => {
   const [facturas, setFacturas] = useState([]);
@@ -11,14 +12,19 @@ const FacturaProveedores = () => {
   const [proveedores, setProveedores] = useState({});
   const [selectedFacturas, setSelectedFacturas] = useState([]); // Facturas seleccionadas para pago
   const [paymentType, setPaymentType] = useState(''); // Tipo de pago seleccionado
-  const [chequeInfo, setChequeInfo] = useState(''); // Información del cheque en caso de ser seleccionado
+  const [cheques, setCheques] = useState([]); // Cheques seleccionados o cargados
   const [monto, setMonto] = useState(''); // Monto a ingresar para pago parcial
   const [montoPagoTotal, setMontoPagoTotal] = useState(false); // Estado para controlar si es "pago total"
   const [showPaymentForm, setShowPaymentForm] = useState(false); // Mostrar formulario de pago
+  const [showChequeModal, setShowChequeModal] = useState(false); // Mostrar modal de cheque
+  const [newCheque, setNewCheque] = useState({ numero: '', banco: '', fechaCobro: '', propietario: '', idCliente: '' }); // Datos del cheque nuevo
   const [payments, setPayments] = useState([]); // Historial de pagos
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
   const { id } = useParams();  // Obtener el ID del proveedor desde la URL
+
+  // Configura react-modal
+  Modal.setAppElement('#root'); // Asegúrate de que el 'root' es el elemento correcto en tu DOM
 
   useEffect(() => {
     const fetchFacturas = async () => {
@@ -79,6 +85,12 @@ const FacturaProveedores = () => {
     );
   };
 
+  const handleAddCheque = () => {
+    setCheques([...cheques, newCheque]); // Agrega el nuevo cheque al listado de cheques
+    setNewCheque({ numero: '', banco: '', fechaCobro: '', propietario: '', idCliente: '' }); // Limpiar el formulario
+    setShowChequeModal(false); // Cerrar el modal
+  };
+
   const handlePaymentSubmit = async () => {
     const totalFacturas = calcularMontoTotalFacturas();
 
@@ -90,8 +102,9 @@ const FacturaProveedores = () => {
 
     // Caso N° 2: Pago con cheque (generar nota de crédito si el cheque es mayor)
     if (montoPagoTotal && paymentType === 'cheque') {
-      if (chequeInfo > totalFacturas) {
-        const notaCredito = chequeInfo - totalFacturas;
+      const totalChequeMonto = cheques.reduce((acc, cheque) => acc + Number(cheque.monto), 0);
+      if (totalChequeMonto > totalFacturas) {
+        const notaCredito = totalChequeMonto - totalFacturas;
         alert(`Cheque mayor al total. Se generará una nota de crédito de ${notaCredito} pesos.`);
         // Generar nota de crédito y registrar el pago
       }
@@ -117,7 +130,8 @@ const FacturaProveedores = () => {
         }
       }
 
-      if (paymentType === 'cheque' && chequeInfo > monto) {
+      const totalChequeMonto = cheques.reduce((acc, cheque) => acc + Number(cheque.monto), 0);
+      if (paymentType === 'cheque' && totalChequeMonto > monto) {
         alert('El monto del cheque no puede ser mayor al monto ingresado. Debe seleccionar un cheque exacto.');
         return;
       }
@@ -128,7 +142,7 @@ const FacturaProveedores = () => {
         facturaIds: selectedFacturas,
         tipoPago: paymentType,
         monto: montoPagoTotal ? totalFacturas : monto,
-        chequeInfo: paymentType === 'cheque' ? chequeInfo : null,
+        cheques, // Cheques cargados o seleccionados
       };
 
       const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/pagarFactura`, {
@@ -151,7 +165,7 @@ const FacturaProveedores = () => {
       );
 
       setMonto(''); // Limpiar el campo de monto
-      setChequeInfo(''); // Limpiar el campo de cheque
+      setCheques([]); // Limpiar los cheques
       setSelectedFacturas([]); // Limpiar la selección después del pago
       setShowPaymentForm(false); // Ocultar el formulario de pago
     } catch (error) {
@@ -258,7 +272,7 @@ const FacturaProveedores = () => {
               {/* Si es un pago total, mostramos el total calculado */}
               {montoPagoTotal && (
                 <div>
-                  <p><strong>Total a pagar:</strong> {calcularMontoTotalFacturas().toFixed(2)} pesos</p>
+                  <p><strong>Total a pagar:</strong> {calcularMontoTotalFacturas()} pesos</p>
                 </div>
               )}
 
@@ -287,16 +301,28 @@ const FacturaProveedores = () => {
                 <option value="cheque">Cheque</option>
               </select>
 
-              {/* Mostrar campo para registrar cheque si el pago es "cheque" */}
+              {/* Mostrar opción para agregar cheques si el pago es "cheque" */}
               {paymentType === 'cheque' && (
                 <>
-                  <label>Registrar Cheque:</label>
-                  <input
-                    type="number"
-                    value={chequeInfo}
-                    onChange={(e) => setChequeInfo(e.target.value)}
-                    placeholder="Ingrese el monto del cheque"
-                  />
+                  <button className="btn-add-cheque" onClick={() => setShowChequeModal(true)}>
+                    Cargar Cheque
+                  </button>
+
+                  {/* Mostrar lista de cheques cargados */}
+                  {cheques.length > 0 && (
+                    <div className="cheques-list">
+                      <h4>Cheques Cargados:</h4>
+                      {cheques.map((cheque, index) => (
+                        <div key={index} className="cheque-item">
+                          <p>Número: {cheque.numero}</p>
+                          <p>Banco: {cheque.banco}</p>
+                          <p>Fecha de Cobro: {cheque.fechaCobro}</p>
+                          <p>Propietario: {cheque.propietario}</p>
+                          <p>ID Cliente: {cheque.idCliente}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </>
               )}
 
@@ -307,6 +333,46 @@ const FacturaProveedores = () => {
           )}
         </div>
       </div>
+
+      {/* Modal para cargar cheques */}
+      <Modal isOpen={showChequeModal} onRequestClose={() => setShowChequeModal(false)} className="modal-cheque">
+        <label>Número de Cheque:</label>
+        <input
+          type="text"
+          value={newCheque.numero}
+          onChange={(e) => setNewCheque({ ...newCheque, numero: e.target.value })}
+          placeholder="Ingrese el número del cheque"
+        />
+        <label>Banco:</label>
+        <input
+          type="text"
+          value={newCheque.banco}
+          onChange={(e) => setNewCheque({ ...newCheque, banco: e.target.value })}
+          placeholder="Ingrese el banco"
+        />
+        <label>Fecha de Cobro:</label>
+        <input
+          type="date"
+          value={newCheque.fechaCobro}
+          onChange={(e) => setNewCheque({ ...newCheque, fechaCobro: e.target.value })}
+        />
+        <label>Propietario (a nombre de):</label>
+        <input
+          type="text"
+          value={newCheque.propietario}
+          onChange={(e) => setNewCheque({ ...newCheque, propietario: e.target.value })}
+          placeholder="Ingrese el nombre del propietario"
+        />
+        <label>ID Cliente:</label>
+        <input
+          type="text"
+          value={newCheque.idCliente}
+          onChange={(e) => setNewCheque({ ...newCheque, idCliente: e.target.value })}
+          placeholder="Ingrese el ID del cliente"
+        />
+        <button className="btn-submit" onClick={handleAddCheque}>Agregar Cheque</button>
+        <button className="btn-close" onClick={() => setShowChequeModal(false)}></button>
+      </Modal>
 
       {/* Registro de Pagos */}
       <div className="payment-history">

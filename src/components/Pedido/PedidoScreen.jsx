@@ -170,7 +170,7 @@ const PedidoScreen = () => {
                     />
                   <FaFileAlt 
                     className="icon view-icon" 
-                    onClick={() => navigate(`/crearfactura/${pedido.id}`)}  // Navegar a CrearFactura con el ID del pedido
+                    onClick={() => navigate(`/convertir/${pedido.id}`)}  // Navegar a CrearFactura con el ID del pedido
                     />                    
 
                   </td>

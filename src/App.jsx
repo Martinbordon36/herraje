@@ -31,6 +31,7 @@ import FacturaCompraScreen from './components/FacturaCompra/FacturaCompraScreen'
 import FacturaCompraView from './components/FacturaCompra/FacturaCompraView';
 import FacturaCliente from './components/Factura/FacturaCliente';
 import FacturaProveedores from './components/Factura/FacturaProveedores';
+import Conversor from './components/Pedido/Conversor';
 
 const App = () => {
   return (
@@ -69,6 +70,8 @@ const App = () => {
         <Route path="/verFacturaCompra/:id" element={<FacturaCompraView />} />
         <Route path="/facturaCliente/:id" element={<FacturaCliente />} />
         <Route path="/facturaProveedores/:id" element={<FacturaProveedores />} />
+        <Route path="/convertir/:id" element={<Conversor />} />
+
 
       </Routes>
       <Footer/>

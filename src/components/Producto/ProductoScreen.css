@@ -246,3 +246,97 @@
   .th.active {
   font-weight: bold;
 }
+
+
+.credential-modal.show {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.modal-dialog {
+  position: relative;
+  width: 550px;
+  background: linear-gradient(to bottom, #a0ba61, #dd8585);
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  padding: 20px;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 450px;
+
+}
+
+.credential-header {
+  text-align: center;
+  color: white;
+}
+
+.credential-header h5 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.credential-content-vertical {
+  margin-top: 10px;
+  color: white;
+  font-size: 0.9rem;
+  text-align: left;
+  line-height: 1.5;
+  width: 100%;
+  padding: 20px;
+  line-height: 2;
+  margin-bottom: 10px;
+}
+
+.credential-content-vertical p {
+  margin: 4px 0;
+}
+
+.credential-footer {
+  text-align: right;
+  width: 100%;
+  color: white;
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-primary {
+  background-color: #ff6347;
+  border-color: #ff6347;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #b22222;
+}

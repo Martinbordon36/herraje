@@ -44,15 +44,15 @@ const Navbar = () => {
                 Reportes
               </Link>
               <ul className="dropdown-menu" aria-labelledby="pedidosDropdown">
-                <li><Link className="dropdown-item" to="/pedidos">Ver Pedidos</Link></li>
-                <li><Link className="dropdown-item" to="/facturas">Ver Facturas</Link></li>
-                <li><Link className="dropdown-item" to="/facturas">Ver Presupuestos</Link></li>
-                <li><Link className="dropdown-item" to="/crearFacturaCompra">Crear FacturaCompras</Link></li>
-                <li><Link className="dropdown-item" to="/FacturasCompra">Ver Todas facturas de compra</Link></li>
-                <li><Link className="dropdown-item" to="/nuevoPedido">Crear Pedidos</Link></li>
+                <li><Link className="dropdown-item" to="/pedidos">Pedidos</Link></li>
+                <li><Link className="dropdown-item" to="/facturas">Facturas</Link></li>
+                <li><Link className="dropdown-item" to="/facturas">Presupuestos</Link></li>
+        {/*        <li><Link className="dropdown-item" to="/crearFacturaCompra">Crear FacturaCompras</Link></li> */}
+                <li><Link className="dropdown-item" to="/FacturasCompra">Factura Compras</Link></li>
+                {/* <li><Link className="dropdown-item" to="/nuevoPedido">Crear Pedidos</Link></li>
                 <li><Link className="dropdown-item" to="/nuevoPresupuesto">Crear Presupuesto</Link></li>
                 <li><Link className="dropdown-item" to="/crearFactura">Crear Factura</Link></li>
-  
+   */}
               </ul>
             </li>
             <li className="nav-item dropdown">
@@ -61,7 +61,7 @@ const Navbar = () => {
               </Link>
               <ul className="dropdown-menu" aria-labelledby="categoriasDropdown">
                 <li><Link className="dropdown-item" to="/categorias">Listado de Categorias</Link></li>
-                <li><Link className="dropdown-item" to="/nuevacategoria">Crear Categoria</Link></li>
+                {/* <li><Link className="dropdown-item" to="/nuevacategoria">Crear Categoria</Link></li> */}
               </ul>
             </li>
             <li className="nav-item dropdown">

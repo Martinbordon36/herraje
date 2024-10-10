@@ -174,9 +174,9 @@ const ProveedorScreen = () => {
               <th className="th">Domicilio</th>
               <th className="th">Teléfono</th>
               <th className="th">Email</th>
-              <th className="th">Provincia</th>
-              <th className="th">Localidad</th>
-              <th className="th">Acciones</th>
+              {/*   <th className="th">Provincia</th>
+             <th className="th">Localidad</th>*/}
+              <th className="th">Acciones</th> 
             </tr>
           </thead>
           <tbody>
@@ -188,8 +188,8 @@ const ProveedorScreen = () => {
                 <td className="td">{proveedor.domicilio}</td>
                 <td className="td">{proveedor.telefono}</td>
                 <td className="td">{proveedor.email}</td>
-                <td className="td">{proveedor.provincia}</td>
-                <td className="td">{proveedor.localidad}</td>
+                {/* <td className="td">{proveedor.provincia}</td>
+                <td className="td">{proveedor.localidad}</td> */}
                 <td className="td">
                 <FaFileAlt 
                     className="icon view-icon" 
@@ -275,23 +275,29 @@ const ProveedorScreen = () => {
         </div>
       )}
 
-      {/* Modal de Detalles del Proveedor */}
-      {showDetailModal && (
+
+    {showDetailModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Detalles del Proveedor</h5>
+                {/* <button type="button" className="close" onClick={closeDetailModal}>
+                  <span>&times;</span>
+                </button> */}
               </div>
               <div className="modal-body">
-                <p><strong>ID:</strong> {selectedProveedor.id}</p>
-                <p><strong>Razón Social:</strong> {selectedProveedor.razonSocial}</p>
-                <p><strong>CUIT:</strong> {selectedProveedor.cuit}</p>
-                <p><strong>Domicilio:</strong> {selectedProveedor.domicilio}</p>
-                <p><strong>Teléfono:</strong> {selectedProveedor.telefono}</p>
-                <p><strong>Email:</strong> {selectedProveedor.email}</p>
-                <p><strong>Provincia:</strong> {selectedProveedor.provincia}</p>
-                <p><strong>Localidad:</strong> {selectedProveedor.localidad}</p>
+                {selectedProveedor && (
+                  <div>
+            <p><strong>Razon Social:</strong> {selectedProveedor.razonSocial}</p>
+            <p><strong>Cuit:</strong> {selectedProveedor.cuit}</p>
+            <p><strong>Domicilio:</strong> {selectedProveedor.domicilio}</p>
+            <p><strong>Teléfono:</strong> {selectedProveedor.telefono}</p>
+            <p><strong>Email:</strong> {selectedProveedor.email}</p>
+            <p><strong>Provincia:</strong> {selectedProveedor.provincia}</p>
+            <p><strong>Localidad:</strong> {selectedProveedor.localidad}</p>
+                  </div>
+                )}
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={closeDetailModal}>Cerrar</button>
@@ -300,6 +306,7 @@ const ProveedorScreen = () => {
           </div>
         </div>
       )}
+
     </>
   );
 };

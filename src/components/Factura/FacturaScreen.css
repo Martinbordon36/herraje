@@ -350,3 +350,82 @@
   font-size: 14px;
   color: #333;
 }
+
+/* Estilos básicos para el modal */
+.modal-cheque {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000; /* Asegura que el modal esté sobre otros elementos */
+}
+
+/* Fondo semi-transparente detrás del modal */
+.ReactModal__Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+
+/* Estilo de los inputs dentro del modal */
+.modal-cheque input[type="text"],
+.modal-cheque input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Botón de agregar cheque */
+.modal-cheque .btn-submit {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.modal-cheque .btn-submit:hover {
+  background-color: #218838;
+}
+
+/* Botón de cerrar modal */
+.modal-cheque .btn-close {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 90%;
+  margin-top: 10px;
+}
+
+.modal-cheque .btn-close:hover {
+  background-color: #c82333;
+}
+
+
+.btn-add-cheque {
+  background-color: #b97536;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-right: 1px;
+}

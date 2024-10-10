@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../Others/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
-import "./CrearFactura.css";
+import "./Conversor.css";
 import Footer from "../Others/Footer";
 
-const CrearFactura = () => {
+const Conversor = () => {
   const [productos, setProductos] = useState([
     {
       codigo: "",
@@ -52,35 +52,84 @@ const CrearFactura = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProductosAPI = async () => {
-      console.log(zona);
-      try {
-        const response = await fetch(
-          `http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/cliente/${zona}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Error al obtener los productos de la API");
-        }
-        const data = await response.json();
-        console.log("Esto hay en data" + JSON.stringify(data));
-        // const prodFilt = data.filter(data => data.estado=== 'S');
-        setProductosAPI(data);
-      } catch (error) {
-        console.error("Error fetching productosAPI:", error);
-      }
-    };
+//   useEffect(() => {
+//     if (id) {
+//       const fetchPedido = async () => {
+//         try {
+//           const response = await fetch(
+//             `http://vps-1915951-x.dattaweb.com:8090/api/v1/pedido/${id}`,
+//             {
+//               method: "GET",
+//               headers: {
+//                 "Content-Type": "application/json",
+//               },
+//             }
+//           );
+//           if (!response.ok) {
+//             throw new Error("Error al obtener el pedido");
+//           }
+//           const data = await response.json();
+//           console.log(JSON.stringify(data));
+//           setPedidoId(data.id);
+//           setIsEditing(true);
+//           setSelectedClienteId(data.idCliente);
 
-    fetchProductosAPI();
-  }, [selectedCliente]);
+        
+//           {/*Recuepero los datos del cliente */ }
 
-  useEffect(() => {
+//           const cliente = await fetch(
+//             `http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${selectedClienteId}`,
+//             {
+//               method: "GET",
+//               headers: {
+//                 "Content-Type": "application/json",
+//               },
+//             }
+//           );
+//           const clienteData = await cliente.json();
+//           setSelectedCliente(clienteData.razonSocial);
+
+//           console.log(clienteData)
+//           setSelectZona(clienteData.zona.id);
+
+//           setClienteDetails({
+//             cuit: clienteData.cuit || "",
+//             condicionIva: clienteData.condicionIva || "",
+//             condicionVenta: clienteData.condicionVenta || "",
+//             razonSocial: clienteData.razonSocial || "",
+//             domicilio: clienteData.domicilio || "",
+//           });
+
+
+//         {/*Recuperamos el pedido  */ }
+
+//         const detalles = data.pedidoDetalles.map((detalle) => {
+//             const producto = detalle.producto;
+//             console.log(producto)
+//             return {
+//               codigo: producto.codigo,
+//               descripcion: producto.descripcion,
+//               cantidad: detalle.cantidad,
+//               precio: producto.precioVenta,
+//               descuento: detalle.descuento,
+//               total: detalle.total,
+//               removable: true,
+//             };
+//           });
+//           console.log("Esto hay en detalles" + JSON.stringify(detalles));
+//           setProductos(detalles);
+
+//           console.log(data.pedidoDetalles)
+
+//         }catch (error) {
+//             console.error("Error fetching pedido:", error);
+//           }
+//      } 
+//      fetchPedido();
+//     }   
+//       }, [id]);
+
+useEffect(() => {
     if (id) {
       const fetchPedido = async () => {
         try {
@@ -97,10 +146,11 @@ const CrearFactura = () => {
             throw new Error("Error al obtener el pedido");
           }
           const data = await response.json();
-          console.log(JSON.stringify(data));
           setPedidoId(data.id);
           setIsEditing(true);
           setSelectedClienteId(data.idCliente);
+  
+          // Recupere los datos del cliente
           const cliente = await fetch(
             `http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${data.idCliente}`,
             {
@@ -111,11 +161,9 @@ const CrearFactura = () => {
             }
           );
           const clienteData = await cliente.json();
-          console.log("Esto hay en clientes" + clienteData);
-
           setSelectedCliente(clienteData.razonSocial);
-
-          // Actualizamos los detalles del cliente cuando cargamos el pedido
+          setSelectZona(clienteData.zona.id);
+          
           setClienteDetails({
             cuit: clienteData.cuit || "",
             condicionIva: clienteData.condicionIva || "",
@@ -123,29 +171,79 @@ const CrearFactura = () => {
             razonSocial: clienteData.razonSocial || "",
             domicilio: clienteData.domicilio || "",
           });
-
+  
+          // Recuperar los productos después de haber recuperado la zona
+          if (clienteData.zona.id) {
+            const responseProductos = await fetch(
+              `http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/cliente/${clienteData.zona.id}`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (!responseProductos.ok) {
+              throw new Error("Error al obtener los productos de la API");
+            }
+            const productosData = await responseProductos.json();
+            setProductosAPI(productosData);
+          }
+  
+          // Recuperamos el pedido
           const detalles = data.pedidoDetalles.map((detalle) => {
             const producto = detalle.producto;
+            console.log(producto);
             return {
               codigo: producto.codigo,
               descripcion: producto.descripcion,
               cantidad: detalle.cantidad,
-              precio: producto.precioVenta,
+              precioVenta: producto.precioVenta,
               descuento: detalle.descuento,
               total: detalle.total,
               removable: true,
             };
           });
-          console.log("Esto hay en detalles" + detalles);
+          console.log(detalles);
+
           setProductos(detalles);
         } catch (error) {
           console.error("Error fetching pedido:", error);
         }
       };
-
       fetchPedido();
     }
   }, [id]);
+  
+
+{/* Obtenemos los productos   */}
+
+      useEffect(() => {
+        const fetchProductosAPI = async () => {
+          console.log(zona);
+          try {
+            const response = await fetch(
+              `http://vps-1915951-x.dattaweb.com:8090/api/v1/producto/cliente/${zona}`,
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Error al obtener los productos de la API");
+            }
+            const data = await response.json();
+            setProductosAPI(data);
+          } catch (error) {
+            console.error("Error fetching productosAPI:", error);
+          }
+        };
+    
+        fetchProductosAPI();
+      }, [selectedCliente]);
+    
 
   const handleCodigoChange = (index, selectedOption) => {
     const newProductos = [...productos];
@@ -335,53 +433,7 @@ const CrearFactura = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchClientes = async () => {
-      try {
-        const response = await fetch(
-          "http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Error al obtener los clientes");
-        }
-        const data = await response.json();
-        setClientes(data);
-      } catch (error) {
-        console.error("Error fetching clientes:", error);
-      }
-    };
 
-    fetchClientes();
-  }, []);
-
-  const handleClienteSelect = (selectedOption) => {
-    const cliente = clientes.find((c) => c.id === selectedOption.value);
-    setSelectedClienteId(cliente.id);
-    setSelectedCliente(cliente.razonSocial);
-    setSelectZona(cliente.zona.id);
-    console.log(cliente);
-
-    // Actualizar los detalles del cliente en los campos de solo lectura
-    setClienteDetails({
-      cuit: cliente.cuit || "",
-      condicionIva: cliente.condicionIva || "",
-      condicionVenta: cliente.condicionVenta || "",
-      razonSocial: cliente.razonSocial || "",
-      domicilio: cliente.domicilio || "",
-    });
-  };
-
-  // const handleDescuentoGeneralChange = (e) => {
-  //   const value = parseFloat(e.target.value) || 0;
-  //   setDescuentoGeneral(value);
-  //   calcularTotales(value);
-  // };
   const handleDescuentoGeneralChange = (e) => {
     const value = parseFloat(e.target.value) || 0;
     setDescuentoGeneral(value);
@@ -425,29 +477,6 @@ const CrearFactura = () => {
       calcularTotales(); 
     }
   };
-
-  // const calcularTotales = (descuentoGeneral) => {
-  //   const gravadoSinDescuento =
-  //     productos.reduce(
-  //       (acc, producto) =>
-  //         acc + (producto.total ? parseFloat(producto.total) : 0),
-  //       0
-  //     ) || 0;
-  //   const descuento = (gravadoSinDescuento * (descuentoGeneral || 0)) / 100;
-  //   const gravadoConDescuento = gravadoSinDescuento - descuento;
-
-  //   const exento = 0; // Aquí podrías calcular el valor exento si lo necesitas
-  //   const iva = gravadoConDescuento * 0.21 || 0;
-  //   const total = gravadoConDescuento + iva || 0;
-
-  //   setFactura((prevFactura) => ({
-  //     ...prevFactura, // Trae los valores anteriores
-  //     gravado: gravadoConDescuento.toFixed(2),
-  //     exento: exento.toFixed(2),
-  //     iva: iva.toFixed(2),
-  //     total: total.toFixed(2),
-  //   }));
-  // };
 
 
   const calcularTotales = () => {
@@ -496,28 +525,6 @@ const CrearFactura = () => {
   };
   
 
-  // const calcularTotalesFacturaN= (descuentoGeneral) => {
-  //   const gravadoSinDescuento = productos.reduce((acc, producto) => acc + (producto.total ? parseFloat(producto.total) : 0), 0) || 0;
-  //   const descuento = (gravadoSinDescuento * (descuentoGeneral || 0)) / 100;
-  //   const gravadoConDescuento = gravadoSinDescuento - descuento;
-
-  //   const exento = 0; // Aquí podrías calcular el valor exento si lo necesitas
-  //   // const iva = (gravadoConDescuento * 0.21) || 0;
-  //   const total = gravadoConDescuento  || 0;
-
-  //   setFactura((prevFactura) => ({
-  //     ...prevFactura,  // Trae los valores anteriores
-  //     gravado: gravadoConDescuento.toFixed(2),
-  //     exento: exento.toFixed(2),
-  //     iva: 0,
-  //     total: total.toFixed(2),
-  //   }));
-  // };
-
-  // Llama a calcularTotales después de agregar o modificar productos
-  // useEffect(() => {
-  //   calcularTotales();
-  // }, [productos,factura.tipoFactura]);
   useEffect(() => {
     calcularTotales();
   }, [descuentoGeneral, productos, factura.tipoFactura]);
@@ -530,7 +537,7 @@ const CrearFactura = () => {
       <br />
       <br />
       <div className="container-principal">
-        <h1>{isEditing ? "Editar Pedido" : "Crear Nueva Factura"}</h1>
+        <h1>{isEditing ? " Convertir pedido a Factura" : "Crear Nueva Factura"}</h1>
         <button className="btn btn-secondary mb-3" onClick={handleBack}>
           Volver Atrás
         </button>
@@ -599,24 +606,7 @@ const CrearFactura = () => {
             </div>
           </div>
         ) : null}
-        {/* Mostrar los detalles del cliente en campos de solo lectura */}
 
-        {/* Campo de descuento general 
-       
-          <div className="input-container-descuento">
-            <label htmlFor="descuentoEspecial">Descuento Especial </label>
-            <select
-                    id="descuentoEspecial"
-                    name="descuentoEspecial"
-                    className="form-select"
-                    value={factura.descuentoEspecial}
-                    onChange={handleChange}
-                  >
-                    <option value="false">NO</option>
-                    <option value="true">SI</option>
-                  </select>
-        </div>
-        */}
         <div className="input-row">
           <div className="input-row">
             <div className="input-container-descuento">
@@ -862,4 +852,4 @@ const CrearFactura = () => {
   );
 };
 
-export default CrearFactura;
+export default Conversor;

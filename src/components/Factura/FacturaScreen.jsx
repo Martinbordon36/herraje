@@ -163,10 +163,10 @@ const FacturaScreen = () => {
                       className="icon view-icon" 
                       onClick={() => handleViewFactura(factura.id)}
                     />
-                    <FaTrash 
+                    {/* <FaTrash 
                       className="icon delete-icon" 
                       onClick={() => handleDelete(factura.id)} 
-                    />
+                    /> */}
                   </td>
                 </tr>
               ))

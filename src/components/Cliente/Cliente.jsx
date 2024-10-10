@@ -176,8 +176,8 @@ const Cliente = () => {
               <th className="th">Domicilio</th>
               <th className="th">Teléfono</th>
               <th className="th">Email</th>
-              <th className="th">Provincia</th>
-              <th className="th">Localidad</th>
+              {/* <th className="th">Provincia</th>
+              <th className="th">Localidad</th> */}
               <th className="th">Acciones</th>
             </tr>
           </thead>
@@ -190,8 +190,8 @@ const Cliente = () => {
                 <td className="td">{cliente.domicilio}</td>
                 <td className="td">{cliente.telefono}</td>
                 <td className="td">{cliente.email}</td>
-                <td className="td">{cliente.provincia}</td>
-                <td className="td">{cliente.localidad}</td>
+                {/* <td className="td">{cliente.provincia}</td>
+                <td className="td">{cliente.localidad}</td> */}
                 <td className="td">
                 <FaFileAlt
                     className="icon view-icon"
@@ -300,16 +300,19 @@ const Cliente = () => {
         </div>
       )}
 
-      {/* Modal de Detalles del Cliente */}
-      {showDetailModal && (
+
+{showDetailModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Detalles del Cliente</h5>
+
               </div>
               <div className="modal-body">
-                <p>ID Cliente: {selectedCliente.id}</p>
+                {selectedCliente && (
+                  <div>
+                 <p>ID Cliente: {selectedCliente.id}</p>
                 <p>Razón Social: {selectedCliente.razonSocial}</p>
                 <p>CUIT: {selectedCliente.cuit}</p>
                 <p>Domicilio: {selectedCliente.domicilio}</p>
@@ -317,15 +320,11 @@ const Cliente = () => {
                 <p>Email: {selectedCliente.email}</p>
                 <p>Provincia: {selectedCliente.provincia}</p>
                 <p>Localidad: {selectedCliente.localidad}</p>
+                  </div>
+                )}
               </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={closeDetailModal}
-                >
-                  Cerrar
-                </button>
+                <button type="button" className="btn btn-primary" onClick={closeDetailModal}>Cerrar</button>
               </div>
             </div>
           </div>

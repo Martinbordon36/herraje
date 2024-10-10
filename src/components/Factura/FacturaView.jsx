@@ -36,6 +36,7 @@ const FacturaView = () => {
         const data = await response.json();
         setFactura(data);
         setIdCliente(data.cliente); // Aquí se establece el idCliente
+        console.log(JSON.stringify(data));
       } catch (error) {
         console.error("Error fetching factura:", error);
       }
@@ -99,7 +100,7 @@ const FacturaView = () => {
             </p>
           </div>
           <div className="factura-info">
-            {factura?.tipoFactura === "1" ? (
+            {factura?.tipoFactura === 1? (
               <h1>
                 <strong>FACTURA A</strong>
               </h1>
