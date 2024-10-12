@@ -155,6 +155,7 @@ const CoeficienteScreen = () => {
   };
   const createCoeficiente = async () => {
     const newCoeficienteData = {
+      idCoeficiente:999,
       idProveedor: newCoeficiente.idProveedor,
       idZona: newCoeficiente.idZona,
       coeficienteTotal: newCoeficiente.coeficienteTotal,

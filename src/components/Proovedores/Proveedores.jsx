@@ -6,7 +6,6 @@ import Footer from '../Others/Footer';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const Proveedores = () => {
   const [proveedor, setProveedor] = useState({
     razonSocial: '',
@@ -37,7 +36,6 @@ const Proveedores = () => {
     esGasto:false
   });
   const [proveedores, setProveedores] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [validationError, setValidationError] = useState('');
   
   const { id } = useParams();
@@ -79,7 +77,6 @@ const Proveedores = () => {
           }
           const data = await response.json();
           setProveedor(data);
-          console.log(JSON.stringify(data));
         } catch (error) {
           console.error('Error fetching proveedor:', error);
         }
@@ -92,7 +89,6 @@ const Proveedores = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProveedor({ ...proveedor, [name]: value });
-    console.log("Proveedor " + proveedor);
   };
 
   const validateForm = () => {
@@ -120,6 +116,7 @@ const Proveedores = () => {
     const error = validateForm();
     if (error) {
       setValidationError(error);
+      toast.error(error);
       return;
     }
 
@@ -144,28 +141,20 @@ const Proveedores = () => {
       return response.json();
     })
     .then(data => {
-      console.log(id ? 'Proveedor editado:' : 'Proveedor creado:', data);
       toast.success(id ? 'Proveedor editado con éxito' : 'Proveedor creado con éxito'); // Notificación de éxito
-
-      setShowModal(true);
+      setTimeout(() => {
+        navigate('/proveedores');
+      }, 2000); // Redirigir después de 2 segundos
     })
     .catch(error => {
       console.error('Error:', error);
       toast.error(id ? 'Error al editar el proveedor' : 'Error al crear el proveedor'); // Mostrar error en el toast
-
     });
   };
 
   const handleBack = () => {
     navigate(-1);
   };
-
-  const closeModal = () => {
-    setShowModal(false);
-    navigate('/proveedores');
-  };
-
-  const successMessage = id ? 'Proveedor editado con éxito.' : 'Proveedor creado con éxito.';
 
   return (
     <>
@@ -244,54 +233,42 @@ const Proveedores = () => {
                 </div>
               </div>
               <div className="row mb-3">
-                {/* <div className="col-md-6">
-                  <label htmlFor="provincia" className="form-label">Provincia</label>
-                  <input
-                    type="text"
-                    id="provincia"
-                    name="provincia"
-                    className="form-control"
-                    value={proveedor.provincia}
-                    onChange={handleChange}
-                  />
-                </div> */}
                 <div className="col-md-6">
-                
-                <label htmlFor="provincia" className="form-label">Provincia </label>
-                <select
-                   id="provincia"
-                   name="provincia"
-                   className="form-select"
-                   value={proveedor.provincia}
-                   onChange={handleChange}
-                 >
-                <option value="Buenos Aires">Buenos Aires</option>
-                 <option value="CABA">Ciudad Autónoma de Buenos Aires</option>
-                 <option value="Catamarca">Catamarca</option>
-                 <option value="Chaco">Chaco</option>
-                 <option value="Chubut">Chubut</option>
-                 <option value="Córdoba">Córdoba</option>
-                 <option value="Corrientes">Corrientes</option>
-                 <option value="Entre Ríos">Entre Ríos</option>
-                 <option value="Formosa">Formosa</option>
-                 <option value="Jujuy">Jujuy</option>
-                 <option value="La Pampa">La Pampa</option>
-                 <option value="La Rioja">La Rioja</option>
-                 <option value="Mendoza">Mendoza</option>
-                 <option value="Misiones">Misiones</option>
-                 <option value="Neuquén">Neuquén</option>
-                 <option value="Río Negro">Río Negro</option>
-                 <option value="Salta">Salta</option>
-                 <option value="San Juan">San Juan</option>
-                 <option value="San Luis">San Luis</option>
-                 <option value="Santa Cruz">Santa Cruz</option>
-                 <option value="Santa Fe">Santa Fe</option>
-                 <option value="Santiago del Estero">Santiago del Estero</option>
-                 <option value="Tierra del Fuego">Tierra del Fuego</option>
-                 <option value="Tucumán">Tucumán</option>
-                 </select>
-
-              </div> 
+                  <label htmlFor="provincia" className="form-label">Provincia </label>
+                  <select
+                     id="provincia"
+                     name="provincia"
+                     className="form-select"
+                     value={proveedor.provincia}
+                     onChange={handleChange}
+                   >
+                    {/* <option value="">Seleccione una opcion</option> */}
+                    <option value="Buenos Aires">Buenos Aires</option>
+                     <option value="CABA">Ciudad Autónoma de Buenos Aires</option>
+                     <option value="Catamarca">Catamarca</option>
+                     <option value="Chaco">Chaco</option>
+                     <option value="Chubut">Chubut</option>
+                     <option value="Córdoba">Córdoba</option>
+                     <option value="Corrientes">Corrientes</option>
+                     <option value="Entre Ríos">Entre Ríos</option>
+                     <option value="Formosa">Formosa</option>
+                     <option value="Jujuy">Jujuy</option>
+                     <option value="La Pampa">La Pampa</option>
+                     <option value="La Rioja">La Rioja</option>
+                     <option value="Mendoza">Mendoza</option>
+                     <option value="Misiones">Misiones</option>
+                     <option value="Neuquén">Neuquén</option>
+                     <option value="Río Negro">Río Negro</option>
+                     <option value="Salta">Salta</option>
+                     <option value="San Juan">San Juan</option>
+                     <option value="San Luis">San Luis</option>
+                     <option value="Santa Cruz">Santa Cruz</option>
+                     <option value="Santa Fe">Santa Fe</option>
+                     <option value="Santiago del Estero">Santiago del Estero</option>
+                     <option value="Tierra del Fuego">Tierra del Fuego</option>
+                     <option value="Tucumán">Tucumán</option>
+                   </select>
+                </div> 
 
                 <div className="col-md-6">
                   <label htmlFor="localidad" className="form-label">Localidad</label>
@@ -313,6 +290,7 @@ const Proveedores = () => {
                     value={proveedor.ivtCodigo}
                     onChange={handleChange}
                   >
+                    {/* <option value="">Seleccione una opcion</option> */}
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -328,6 +306,7 @@ const Proveedores = () => {
                     value={proveedor.pais}
                     onChange={handleChange}
                   >
+                    {/* <option value="">Seleccione una opcion</option> */}
                     <option value="Argentina">Argentina</option>
                     <option value="Brasil">Brasil</option>
                     <option value="Uruguay">Uruguay</option>
@@ -345,6 +324,7 @@ const Proveedores = () => {
                     value={proveedor.tipoProveedor}
                     onChange={handleChange}
                   >
+                   {/* <option value="">Seleccione una opcion</option> */}
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -493,8 +473,6 @@ const Proveedores = () => {
                 :
                 null
                 }
-               
-               
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
@@ -509,25 +487,6 @@ const Proveedores = () => {
         </div>
       </div>
       <ToastContainer />
-
-
-      {showModal && (
-        <div className="modal show" style={{ display: 'block' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{id ? 'Proveedor Editado' : 'Proveedor Creado'}</h5>
-              </div>
-              <div className="modal-body">
-                <p>{successMessage}</p>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

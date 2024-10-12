@@ -3,6 +3,8 @@ import Navbar from '../Others/Navbar';
 import './ClienteScreen.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../Others/Footer';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ClienteScreen = () => {
   const [cliente, setCliente] = useState({
@@ -88,8 +90,8 @@ const ClienteScreen = () => {
   };
 
   const validateForm = () => {
-    const requiredFields = id ? ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'ivtCodigo', 'pais', 'idVendedor', 'estado', 'numeroDocumento', 'nroIngresosBrutos', 'celular'] 
-                              : ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'ivtCodigo', 'pais', 'idVendedor', 'estado'];
+    const requiredFields = id ? ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'pais', 'ivtCodigo', 'estado', 'idVendedor', 'numeroDocumento', 'nroIngresosBrutos', 'celular'] 
+                              : ['razonSocial', 'cuit', 'domicilio', 'telefono', 'email', 'provincia', 'localidad', 'pais', 'ivtCodigo', 'estado', 'idVendedor', 'zona'];
   
     for (let field of requiredFields) {
       if (!cliente[field]) {
@@ -120,6 +122,8 @@ const ClienteScreen = () => {
       : 'http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente';
     const method = id ? 'PUT' : 'POST';
 
+    console.log(cliente);
+
     fetch(url, {
       method,
       headers: {
@@ -137,8 +141,15 @@ const ClienteScreen = () => {
       console.log(id ? 'Cliente editado:' : 'Cliente creado:', data);
       setShowModal(true);
     })
+    .then(data => {
+      toast.success(id ? 'Cliente editado con éxito' : 'Cliente creado con éxito'); // Notificación de éxito
+      setTimeout(() => {
+        navigate('/clientes');
+      }, 2000); // Redirigir después de 2 segundos
+    })
     .catch(error => {
       console.error('Error:', error);
+      toast.error(id ? 'Error al editar el cliente' : 'Error al crear el cliente'); // Mostrar error en el toast
     });
   };
 
@@ -401,9 +412,7 @@ const ClienteScreen = () => {
                
                 </>
 
-                
-
-) : null}
+          ) : null}
               </div>
               <div className="row mb-3">
                 <div className="col-md-6">
@@ -418,25 +427,10 @@ const ClienteScreen = () => {
         </div>
       </div>
 
+                <ToastContainer />
 
-      {showModal && (
-        <div className="modal show" style={{ display: 'block' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{modalTitle}</h5>
-              </div>
-              <div className="modal-body">
-                <p>{modalMessage}</p>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-primary" onClick={closeModal}>Cerrar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
+
   );
 };
 

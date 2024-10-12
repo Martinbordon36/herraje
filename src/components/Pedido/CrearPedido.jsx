@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./CrearPedido.css";
 import Footer from "../Others/Footer";
 import Select from "react-select";
+import ClientDetails from '../Factura/ClientDetails';
+import { Container, Button, Form, Modal } from 'react-bootstrap';
 
 const CrearPedido = () => {
   const [productos, setProductos] = useState([
@@ -383,56 +385,9 @@ const CrearPedido = () => {
           />
         )}
 
-        {selectedCliente ? (
-          <div className="client-details">
-            <div className="input-row">
-              <label>CUIT:</label>
-              <input
-                type="text"
-                value={clienteDetails.cuit}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Condición de IVA:</label>
-              <input
-                type="text"
-                value={clienteDetails.condicionIva}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Condición de Venta:</label>
-              <input
-                type="text"
-                value={clienteDetails.condicionVenta}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Razón Social:</label>
-              <input
-                type="text"
-                value={clienteDetails.razonSocial}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Domicilio:</label>
-              <input
-                type="text"
-                value={clienteDetails.domicilio}
-                id="input-read"
-                readOnly
-              />
-            </div>
-          </div>
-        ) : null}
-
+{selectedCliente && (
+         <ClientDetails selectedCliente={selectedCliente} clienteDetails={clienteDetails} />
+)}
         {/* Aquí se añade el nuevo campo para el descuento general */}
         <div className="input-row">
           <div className="input-container-descuento">
@@ -513,6 +468,8 @@ const CrearPedido = () => {
                 value={producto.descuento}
                 onChange={(e) => handleInputChange(index, e)}
                 disabled={!selectedClienteId} // Deshabilitar si no hay cliente seleccionado
+                min={0}
+                max={100}
               />
             </div>
 
@@ -528,15 +485,27 @@ const CrearPedido = () => {
             </div>
 
             {producto.removable && (
-              <button onClick={() => eliminarProducto(index)}>x</button>
+              <div className="text-end">
+                <Button
+                  variant="danger"
+                  onClick={() => eliminarProducto(index)}
+                  className="shadow-sm"
+                >
+                  x
+                </Button>
+              </div>
             )}
           </div>
         ))}
       <div className="input-row">
-        <button onClick={agregarProducto} className="button-add-product">
-          Agregar Producto
-        </button>
-      </div>
+        <Button
+          variant="primary"
+          onClick={agregarProducto}
+          className="mb-4 shadow-sm"
+        >
+         +
+        </Button>
+        </div>
       <hr />
       <div className="bottom-controls">
         <h2>Precio Total: {calcularSumaTotal()}</h2>

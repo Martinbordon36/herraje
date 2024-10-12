@@ -4,6 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import "./CrearFactura.css";
 import Footer from "../Others/Footer";
+import ClientDetails from "./ClientDetails";
+import ProductForm from "./ProductoForm";
+import { Container, Button, Form, Modal } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CrearFactura = () => {
   const [productos, setProductos] = useState([
@@ -521,7 +525,6 @@ const CrearFactura = () => {
   useEffect(() => {
     calcularTotales();
   }, [descuentoGeneral, productos, factura.tipoFactura]);
-  
 
   return (
     <div>
@@ -550,73 +553,11 @@ const CrearFactura = () => {
           />
         )}
 
-        {selectedCliente ? (
-          <div className="client-details">
-            <div className="input-row">
-              <label>CUIT:</label>
-              <input
-                type="text"
-                value={clienteDetails.cuit}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Condición de IVA:</label>
-              <input
-                type="text"
-                value={clienteDetails.condicionIva}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Condición de Venta:</label>
-              <input
-                type="text"
-                value={clienteDetails.condicionVenta}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Razón Social:</label>
-              <input
-                type="text"
-                value={clienteDetails.razonSocial}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Domicilio:</label>
-              <input
-                type="text"
-                value={clienteDetails.domicilio}
-                id="input-read"
-                readOnly
-              />
-            </div>
-          </div>
-        ) : null}
+        {selectedCliente && (
+         <ClientDetails selectedCliente={selectedCliente} clienteDetails={clienteDetails} />
+)}
         {/* Mostrar los detalles del cliente en campos de solo lectura */}
 
-        {/* Campo de descuento general 
-       
-          <div className="input-container-descuento">
-            <label htmlFor="descuentoEspecial">Descuento Especial </label>
-            <select
-                    id="descuentoEspecial"
-                    name="descuentoEspecial"
-                    className="form-select"
-                    value={factura.descuentoEspecial}
-                    onChange={handleChange}
-                  >
-                    <option value="false">NO</option>
-                    <option value="true">SI</option>
-                  </select>
-        </div>
-        */}
         <div className="input-row">
           <div className="input-row">
             <div className="input-container-descuento">
@@ -728,6 +669,7 @@ const CrearFactura = () => {
                 value={producto.descuento}
                 onChange={(e) => handleInputChange(index, e)}
                 disabled={!selectedClienteId} // Deshabilitar si no hay cliente seleccionado
+                min={0}
               />
             </div>
 
@@ -748,21 +690,33 @@ const CrearFactura = () => {
             </div>
 
             {producto.removable && (
-              <button onClick={() => eliminarProducto(index)}>x</button>
+              <div className="text-end">
+                <Button
+                  variant="danger"
+                  onClick={() => eliminarProducto(index)}
+                  className="shadow-sm"
+                >
+                  x
+                </Button>
+              </div>
             )}
           </div>
         ))}
 
         <div className="input-row">
-          <button onClick={agregarProducto} className="button-add-product">
-            Agregar Producto
-          </button>
+        <Button
+          variant="primary"
+          onClick={agregarProducto}
+          className="mb-4 shadow-sm"
+        >
+         +
+        </Button>
         </div>
 
         <hr />
 
         {/* Cálculos adicionales para factura */}
-        <div className="totals-container">
+        {/* <div className="totals-container">
           <div className="calculos-adicionales">
             <div className="calculo-item">
               <label>Gravado:</label>
@@ -785,13 +739,38 @@ const CrearFactura = () => {
               <label>Total:</label>
               <span>${factura.total}</span>
             </div>
+          </div> */}
+
+
+        <div className="row mb-4">
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Gravado:</strong> ${factura.gravado}
+            </div>
           </div>
+          {factura.tipoFactura == 1 || factura.tipoFactura == 3 ? (
+            <div className="col-md-3">
+              <div className="p-3 bg-light rounded shadow-sm">
+                <strong>IVA (21%):</strong> ${factura.iva}
+              </div>
+            </div>
+          ) : null}
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Exento:</strong> ${factura.exento}
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Total:</strong> ${factura.total}
+            </div>
+          </div>
+        </div>
           <br />
           {/* <div className="calculo-item">
       <label>TOTAL:</label>
       <span>${factura.total}</span>
     </div> */}
-        </div>
 
         <div className="bottom-controls">
           <div className="button-container">

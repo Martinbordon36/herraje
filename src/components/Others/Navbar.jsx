@@ -27,7 +27,6 @@ const Navbar = () => {
               </Link>
               <ul className="dropdown-menu" aria-labelledby="productosDropdown">
                 <li><Link className="dropdown-item" to="/proveedores">Ver Proveedores</Link></li>
-                <li><Link className="dropdown-item" to="/nuevoProveedor">Crear Proveedor</Link></li>
               </ul>
             </li>
             <li className="nav-item dropdown">
@@ -36,7 +35,6 @@ const Navbar = () => {
               </Link>
               <ul className="dropdown-menu" aria-labelledby="clientesDropdown">
                 <li><Link className="dropdown-item" to="/clientes">Ver Clientes</Link></li>
-                <li><Link className="dropdown-item" to="/nuevoCliente">Crear Cliente</Link></li>
               </ul>
             </li>
             <li className="nav-item dropdown">

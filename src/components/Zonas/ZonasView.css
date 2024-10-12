@@ -1,0 +1,64 @@
+
+/* ZonasView.css */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+  
+  .shadow-sm {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-control {
+    max-width: 300px;
+  }
+  
+  .table {
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: center;
+    padding: 15px;
+    font-size: 1rem;
+  }
+  
+  .table td {
+    text-align: center;
+    color: #343a40;
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+  
+  .table tr {
+    transition: background-color 0.3s ease;
+  }
+  
+  .table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .text-muted {
+    color: #6c757d;
+  }
+  
+  .btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #ffffff;
+  }

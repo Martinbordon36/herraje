@@ -4,6 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import "./CrearFacturaCompra.css";
 import Footer from "../Others/Footer";
+import ProveedorDetails from "./ProveedorDetails";
+import { Container, Button, Form, Modal } from 'react-bootstrap';
+
 
 const CrearFacturaCompra = () => {
   const [productos, setProductos] = useState([
@@ -335,34 +338,10 @@ const CrearFacturaCompra = () => {
           />
         )}
 
-        {selectedProveedor ? (
-          <div className="provider-details">
-            <div className="input-row">
-              <label>CUIT:</label>
-              <input type="text" value={proveedorDetails.cuit} readOnly />
-            </div>
-            <div className="input-row">
-              <label>Condición de IVA:</label>
-              <input
-                type="text"
-                value={proveedorDetails.condicionIva}
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Razón Social:</label>
-              <input
-                type="text"
-                value={proveedorDetails.razonSocial}
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Domicilio:</label>
-              <input type="text" value={proveedorDetails.domicilio} readOnly />
-            </div>
-          </div>
-        ) : null}
+
+{selectedProveedor && (
+         <ProveedorDetails selectedProveedor={selectedProveedor} proveedorDetails={proveedorDetails} />
+)}
 
         {/* Campo de descuento general y tipo de factura */}
         <div className="input-row">
@@ -420,7 +399,7 @@ const CrearFacturaCompra = () => {
                   handleCodigoChange(index, selectedOption)
                 }
                 placeholder="Seleccione un código"
-                isDisabled={!selectedProveedorId}
+                isDisabled={!selectedProveedor}
               />
             </div>
 
@@ -442,7 +421,7 @@ const CrearFacturaCompra = () => {
                   handleCodigoChange(index, selectedOption)
                 }
                 placeholder="Seleccione una descripción"
-                isDisabled={!selectedProveedorId}
+                isDisabled={!selectedProveedor}
               />
             </div>
 
@@ -455,7 +434,7 @@ const CrearFacturaCompra = () => {
                 name="cantidad"
                 value={producto.cantidad}
                 onChange={(e) => handleInputChange(index, e)}
-                min="1"
+                min={1}
                 disabled={!selectedProveedorId}
               />
             </div>
@@ -482,6 +461,8 @@ const CrearFacturaCompra = () => {
                 value={producto.descuento}
                 onChange={(e) => handleInputChange(index, e)}
                 disabled={!selectedProveedorId}
+                min={0}
+                max={100}
               />
             </div>
 
@@ -502,39 +483,53 @@ const CrearFacturaCompra = () => {
             </div>
 
             {producto.removable && (
-              <button onClick={() => eliminarProducto(index)}>x</button>
+              <div className="text-end">
+                <Button
+                  variant="danger"
+                  onClick={() => eliminarProducto(index)}
+                  className="shadow-sm"
+                >
+                  x
+                </Button>
+              </div>
             )}
           </div>
         ))}
 
         <div className="input-row">
-          <button onClick={agregarProducto} className="button-add-product">
-            Agregar Producto
-          </button>
+        <Button
+          variant="primary"
+          onClick={agregarProducto}
+          className="mb-4 shadow-sm"
+        >
+         +
+        </Button>
         </div>
 
         <hr />
 
         {/* Cálculos adicionales para factura */}
-        <div className="totals-container">
-          <div className="calculos-adicionales">
-            <div className="calculo-item">
-              <label>Gravado:</label>
-              <span>${factura.gravado}</span>
+        <div className="row mb-4">
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Gravado:</strong> ${factura.gravado}
             </div>
-            {factura.tipoFactura === "1" || factura.tipoFactura === "3" ? (
-              <div className="calculo-item">
-                <label>IVA (21%):</label>
-                <span>${factura.iva}</span>
+          </div>
+          {factura.tipoFactura == 1 || factura.tipoFactura == 3 ? (
+            <div className="col-md-3">
+              <div className="p-3 bg-light rounded shadow-sm">
+                <strong>IVA (21%):</strong> ${factura.iva}
               </div>
-            ) : null}
-            <div className="calculo-item">
-              <label>Exento:</label>
-              <span>${factura.exento}</span>
             </div>
-            <div className="calculo-item">
-              <label>Total:</label>
-              <span>${factura.total}</span>
+          ) : null}
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Exento:</strong> ${factura.exento}
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Total:</strong> ${factura.total}
             </div>
           </div>
         </div>
@@ -546,6 +541,8 @@ const CrearFacturaCompra = () => {
             </button>
           </div>
         </div>
+
+
 
         {/* Modal de confirmación */}
         {showModal && (

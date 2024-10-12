@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Others/Navbar';
-import './Categorias.css'; // Asegúrate de crear y enlazar este archivo CSS
+import './Categorias.css';
 import Footer from '../Others/Footer';
+import { Card, Container, Form, Button, Modal } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Categorias = () => {
   const [categoria, setCategoria] = useState('');
@@ -15,12 +17,11 @@ const Categorias = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const token = localStorage.getItem('token'); // Obtener el token desde localStorage o donde lo tengas almacenado
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria', {
-      headers: {
-      }
+      headers: {}
     })
       .then(response => response.json())
       .then(data => setCategorias(data))
@@ -38,6 +39,11 @@ const Categorias = () => {
 
   const handleCategoriaSubmit = (e) => {
     e.preventDefault();
+    if (!categoria.trim()) {
+      setModalMessage('La descripción de la categoría no puede estar vacía');
+      setShowModal(true);
+      return;
+    }
     fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/categoria', {
       method: 'POST',
       headers: {
@@ -52,12 +58,11 @@ const Categorias = () => {
         return response.json();
       })
       .then(data => {
-        console.log('Categoría creada:', data);
         setCategorias([...categorias, data]);
-        setUltimaCategoria(data); // Guardar la última categoría creada
-        setSubcategoria({ ...subcategoria, idCategoria: data.id }); // Establecer la última categoría como seleccionada
+        setUltimaCategoria(data);
+        setSubcategoria({ ...subcategoria, idCategoria: data.id });
         setCategoria('');
-        setShowCategoriaForm(false); // Ocultar el formulario de categoría y mostrar el de subcategoría
+        setShowCategoriaForm(false);
         setModalMessage('Categoría creada exitosamente');
         setShowModal(true);
       })
@@ -66,6 +71,11 @@ const Categorias = () => {
 
   const handleSubcategoriaSubmit = (e) => {
     e.preventDefault();
+    if (!subcategoria.descripcion.trim() || !subcategoria.idCategoria) {
+      setModalMessage('La subcategoría debe tener una descripción y una categoría seleccionada');
+      setShowModal(true);
+      return;
+    }
     fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/subcategoria', {
       method: 'POST',
       headers: {
@@ -80,7 +90,6 @@ const Categorias = () => {
         return response.json();
       })
       .then(data => {
-        console.log('Subcategoría creada:', data);
         setSubcategoria({
           idCategoria: '',
           descripcion: ''
@@ -94,98 +103,81 @@ const Categorias = () => {
   const closeModal = () => {
     setShowModal(false);
     if (modalMessage === 'Subcategoría creada exitosamente') {
-      window.location.href = '/categorias'; // Redirigir a la página de categorías
+      window.location.href = '/categorias';
     }
   };
 
   return (
     <>
       <Navbar />
-      <br/>
-      <br/>
-
-
-      <div className="container mt-4">
+      <Container className="mt-5">
         {showCategoriaForm ? (
-          <div className="card">
-            <div className="card-header">
-              <h1 className="card-title">Crear Categoría</h1>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleCategoriaSubmit}>
-                <div className="row mb-3">
-                  <div className="col-md-12">
-                    <label htmlFor="categoria" className="form-label">Descripción de la Categoría</label>
-                    <input
-                      type="text"
-                      id="categoria"
-                      name="categoria"
-                      className="form-control"
-                      value={categoria}
-                      onChange={handleCategoriaChange}
-                    />
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-12">
-                    <button className="btn btn-primary w-100" type="submit">Guardar Categoría</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
+          <Card className="p-4 shadow-sm border-0 rounded-lg">
+            <Card.Header className="bg-primary text-white">
+              <h2>Crear Categoría</h2>
+            </Card.Header>
+            <Card.Body>
+              <Form onSubmit={handleCategoriaSubmit}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Descripción de la Categoría</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese una descripción..."
+                    value={categoria}
+                    onChange={handleCategoriaChange}
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="w-100 fw-bold">
+                  Guardar Categoría
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
         ) : (
-          <div className="card mt-4">
-            <div className="card-header">
-              <h1 className="card-title">Crear Subcategoría</h1>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubcategoriaSubmit}>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label htmlFor="idCategoria" className="form-label">Categoría</label>
-                    <select
-                      id="idCategoria"
-                      name="idCategoria"
-                      className="form-control"
-                      value={subcategoria.idCategoria}
-                      onChange={handleSubcategoriaChange}
-                    >
-                      <option value="">Seleccione una categoría</option>
-                      {categorias.map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.descripcion}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="descripcion" className="form-label">Descripción de la Subcategoría</label>
-                    <input
-                      type="text"
-                      id="descripcion"
-                      name="descripcion"
-                      className="form-control"
-                      value={subcategoria.descripcion}
-                      onChange={handleSubcategoriaChange}
-                    />
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-12">
-                    <button className="btn btn-primary w-100" type="submit">Guardar Subcategoría</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
+          <Card className="p-4 shadow-sm border-0 rounded-lg mt-4">
+            <Card.Header className="bg-primary text-white">
+              <h2>Crear Subcategoría</h2>
+            </Card.Header>
+            <Card.Body>
+              <Form onSubmit={handleSubcategoriaSubmit}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Categoría</Form.Label>
+                  <Form.Select
+                    value={subcategoria.idCategoria}
+                    name="idCategoria"
+                    onChange={handleSubcategoriaChange}
+                  >
+                    <option value="">Seleccione una categoría</option>
+                    {categorias.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.descripcion}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Descripción de la Subcategoría</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese una descripción..."
+                    name="descripcion"
+                    value={subcategoria.descripcion}
+                    onChange={handleSubcategoriaChange}
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit" className="w-100 fw-bold">
+                  Guardar Subcategoría
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
         )}
-      </div>
+      </Container>
 
       {showModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Éxito</h5>
+                <h5 className="modal-title"></h5>
                 {/* <button type="button" className="close" onClick={closeModal}>
                   <span>&times;</span>
                 </button> */}

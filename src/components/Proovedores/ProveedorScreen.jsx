@@ -4,6 +4,60 @@ import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaFileAlt } from 'react-icons/fa'; // Importar iconos de react-icons
 import search from '../../assets/lupa.png';
 import '../Producto/ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
+import { Card, CardContent, Typography, Grid, Avatar, Modal, Fade, Backdrop, IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import CloseIcon from '@mui/icons-material/Close';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+const useStyles = makeStyles((theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: theme.spacing(2),
+  },
+  card: {
+    marginTop: theme.spacing(4),
+    backgroundColor: theme.palette.background.default,
+    boxShadow: theme.shadows[5],
+    borderRadius: theme.shape.borderRadius * 2,
+    padding: theme.spacing(4),
+    transition: 'transform 0.3s',
+    '&:hover': {
+      transform: 'scale(1.02)',
+    },
+    position: 'relative',
+  },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(3),
+  },
+  avatar: {
+    marginRight: theme.spacing(2),
+    backgroundColor: theme.palette.primary.main,
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+  label: {
+    fontWeight: 600,
+    color: theme.palette.text.secondary,
+  },
+  value: {
+    color: theme.palette.text.primary,
+    marginTop: theme.spacing(0.5),
+    fontSize: '1.1rem',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+}));
 
 const ProveedorScreen = () => {
   const [proveedores, setProveedores] = useState([]);
@@ -17,6 +71,7 @@ const ProveedorScreen = () => {
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+  const classes = useStyles();
 
   useEffect(() => {
     const fetchProveedores = async () => {
@@ -71,6 +126,7 @@ const ProveedorScreen = () => {
       setFilteredProveedores(updatedProveedores); // Update filtered list
       setShowConfirmModal(false);
       setShowSuccessModal(true);
+      toast.success('Proveedor eliminado con éxito');
     } catch (error) {
       console.error('Error deleting proveedor:', error);
     }
@@ -130,6 +186,7 @@ const ProveedorScreen = () => {
   return (
     <>
       <Navbar />
+      <br/>
       <div className="container">
         <h1 className="title">Proveedores</h1>
         <button className="button" onClick={handleCreateProveedor}>Crear Proveedor</button>
@@ -275,37 +332,88 @@ const ProveedorScreen = () => {
         </div>
       )}
 
-
-    {showDetailModal && (
-        <div className="modal show" style={{ display: 'block' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Detalles del Proveedor</h5>
-                {/* <button type="button" className="close" onClick={closeDetailModal}>
-                  <span>&times;</span>
-                </button> */}
-              </div>
-              <div className="modal-body">
-                {selectedProveedor && (
-                  <div>
-            <p><strong>Razon Social:</strong> {selectedProveedor.razonSocial}</p>
-            <p><strong>Cuit:</strong> {selectedProveedor.cuit}</p>
-            <p><strong>Domicilio:</strong> {selectedProveedor.domicilio}</p>
-            <p><strong>Teléfono:</strong> {selectedProveedor.telefono}</p>
-            <p><strong>Email:</strong> {selectedProveedor.email}</p>
-            <p><strong>Provincia:</strong> {selectedProveedor.provincia}</p>
-            <p><strong>Localidad:</strong> {selectedProveedor.localidad}</p>
-                  </div>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-primary" onClick={closeDetailModal}>Cerrar</button>
-              </div>
+<Modal
+        open={showDetailModal}
+        onClose={closeDetailModal}
+        className={classes.modal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={showDetailModal}>
+          <Card className={classes.card}>
+            <IconButton className={classes.closeButton} onClick={closeDetailModal}>
+              <CloseIcon />
+            </IconButton>
+            <div className={classes.header}>
+              <Avatar className={classes.avatar}>
+                <AccountCircleIcon fontSize="large" />
+              </Avatar>
+              <Typography variant="h5" color="textPrimary">
+                Detalles del Proveedor
+              </Typography>
             </div>
-          </div>
-        </div>
-      )}
+            <CardContent>
+              <Grid container spacing={3}>
+                {selectedProveedor && (
+                  <>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>ID Proveedor:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.id}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Razón Social:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.razonSocial}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>CUIT:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.cuit}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Domicilio:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.domicilio}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Teléfono:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.telefono}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Email:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.email}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Provincia:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.provincia}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Localidad:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProveedor.localidad}
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            </CardContent>
+          </Card>
+        </Fade>
+      </Modal>
 
     </>
   );

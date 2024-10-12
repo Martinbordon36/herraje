@@ -340,3 +340,14 @@
 .btn-primary:hover {
   background-color: #b22222;
 }
+
+
+.mt5{
+margin-top: 16px;
+padding:10px;
+}
+
+.text-white th{
+  color: white;
+}
+

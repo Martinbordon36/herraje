@@ -714,6 +714,15 @@ html {
 .client-details{
   background-color: rgb(240, 240, 214);
   display: flex;
+  
+}
+
+.client-details-fact{
+  display: flex;
+  box-shadow: -2px 1px 7px 1px rgba(0,0,0,0.87);
+-webkit-box-shadow: -2px 1px 7px 1px rgba(0,0,0,0.87);
+-moz-box-shadow: -2px 1px 7px 1px rgba(0,0,0,0.87);
+margin-top: 20px;
 }
 
 .input-container-descuento{

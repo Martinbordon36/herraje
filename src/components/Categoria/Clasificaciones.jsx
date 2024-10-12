@@ -100,6 +100,8 @@ const Clasificaciones = () => {
   return (
     <>
       <Navbar />
+      <br/>      <br/>
+
       <div className="container mt-4">
         <div className="card">
           <div className="card-header">

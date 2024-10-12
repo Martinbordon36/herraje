@@ -4,6 +4,60 @@ import { useNavigate } from 'react-router-dom';
 import './ProductoScreen.css'; // Asegúrate de importar tu archivo CSS
 import search from '../../assets/lupa.png';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa'; // Importar iconos de react-icons
+import { Card, CardContent, Typography, Grid, Avatar, Modal, Fade, Backdrop, IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CloseIcon from '@mui/icons-material/Close';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+const useStyles = makeStyles((theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: theme.spacing(2),
+  },
+  card: {
+    marginTop: theme.spacing(4),
+    backgroundColor: theme.palette.background.default,
+    boxShadow: theme.shadows[5],
+    borderRadius: theme.shape.borderRadius * 2,
+    padding: theme.spacing(4),
+    transition: 'transform 0.3s',
+    '&:hover': {
+      transform: 'scale(1.02)',
+    },
+    position: 'relative',
+  },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(3),
+  },
+  avatar: {
+    marginRight: theme.spacing(2),
+    backgroundColor: theme.palette.primary.main,
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+  label: {
+    fontWeight: 600,
+    color: theme.palette.text.secondary,
+  },
+  value: {
+    color: theme.palette.text.primary,
+    marginTop: theme.spacing(0.5),
+    fontSize: '1.1rem',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+}));
 
 const ProductoScreen = () => {
   const [productos, setProductos] = useState([]);
@@ -18,6 +72,7 @@ const ProductoScreen = () => {
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+  const classes = useStyles();
 
   useEffect(() => {
     const fetchProductos = async () => {
@@ -128,6 +183,7 @@ const ProductoScreen = () => {
   return (
     <>
       <Navbar />
+      <br/>
 
       <div className="container">
         <h1 className="title">Productos</h1>
@@ -276,7 +332,7 @@ const ProductoScreen = () => {
       )}
 
       {/* Modal de Detalles del Producto */}
-      {showDetailModal && (
+      {/* {showDetailModal && (
         <div className="modal show" style={{ display: 'block' }}>
           <div className="modal-dialog">
             <div className="modal-content">
@@ -284,7 +340,7 @@ const ProductoScreen = () => {
                 <h5 className="modal-title">Detalles del Producto</h5>
                 {/* <button type="button" className="close" onClick={closeDetailModal}>
                   <span>&times;</span>
-                </button> */}
+                </button> 
               </div>
               <div className="modal-body">
                 {selectedProducto && (
@@ -305,7 +361,81 @@ const ProductoScreen = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
+
+
+<Modal
+        open={showDetailModal}
+        onClose={closeDetailModal}
+        className={classes.modal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={showDetailModal}>
+          <Card className={classes.card}>
+            <IconButton className={classes.closeButton} onClick={closeDetailModal}>
+              <CloseIcon />
+            </IconButton>
+            <div className={classes.header}>
+              <Avatar className={classes.avatar}>
+                <VisibilityIcon fontSize="large" />
+              </Avatar>
+              <Typography variant="h5" color="textPrimary">
+                Detalles del Producto
+              </Typography>
+            </div>
+            <CardContent>
+              <Grid container spacing={3}>
+     
+                {selectedProducto && (
+                  <>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>ID Producto:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                      {selectedProducto.id}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Codigo:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                      {selectedProducto.codigo}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Descripción:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProducto.descripcion}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Punto de Reposición:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProducto.puntoReposicion}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Estado:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProducto.estado}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={6} lg={4}>
+                      <Typography className={classes.label}>Costo:</Typography>
+                      <Typography variant="body1" className={classes.value}>
+                        {selectedProducto.costo}
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            </CardContent>
+          </Card>
+        </Fade>
+      </Modal>
+
     </>
   );
 };

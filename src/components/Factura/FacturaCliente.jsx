@@ -13,11 +13,12 @@ const FacturaClientes = () => {
   const [selectedFacturas, setSelectedFacturas] = useState([]); // Facturas seleccionadas para pago
   const [paymentType, setPaymentType] = useState(''); // Tipo de pago seleccionado
   const [cheques, setCheques] = useState([]); // Cheques seleccionados o cargados
+  const [selectedCheque, setSelectedCheque] = useState(null); // Cheque seleccionado para el pago
   const [monto, setMonto] = useState(''); // Monto a ingresar para pago parcial
   const [montoPagoTotal, setMontoPagoTotal] = useState(false); // Estado para controlar si es "pago total"
   const [showPaymentForm, setShowPaymentForm] = useState(false); // Mostrar formulario de pago
   const [showChequeModal, setShowChequeModal] = useState(false); // Mostrar modal de cheque
-  const [newCheque, setNewCheque] = useState({ numero: '', banco: '', fechaCobro: '', propietario: '', idCliente: '' }); // Datos del cheque nuevo
+  const [newCheque, setNewCheque] = useState({ numero: '', banco: '', fechaCobro: '', propietario: '', monto: '' }); // Datos del cheque nuevo
   const [payments, setPayments] = useState([]); // Historial de pagos
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -85,70 +86,68 @@ const FacturaClientes = () => {
     );
   };
 
-  const handleAddCheque = () => {
-    setCheques([...cheques, newCheque]); // Agrega el nuevo cheque al listado de cheques
-    setNewCheque({ numero: '', banco: '', fechaCobro: '', propietario: '', idCliente: '' }); // Limpiar el formulario
-    setShowChequeModal(false); // Cerrar el modal
+  const handleAddCheque = async () => {
+    const chequeData = {
+      ...newCheque,
+      fechaEmision: new Date().toISOString(),
+      propietario: newCheque.propietario,
+      fechaCobro: newCheque.fechaCobro,
+      numero: newCheque.numero,
+      banco: newCheque.banco,
+      monto: parseFloat(newCheque.monto),
+      idCliente: parseInt(id, 10)
+    };
+
+    try {
+      const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/cheque', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chequeData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear el cheque');
+      }
+
+      const savedCheque = await response.json();
+      setCheques([...cheques, savedCheque]); // Agrega el nuevo cheque al listado de cheques
+      setNewCheque({ numero: '', banco: '', fechaCobro: '', propietario: '', monto: '' }); // Limpiar el formulario
+      setShowChequeModal(false); // Cerrar el modal
+    } catch (error) {
+      console.error('Error al crear el cheque:', error);
+    }
   };
 
   const handlePaymentSubmit = async () => {
     const totalFacturas = calcularMontoTotalFacturas();
 
-    // Caso N° 1: Pago total con contado o transferencia
-    if (montoPagoTotal && (paymentType === 'contado' || paymentType === 'transferencia')) {
-      setMonto(totalFacturas); // El monto será el total de las facturas
-      // Continuar con el proceso de pago
-    }
-
-    // Caso N° 2: Pago con cheque (generar nota de crédito si el cheque es mayor)
-    if (montoPagoTotal && paymentType === 'cheque') {
-      const totalChequeMonto = cheques.reduce((acc, cheque) => acc + Number(cheque.monto), 0);
-      if (totalChequeMonto > totalFacturas) {
-        const notaCredito = totalChequeMonto - totalFacturas;
-        alert(`Cheque mayor al total. Se generará una nota de crédito de ${notaCredito} pesos.`);
-        // Generar nota de crédito y registrar el pago
-      }
-      // Si el cheque es igual al total, registrar el pago directamente
-    }
-
-    // Caso N° 3: Pago parcial (repartir el monto entre las facturas seleccionadas)
-    if (!montoPagoTotal && monto > 0) {
-      let montoRestante = monto;
-
-      // Ordenar las facturas para pagar en secuencia
-      const facturasOrdenadas = selectedFacturas.map(facturaId => facturas.find(f => f.id === facturaId)).sort((a, b) => a.total - b.total);
-
-      for (let factura of facturasOrdenadas) {
-        if (montoRestante >= factura.total) {
-          montoRestante -= factura.total;
-          factura.estado = 'pagada'; // Pagar la factura completamente
-        } else {
-          // Pagar parte de la factura
-          factura.total -= montoRestante;
-          montoRestante = 0;
-          break;
-        }
-      }
-
-      const totalChequeMonto = cheques.reduce((acc, cheque) => acc + Number(cheque.monto), 0);
-      if (paymentType === 'cheque' && totalChequeMonto > monto) {
-        alert('El monto del cheque no puede ser mayor al monto ingresado. Debe seleccionar un cheque exacto.');
-        return;
-      }
-    }
-
     try {
-      const paymentData = {
-        facturaIds: selectedFacturas,
-        tipoPago: paymentType,
-        monto: montoPagoTotal ? totalFacturas : monto,
-        cheques, // Cheques cargados o seleccionados
-      };
 
-      const response = await fetch(`http://vps-1915951-x.dattaweb.com:8090/api/v1/pagarFactura`, {
+      const selectedChequeNumero = selectedCheque
+      ? cheques.find(cheque => cheque.numeroCheque === selectedCheque)?.numero
+      : null;
+    
+
+
+      const paymentData = {
+        idCliente: parseInt(id, 10), // Asegurarse de que sea un número entero
+        idFacturas: selectedFacturas.map(factura => parseInt(factura, 10)), // Convertir cada elemento a un número entero
+        monto: montoPagoTotal ? parseFloat(totalFacturas) : parseFloat(monto), // Convertir a punto flotante
+        metodoPago: paymentType === 'contado' ? 1 : paymentType === 'transferencia' ? 2 : 3, // Valor del método de pago
+        idCheques: selectedChequeNumero ? [parseInt(selectedChequeNumero, 10)] : [], // Convertir el cheque seleccionado a un entero y colocarlo en un arreglo si aplica
+        idnotasCredito: [], // Arreglo vacío para notas de crédito
+    };
+
+      console.log(paymentData)
+
+      const response = await fetch('http://vps-1915951-x.dattaweb.com:8090/api/v1/pagosclientes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json', // Añadir 'Accept' para imitar Postman
+
         },
         body: JSON.stringify(paymentData),
       });
@@ -157,7 +156,6 @@ const FacturaClientes = () => {
         throw new Error('Error al registrar el pago');
       }
 
-      // Actualizar el estado de las facturas a "pagada"
       setFacturas((prevFacturas) =>
         prevFacturas.map((factura) =>
           selectedFacturas.includes(factura.id) ? { ...factura, estado: 'pagada' } : factura
@@ -270,7 +268,7 @@ const FacturaClientes = () => {
               {/* Si es un pago total, mostramos el total calculado */}
               {montoPagoTotal && (
                 <div>
-                  <p><strong>Total a pagar:</strong> {calcularMontoTotalFacturas()} pesos</p>
+                  <p><strong>Total a pagar:</strong> {calcularMontoTotalFacturas().toFixed(2)} pesos</p>
                 </div>
               )}
 
@@ -306,19 +304,21 @@ const FacturaClientes = () => {
                     Cargar Cheque
                   </button>
 
-                  {/* Mostrar lista de cheques cargados */}
+                  {/* Mostrar lista de cheques cargados y opción para seleccionar uno */}
                   {cheques.length > 0 && (
                     <div className="cheques-list">
                       <h4>Cheques Cargados:</h4>
-                      {cheques.map((cheque, index) => (
-                        <div key={index} className="cheque-item">
-                          <p>Número: {cheque.numero}</p>
-                          <p>Banco: {cheque.banco}</p>
-                          <p>Fecha de Cobro: {cheque.fechaCobro}</p>
-                          <p>Propietario: {cheque.propietario}</p>
-                          <p>ID Cliente: {cheque.idCliente}</p>
-                        </div>
-                      ))}
+                      <select
+                        value={selectedCheque || ''}
+                        onChange={(e) => setSelectedCheque(e.target.value)}
+                      >
+                        <option value="">Seleccionar cheque</option>
+                        {cheques.map((cheque) => (
+                          <option key={cheque.id} value={cheque.id}>
+                            {`Número: ${cheque.numeroCheque}, Banco: ${cheque.banco}, Monto: ${cheque.monto}`}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   )}
                 </>
@@ -334,7 +334,7 @@ const FacturaClientes = () => {
 
       {/* Modal para cargar cheques */}
       <Modal isOpen={showChequeModal} onRequestClose={() => setShowChequeModal(false)} className="modal-cheque">
-        {/* <h3>Cargar Cheque</h3> */}
+        <h3>Cargar Cheque</h3>
         <label>Número de Cheque:</label>
         <input
           type="text"
@@ -362,15 +362,15 @@ const FacturaClientes = () => {
           onChange={(e) => setNewCheque({ ...newCheque, propietario: e.target.value })}
           placeholder="Ingrese el nombre del propietario"
         />
-        <label>ID Cliente:</label>
+        <label>Monto:</label>
         <input
-          type="text"
-          value={newCheque.idCliente}
-          onChange={(e) => setNewCheque({ ...newCheque, idCliente: e.target.value })}
-          placeholder="Ingrese el ID del cliente"
+          type="number"
+          value={newCheque.monto}
+          onChange={(e) => setNewCheque({ ...newCheque, monto: e.target.value })}
+          placeholder="Ingrese el monto del cheque"
         />
         <button className="btn-submit" onClick={handleAddCheque}>Agregar Cheque</button>
-        <button className="btn-close" onClick={() => setShowChequeModal(false)}></button>
+        <button className="btn-close" onClick={() => setShowChequeModal(false)}>Cerrar</button>
       </Modal>
 
       {/* Registro de Pagos */}

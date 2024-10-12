@@ -36,7 +36,7 @@ const FacturaCompraView = () => {
         const data = await response.json();
         setFactura(data);
         setIdProveedor(data.proveedor); // Cambiado a idProveedor
-        console.log(data.setFacturaCompraDetalles); // Verificar los detalles
+        console.log(data); // Verificar los detalles
       } catch (error) {
         console.error("Error fetching factura:", error);
       }

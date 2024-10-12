@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import "./Conversor.css";
 import Footer from "../Others/Footer";
+import ClientDetails from "../Factura/ClientDetails";
+import { Container, Button, Form, Modal } from 'react-bootstrap';
 
 const Conversor = () => {
   const [productos, setProductos] = useState([
@@ -51,83 +53,6 @@ const Conversor = () => {
   const token = localStorage.getItem("token");
   const { id } = useParams();
   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     if (id) {
-//       const fetchPedido = async () => {
-//         try {
-//           const response = await fetch(
-//             `http://vps-1915951-x.dattaweb.com:8090/api/v1/pedido/${id}`,
-//             {
-//               method: "GET",
-//               headers: {
-//                 "Content-Type": "application/json",
-//               },
-//             }
-//           );
-//           if (!response.ok) {
-//             throw new Error("Error al obtener el pedido");
-//           }
-//           const data = await response.json();
-//           console.log(JSON.stringify(data));
-//           setPedidoId(data.id);
-//           setIsEditing(true);
-//           setSelectedClienteId(data.idCliente);
-
-        
-//           {/*Recuepero los datos del cliente */ }
-
-//           const cliente = await fetch(
-//             `http://vps-1915951-x.dattaweb.com:8090/api/v1/cliente/${selectedClienteId}`,
-//             {
-//               method: "GET",
-//               headers: {
-//                 "Content-Type": "application/json",
-//               },
-//             }
-//           );
-//           const clienteData = await cliente.json();
-//           setSelectedCliente(clienteData.razonSocial);
-
-//           console.log(clienteData)
-//           setSelectZona(clienteData.zona.id);
-
-//           setClienteDetails({
-//             cuit: clienteData.cuit || "",
-//             condicionIva: clienteData.condicionIva || "",
-//             condicionVenta: clienteData.condicionVenta || "",
-//             razonSocial: clienteData.razonSocial || "",
-//             domicilio: clienteData.domicilio || "",
-//           });
-
-
-//         {/*Recuperamos el pedido  */ }
-
-//         const detalles = data.pedidoDetalles.map((detalle) => {
-//             const producto = detalle.producto;
-//             console.log(producto)
-//             return {
-//               codigo: producto.codigo,
-//               descripcion: producto.descripcion,
-//               cantidad: detalle.cantidad,
-//               precio: producto.precioVenta,
-//               descuento: detalle.descuento,
-//               total: detalle.total,
-//               removable: true,
-//             };
-//           });
-//           console.log("Esto hay en detalles" + JSON.stringify(detalles));
-//           setProductos(detalles);
-
-//           console.log(data.pedidoDetalles)
-
-//         }catch (error) {
-//             console.error("Error fetching pedido:", error);
-//           }
-//      } 
-//      fetchPedido();
-//     }   
-//       }, [id]);
 
 useEffect(() => {
     if (id) {
@@ -546,66 +471,10 @@ useEffect(() => {
           <div className="alert alert-danger">{validationError}</div>
         )}
 
-        {/* Información del cliente o búsqueda */}
-        {id ? (
-          <h1> Cliente : {selectedCliente}</h1>
-        ) : (
-          <Select
-            options={clienteOptions}
-            onChange={handleClienteSelect}
-            placeholder="Buscar cliente"
-          />
-        )}
 
-        {selectedCliente ? (
-          <div className="client-details">
-            <div className="input-row">
-              <label>CUIT:</label>
-              <input
-                type="text"
-                value={clienteDetails.cuit}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Condición de IVA:</label>
-              <input
-                type="text"
-                value={clienteDetails.condicionIva}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Condición de Venta:</label>
-              <input
-                type="text"
-                value={clienteDetails.condicionVenta}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Razón Social:</label>
-              <input
-                type="text"
-                value={clienteDetails.razonSocial}
-                id="input-read"
-                readOnly
-              />
-            </div>
-            <div className="input-row">
-              <label>Domicilio:</label>
-              <input
-                type="text"
-                value={clienteDetails.domicilio}
-                id="input-read"
-                readOnly
-              />
-            </div>
-          </div>
-        ) : null}
+      {selectedCliente && (
+         <ClientDetails selectedCliente={selectedCliente} clienteDetails={clienteDetails} />
+       )}
 
         <div className="input-row">
           <div className="input-row">
@@ -738,42 +607,53 @@ useEffect(() => {
             </div>
 
             {producto.removable && (
-              <button onClick={() => eliminarProducto(index)}>x</button>
+              <div className="text-end">
+                <Button
+                  variant="danger"
+                  onClick={() => eliminarProducto(index)}
+                  className="shadow-sm"
+                >
+                  x
+                </Button>
+              </div>
             )}
           </div>
         ))}
 
-        <div className="input-row">
-          <button onClick={agregarProducto} className="button-add-product">
-            Agregar Producto
-          </button>
+<div className="input-row">
+        <Button
+          variant="primary"
+          onClick={agregarProducto}
+          className="mb-4 shadow-sm"
+        >
+         +
+        </Button>
         </div>
 
         <hr />
 
         {/* Cálculos adicionales para factura */}
-        <div className="totals-container">
-          <div className="calculos-adicionales">
-            <div className="calculo-item">
-              <label>Gravado:</label>
-              <span>${factura.gravado}</span>
+        <div className="row mb-4">
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Gravado:</strong> ${factura.gravado}
             </div>
-            {factura.tipoFactura == 1 || factura.tipoFactura == 3 ? (
-              <>
-                <div className="calculo-item">
-                  <label>IVA (21%):</label>
-                  <span>${factura.iva}</span>
-                </div>
-              </>
-            ) : null}
-
-            <div className="calculo-item">
-              <label>Exento:</label>
-              <span>${factura.exento}</span>
+          </div>
+          {factura.tipoFactura == 1 || factura.tipoFactura == 3 ? (
+            <div className="col-md-3">
+              <div className="p-3 bg-light rounded shadow-sm">
+                <strong>IVA (21%):</strong> ${factura.iva}
+              </div>
             </div>
-            <div className="calculo-item">
-              <label>Total:</label>
-              <span>${factura.total}</span>
+          ) : null}
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Exento:</strong> ${factura.exento}
+            </div>
+          </div>
+          <div className="col-md-3">
+            <div className="p-3 bg-light rounded shadow-sm">
+              <strong>Total:</strong> ${factura.total}
             </div>
           </div>
           <br />
