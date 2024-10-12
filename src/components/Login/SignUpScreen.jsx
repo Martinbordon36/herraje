@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SignupScreen.css';
-import avatarImage from '../../assets/herraje.jpeg';; // Ajusta la ruta según corresponda
+import { Container, Row, Col, Card, Form, Button, Spinner } from 'react-bootstrap';
+import avatarImage from '../../assets/herraje.jpeg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const SignupScreen = () => {
   const [fullName, setFullName] = useState('');
@@ -41,47 +42,77 @@ const SignupScreen = () => {
     }
   };
 
+  const handleLoginRedirect = () => {
+    navigate('/');
+  };
+
   return (
-    <div className="signup-container">
-      <div className="signup-box">
-        <div className="avatar">
-          <img src={avatarImage} alt="avatar" className="avatar-image"/>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="input-container">
-            <i className="fa fa-user icon"></i>
-            <input
-              type="text"
-              placeholder="Nombre"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
-          </div>
-          <div className="input-container">
-            <i className="fa fa-envelope icon"></i>
-            <input
-              type="text"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="input-container">
-            <i className="fa fa-lock icon"></i>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button type="submit" className="signup-button" disabled={loading}>
-            {loading ? 'Loading...' : 'Crear Usuario'}
-          </button>
-          {error && <div className="error-message">{error}</div>}
-        </form>
-      </div>
-    </div>
+    <Container className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <Row className="w-100">
+        <Col md={{ span: 6, offset: 3 }}>
+          <Card className="p-5 shadow-lg border-0 rounded-lg" style={{ background: 'linear-gradient(135deg, #ffffff, #f0f0f0)' }}>
+            <div className="text-center mb-4">
+              <img src={avatarImage} alt="avatar" className="rounded-circle border border-primary" style={{ width: '120px', height: '120px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} />
+            </div>
+            <h3 className="text-center text-primary mb-4" style={{ fontWeight: 'bold', fontSize: '1.75rem' }}>Crear Usuario</h3>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group controlId="formFullName" className="mb-4">
+                <Form.Label className="fw-bold">Nombre Completo</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ingrese su nombre completo"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="shadow-sm"
+                  required
+                  style={{ borderRadius: '25px', padding: '10px' }}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formEmail" className="mb-4">
+                <Form.Label className="fw-bold">Correo Electrónico</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Ingrese su correo electrónico"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="shadow-sm"
+                  required
+                  style={{ borderRadius: '25px', padding: '10px' }}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formPassword" className="mb-4">
+                <Form.Label className="fw-bold">Contraseña</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Ingrese su contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="shadow-sm"
+                  required
+                  style={{ borderRadius: '25px', padding: '10px' }}
+                />
+              </Form.Group>
+
+              {error && <div className="alert alert-danger text-center">{error}</div>}
+
+              <div className="d-grid gap-2">
+                <Button variant="primary" type="submit" disabled={loading} className="shadow-sm fw-bold" style={{ borderRadius: '25px', padding: '10px' }}>
+                  {loading ? <Spinner animation="border" size="sm" /> : 'Crear Usuario'}
+                </Button>
+              </div>
+            </Form>
+
+            <div className="text-center mt-4">
+              <Button variant="link" onClick={handleLoginRedirect} className="shadow-sm fw-bold text-decoration-none" style={{ fontSize: '1rem' }}>
+                <span className="text-primary">Volver</span>
+              </Button>
+            </div>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
